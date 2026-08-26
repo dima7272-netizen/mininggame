@@ -15,6 +15,7 @@ export type SimulatorFormulaInput = {
   roomIndex: number;
   blockMaxHP: string;
   currentStrength: string;
+  actualDamagePerHit?: string;
   pickaxePower: string;
   hitStrengthPercent: string;
   rebirths: number;
@@ -33,6 +34,8 @@ export type SimulatorFormulaInput = {
 
 export type SimulatorFormulaResult = {
   damagePerHit: string;
+  calculatedDamagePerHit: string;
+  usesActualDamage: boolean;
   hitsAtCurrentStrength: string;
   blockTimeSeconds: string;
   strengthPerHit: string;
@@ -143,7 +146,20 @@ export function calculateSimulatorFormulas(input: SimulatorFormulaInput): Simula
     MAX_GAME_STAT,
     Decimal.max(1, luaRound(positiveDecimal(input.pickaxePower, '1').mul(strengthMultiplier))),
   );
-  const damagePerHit = miningDamage(input.currentStrength, input.hitStrengthPercent);
+  const calculatedDamagePerHit = miningDamage(input.currentStrength, input.hitStrengthPercent);
+  const enteredDamage = input.actualDamagePerHit?.trim();
+  let actualDamagePerHit: Decimal | null = null;
+  if (enteredDamage) {
+    try {
+      const parsed = new Decimal(enteredDamage);
+      if (parsed.isFinite() && parsed.isPositive()) {
+        actualDamagePerHit = Decimal.min(MAX_GAME_STAT, parsed);
+      }
+    } catch {
+      actualDamagePerHit = null;
+    }
+  }
+  const damagePerHit = actualDamagePerHit ?? calculatedDamagePerHit;
   const blockHP = positiveDecimal(input.blockMaxHP, '1');
   const hitsAtCurrentStrength = blockHP.div(damagePerHit).ceil();
   // MiningClient first waits for an interval, then applies contact at 45% of the animation.
@@ -156,6 +172,8 @@ export function calculateSimulatorFormulas(input: SimulatorFormulaInput): Simula
 
   return {
     damagePerHit: damagePerHit.toFixed(),
+    calculatedDamagePerHit: calculatedDamagePerHit.toFixed(),
+    usesActualDamage: actualDamagePerHit !== null,
     hitsAtCurrentStrength: hitsAtCurrentStrength.toFixed(),
     blockTimeSeconds: blockTimeSeconds.toFixed(),
     strengthPerHit: strengthPerHit.toFixed(),

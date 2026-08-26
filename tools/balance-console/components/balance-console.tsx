@@ -645,6 +645,7 @@ function SimulatorScreen({
   const [room, setRoom] = useState(known.rooms[0]?.index ?? 1);
   const [pickaxe, setPickaxe] = useState(known.pickaxes[0].modelName);
   const [currentStrength, setCurrentStrength] = useState('0');
+  const [actualDamagePerHit, setActualDamagePerHit] = useState('');
   const [hitStrengthLevel, setHitStrengthLevel] = useState(0);
   const [petSlotsLevel, setPetSlotsLevel] = useState(0);
   const [equippedPetIds, setEquippedPetIds] = useState<string[]>([]);
@@ -682,6 +683,7 @@ function SimulatorScreen({
     roomIndex: selectedRoom.index,
     blockMaxHP: selectedRoom.blockMaxHP,
     currentStrength,
+    actualDamagePerHit,
     pickaxePower: selectedPickaxe.power,
     hitStrengthPercent,
     rebirths,
@@ -739,6 +741,7 @@ function SimulatorScreen({
         <div className="simulator-control-fields">
           <Field label="Комната"><select value={room} onChange={(event) => setRoom(Number(event.target.value))}>{known.rooms.map((item) => <option value={item.index} key={item.index}>Комната {item.index}</option>)}</select></Field>
           <Field label="Текущий Strength"><input inputMode="decimal" value={currentStrength} onChange={(event) => setCurrentStrength(event.target.value)} /></Field>
+          <Field label="Фактический урон за удар (из игры)"><input inputMode="decimal" placeholder={`Авторасчёт: ${simulation.calculatedDamagePerHit}`} value={actualDamagePerHit} onChange={(event) => setActualDamagePerHit(event.target.value)} /><small className="field-hint">Введите число урона, которое реально показывает игра. Оставьте поле пустым, чтобы использовать формулу.</small></Field>
           <Field label="Кирка"><select value={pickaxe} onChange={(event) => setPickaxe(event.target.value)}>{known.pickaxes.map((item, index) => <option value={item.modelName} key={item.modelName}>#{index + 1} · {item.modelName} · сила {formatExact(item.power).short}</option>)}</select></Field>
           <Field label={`Уровень ауры · ${hitStrengthPercent}%`}><select value={hitStrengthLevel} onChange={(event) => setHitStrengthLevel(Number(event.target.value))}>{Array.from({ length: (hitStrength?.maxLevel ?? 0) + 1 }, (_, level) => <option value={level} key={level}>Уровень {level} · {valueAtLevel(hitStrength?.baseValue ?? '100', hitStrength?.valuePerLevel ?? '0', level, hitStrength?.maxLevel ?? 0).toFixed()}%</option>)}</select></Field>
           <Field label="Ребёрты"><input type="number" min="0" max="120" value={rebirths} onChange={(event) => setRebirths(Math.min(120, Math.max(0, Number(event.target.value))))} /></Field>
@@ -764,7 +767,7 @@ function SimulatorScreen({
         <PanelHeading title="Результат" subtitle={`Комната ${selectedRoom.index} · ${simulation.roomItemCount} предметов по игровой формуле`} />
         <div className="result-grid simulator-result-grid">
           <Result label="HP блока" value={formatExact(selectedRoom.blockMaxHP).short} exact={selectedRoom.blockMaxHP} />
-          <Result label="Урон за удар" value={formatExact(simulation.damagePerHit).short} exact={simulation.damagePerHit} />
+          <Result label={simulation.usesActualDamage ? 'Урон за удар · фактический' : 'Урон за удар · расчёт'} value={formatExact(simulation.damagePerHit).short} exact={simulation.damagePerHit} />
           <Result label="Ударов по блоку" value={formatExact(simulation.hitsAtCurrentStrength).short} exact={simulation.hitsAtCurrentStrength} />
           <Result label="Время одного блока" value={`${formatExact(simulation.blockTimeSeconds).short} с`} exact={simulation.blockTimeSeconds} />
           <Result label="Strength за удар" value={`+${formatExact(simulation.strengthPerHit).short}`} exact={simulation.strengthPerHit} />
@@ -774,12 +777,12 @@ function SimulatorScreen({
         </div>
         <div className="formula-breakdown">
           <header><span>Как игра посчитала</span><strong>Все промежуточные множители видны</strong></header>
-          <div><b>Урон</b><code>round(max(10, round(Strength × 0.2)) × аура% / 100)</code><span>{currentStrength} Strength → {simulation.damagePerHit} урона</span></div>
+          <div><b>Урон</b><code>{simulation.usesActualDamage ? 'фактическое значение из игры' : 'round(max(10, round(Strength × 0.2)) × аура% / 100)'}</code><span>{simulation.usesActualDamage ? `Введено ${simulation.damagePerHit}; формула дала бы ${simulation.calculatedDamagePerHit}` : `${currentStrength} Strength → ${simulation.damagePerHit} урона`}</span></div>
           <div><b>Strength за удар</b><code>round(кирка × (ребёрт + постоянный + free reward + питомцы/индекс) × друзья)</code><span>Питомцы/индекс ×{simulation.miningRewardMultiplier}; кирка {selectedPickaxe.power} × общий ×{simulation.strengthMultiplier} = {simulation.strengthPerHit}</span></div>
           <div><b>Деньги комнаты</b><code>round(Σ(вес × цена) × точное число предметов × денежный бонус)</code><span>{simulation.baseRoomIncome} × {simulation.cashMultiplier} = {simulation.expectedRoomCash}</span></div>
           <div><b>Число предметов</b><code>min + ((номер комнаты + 13337) mod диапазон)</code><span>Комната {selectedRoom.index}: ровно {simulation.roomItemCount}, не среднее 7,5</span></div>
         </div>
-        <small className="assumption simulator-note">Время блока использует текущий урон и настоящий интервал кирки 0,55 с плюс задержку контакта 0,2475 с. Во время реальной добычи Strength растёт после каждого принятого удара, поэтому следующие блоки ломаются быстрее. Полное время комнаты дополнительно зависит от маршрута, радиуса удара, движения и сети. Арены относятся к AFK-тренировке и не умножают добычу в комнатах. Временный денежный event сейчас считается как ×1.</small>
+        <small className="assumption simulator-note">Время блока использует {simulation.usesActualDamage ? 'введённый фактический урон' : 'урон по игровой формуле'} и настоящий интервал кирки 0,55 с плюс задержку контакта 0,2475 с. Во время реальной добычи Strength растёт после каждого принятого удара, поэтому следующие блоки ломаются быстрее. Полное время комнаты дополнительно зависит от маршрута, радиуса удара, движения и сети. Арены относятся к AFK-тренировке и не умножают добычу в комнатах. Временный денежный event сейчас считается как ×1.</small>
         <div className="saved-goals"><strong>Пользовательские цели</strong>{workspace?.goals.length ? workspace.goals.map((goal) => { if (goal.metric !== 'block_time') return <span key={goal.id}>{goal.label}: <b>{goal.targetValue} {goal.unit}</b> · прежняя цель комнаты, маршрут нельзя честно вывести только из HP</span>; const achieved = new Decimal(simulation.blockTimeSeconds).lessThanOrEqualTo(goal.targetValue); return <span className={achieved ? 'goal-achieved' : 'goal-missed'} key={goal.id}>{goal.label}: <b>{goal.targetValue} {goal.unit}</b> · сейчас {formatExact(simulation.blockTimeSeconds).short} с · {achieved ? 'цель выполнена' : 'медленнее цели'}</span>; }) : <span>Целей пока нет.</span>}</div>
       </article>
     </section>

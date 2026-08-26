@@ -75,4 +75,28 @@ describe('formulas extracted from Dig Get Stronger place version 89', () => {
     expect(result.strengthMultiplier).toBe('5.5'); // reward pool x3.5 + free x2
     expect(result.strengthPerHit).toBe('55');
   });
+
+  it('uses entered in-game damage for hits and time while keeping the formula comparison', () => {
+    const result = calculateSimulatorFormulas({
+      roomIndex: 2,
+      blockMaxHP: '1000',
+      currentStrength: '1000',
+      actualDamagePerHit: '250',
+      pickaxePower: '10',
+      hitStrengthPercent: '200',
+      rebirths: 0,
+      strengthPerRebirth: '1',
+      cashPerRebirth: '1',
+      equippedPetPowers: [],
+      friendCount: 0,
+      expectedItemPrice: '100',
+      minimumItemsPerRoom: '7',
+      maximumItemsPerRoom: '8',
+    });
+    expect(result.usesActualDamage).toBe(true);
+    expect(result.calculatedDamagePerHit).toBe('400');
+    expect(result.damagePerHit).toBe('250');
+    expect(result.hitsAtCurrentStrength).toBe('4');
+    expect(result.blockTimeSeconds).toBe('2.4475');
+  });
 });
