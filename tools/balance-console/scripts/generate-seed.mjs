@@ -23,7 +23,7 @@ for (const fileName of names) {
   entries.push(`  ${JSON.stringify(configName)}: ${JSON.stringify(raw)},`);
 }
 
-const gitSha = execFileSync('git', ['rev-parse', 'HEAD'], {
+const gitSha = execFileSync('git', ['log', '-1', '--format=%H', '--', 'configs'], {
   cwd: repositoryRoot,
   encoding: 'utf8',
 }).trim();
