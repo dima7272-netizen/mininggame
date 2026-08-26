@@ -30,7 +30,8 @@ describe('repository import', () => {
     expect(known.roomDrops).toHaveLength(46);
     expect(known.pickaxes).toHaveLength(55);
     expect(known.roomDrops.reduce((sum, room) => sum + room.drops.length, 0)).toBeGreaterThanOrEqual(449);
-    expect(known.beyondLastRoom.blockMaxHP).toBe('1.3e+30');
+    expect(known.beyondLastRoom.blockMaxHP).toBe('1300000000000000000000000000000');
+    expect(known.rooms.every((room) => /^(?:0|[1-9]\d*)$/.test(room.blockMaxHP))).toBe(true);
     expect(base.Pickaxes).toContain('10000000000000000');
   });
 
@@ -138,6 +139,12 @@ describe('validation gates', () => {
     expect(codes(mutate(base, 'SellItems', '$/settings/minimumItemsPerRoom', exactNumber('11')))).toContain('sell.range');
     expect(codes(mutate(base, 'Upgrades', '$/0/maxLevel', exactNumber('999')))).toContain('upgrade.price_count');
     expect(validateConfigs(base, { baseIsCurrent: false }).issues.map((item) => item.code)).toContain('version.stale_base');
+  });
+
+  it('blocks fractional and exponent notation for wall HP', () => {
+    expect(codes(mutate(base, 'Rooms', '$/rooms/1/blockMaxHP', exactNumber('214.5')))).toContain('rooms.hp_integer');
+    expect(codes(mutate(base, 'Rooms', '$/rooms/1/blockMaxHP', exactNumber('2.14e2')))).toContain('rooms.hp_integer');
+    expect(codes(mutate(base, 'Rooms', '$/beyondLastRoom/maxBlockHP', exactNumber('1.3e30')))).toContain('rooms.beyond_hp_integer');
   });
 
   it('accepts an unknown well-formed config without requiring a code change', () => {

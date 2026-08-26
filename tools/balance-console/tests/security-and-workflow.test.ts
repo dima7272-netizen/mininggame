@@ -86,12 +86,13 @@ describe('safe export and audit logging', () => {
   it('exports one canonical JSON file per config, preserving exact lexemes', () => {
     const files = buildConfigFiles(seedConfigText);
     expect(Object.keys(files)).toHaveLength(9);
-    expect(files['configs/Rooms.json']).toContain('1.3e+30');
+    expect(files['configs/Rooms.json']).toContain('1300000000000000000000000000000');
+    expect(files['configs/Rooms.json']).not.toMatch(/"blockMaxHP":\s*[^,\n]*[.eE]/);
     expect(files['configs/Pickaxes.json']).toContain('10000000000000000');
 
     const archive = unzipSync(buildConfigZip(seedConfigText, { versionId: 'v-test' }));
     expect(Object.keys(archive)).toContain('manifest.json');
-    expect(strFromU8(archive['configs/Rooms.json'])).toContain('1.3e+30');
+    expect(strFromU8(archive['configs/Rooms.json'])).toContain('1300000000000000000000000000000');
   });
 
   it('redacts nested tokens, secrets, API keys and authorization values', () => {

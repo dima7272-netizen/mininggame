@@ -2,6 +2,7 @@ import Decimal from 'decimal.js';
 import { buildRoomEconomy, log10ForChart } from './analytics';
 import { parseKnownConfigs, type ConfigTextMap, type RoomDrop } from './config-model';
 import { exactNumber, parseExactJson, stringifyExactJson, updateAtPointer, type ExactJson } from './exact-json';
+import { roomHpUsesIntegerLiterals } from './room-hp';
 
 type Update = { pointer: string; value: ExactJson };
 
@@ -26,7 +27,7 @@ export function createSmoothProgressionDraft(configs: ConfigTextMap): ConfigText
         : firstHp.mul(hpRatio.pow(new Decimal(index).div(roomCount - 1)));
     return {
       pointer: `$/rooms/${index}/blockMaxHP`,
-      value: exactNumber(value.toSignificantDigits(10).toString()),
+      value: exactNumber(value.toDecimalPlaces(0, Decimal.ROUND_HALF_UP).toFixed(0)),
     };
   });
 
@@ -105,6 +106,7 @@ export function createSmoothProgressionDraft(configs: ConfigTextMap): ConfigText
 
 export function isSmoothProgression(configs: ConfigTextMap) {
   try {
+    if (!roomHpUsesIntegerLiterals(configs)) return false;
     const economy = buildRoomEconomy(configs);
     if (economy.length < 3) return false;
     const hpSteps = stepSizes(economy.map((room) => log10ForChart(room.blockMaxHP)));

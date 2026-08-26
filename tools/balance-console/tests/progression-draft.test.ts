@@ -5,6 +5,7 @@ import { parseKnownConfigs, type ConfigTextMap } from '../lib/config-model';
 import { seedConfigText } from '../lib/generated/seed-configs';
 import { createSmoothProgressionDraft, isSmoothProgression, REWARD_GROWTH_MULTIPLIER } from '../lib/progression-draft';
 import { validateConfigs } from '../lib/validation';
+import { roomHpUsesIntegerLiterals, roundRoomHpToIntegers } from '../lib/room-hp';
 
 const base: ConfigTextMap = { ...seedConfigText };
 
@@ -21,6 +22,7 @@ describe('smooth progression draft', () => {
     expect(Math.max(...rewardSteps) - Math.min(...rewardSteps)).toBeLessThan(0.01);
     expect(hpSteps.every((step) => step > 0)).toBe(true);
     expect(rewardSteps.every((step) => step > 0)).toBe(true);
+    expect(roomHpUsesIntegerLiterals(draft)).toBe(true);
     expect(Number(economy[1].rewardGrowth)).toBeCloseTo(REWARD_GROWTH_MULTIPLIER, 3);
   });
 
@@ -38,6 +40,21 @@ describe('smooth progression draft', () => {
   it('does not generate a second draft when progression is already smooth', () => {
     const draft = createSmoothProgressionDraft(base);
     expect(createSmoothProgressionDraft(draft)).toBe(draft);
+  });
+
+  it('rounds fractional and exponent HP without changing other configs', () => {
+    const fractional = {
+      ...base,
+      Rooms: base.Rooms
+        .replace('"blockMaxHP": 214', '"blockMaxHP": 214.49')
+        .replace('"blockMaxHP": 1300000000000000000000000000000', '"blockMaxHP": 1.3e+30'),
+    };
+    const rounded = roundRoomHpToIntegers(fractional);
+    const known = parseKnownConfigs(rounded);
+    expect(known.rooms[1].blockMaxHP).toBe('214');
+    expect(known.rooms.at(-1)?.blockMaxHP).toBe('1300000000000000000000000000000');
+    expect(rounded.Pickaxes).toBe(fractional.Pickaxes);
+    expect(roomHpUsesIntegerLiterals(rounded)).toBe(true);
   });
 });
 

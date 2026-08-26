@@ -22,6 +22,7 @@ import type { ConfigTextMap } from '@/lib/config-model';
 import { hasPermission, type Permission, type Role } from '@/lib/rbac';
 import { redactSecrets } from '@/lib/security';
 import { diffConfigs, type ConfigChange } from '@/lib/config-diff';
+import { roundRoomHpToIntegers } from '@/lib/room-hp';
 
 export const GAME_ID = 'dig-get-stronger';
 
@@ -185,6 +186,8 @@ export async function getWorkspace(user: AppUser) {
   )).limit(1);
   if (!member) throw new Error('Нет доступа к игре. Используйте действующее приглашение.');
 
+  await ensureIntegerRoomHpDraft(user.userId);
+
   const versionRows = await db.select().from(versions)
     .where(eq(versions.gameId, GAME_ID))
     .orderBy(desc(versions.createdAt));
@@ -257,6 +260,29 @@ export async function getWorkspace(user: AppUser) {
     })),
     logs: logs.map((log) => ({ ...log, detail: JSON.parse(log.detailJson) })),
   };
+}
+
+async function ensureIntegerRoomHpDraft(userId: string) {
+  const db = getDb();
+  const [latest] = await db.select().from(versions)
+    .where(eq(versions.gameId, GAME_ID))
+    .orderBy(desc(versions.createdAt))
+    .limit(1);
+  if (!latest) return;
+
+  const configs = JSON.parse(latest.configsJson) as ConfigTextMap;
+  const normalized = roundRoomHpToIntegers(configs);
+  if (normalized === configs) return;
+
+  await createVersion({
+    userId,
+    configs: normalized,
+    baseVersionId: latest.id,
+    baseSha: latest.baseSha,
+    name: 'Целые значения HP стен',
+    notes: 'Сохранён прежний плавный рост мощности стен. Дробные и степенные значения HP округлены и записаны полными целыми числами для совместимости с игрой.',
+    source: 'integer_room_hp_fix',
+  });
 }
 
 export async function getVersion(versionId: string): Promise<StoredVersion> {

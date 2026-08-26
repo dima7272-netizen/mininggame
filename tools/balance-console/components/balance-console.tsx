@@ -562,13 +562,13 @@ function RoomsScreen({
         </tbody></table></div>
       </article>
       <article className="panel editor-panel">
-        <PanelHeading title="Прочность и геометрия" subtitle="Большие числа редактируются как точные десятичные строки" />
-        <div className="table-scroll"><table className="data-table rooms-table"><thead><tr><th>Комната</th><th>HP блока</th><th>Длина</th><th>Слои</th><th>Средняя награда</th><th>HP рост</th><th>Награда рост</th></tr></thead><tbody>
+        <PanelHeading title="Прочность и геометрия" subtitle="HP стен — только целые числа; большие значения сохраняются полностью" />
+        <div className="table-scroll"><table className="data-table rooms-table"><thead><tr><th>Комната</th><th>HP блока · целое</th><th>Длина</th><th>Слои</th><th>Средняя награда</th><th>HP рост</th><th>Награда рост</th></tr></thead><tbody>
           {known.rooms.map((room, index) => {
             const metrics = economy[index];
             return <tr className={room.index === selectedRoom ? 'selected-row' : ''} key={room.index} onClick={() => setSelectedRoom(room.index)}>
               <td><strong>№ {room.index}</strong></td>
-              <td><ExactInput compact label={`HP комнаты ${room.index}`} value={room.blockMaxHP} onCommit={(value) => commitNumber('Rooms', `$/rooms/${index}/blockMaxHP`, value)} /></td>
+              <td><ExactInput compact integerOnly label={`HP комнаты ${room.index}`} value={room.blockMaxHP} onCommit={(value) => commitNumber('Rooms', `$/rooms/${index}/blockMaxHP`, value)} /></td>
               <td><ExactInput compact label={`Длина комнаты ${room.index}`} value={room.roomLengthCells} onCommit={(value) => commitNumber('Rooms', `$/rooms/${index}/roomLengthCells`, value)} /></td>
               <td><ExactInput compact label={`Слои комнаты ${room.index}`} value={room.barrierLayers} onCommit={(value) => commitNumber('Rooms', `$/rooms/${index}/barrierLayers`, value)} /></td>
               <td title={metrics.expectedItemPrice}>{formatExact(metrics.expectedItemPrice).short}</td>

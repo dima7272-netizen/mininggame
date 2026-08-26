@@ -129,6 +129,27 @@ export function validateConfigs(
   }
 
   for (const room of known.rooms) nonNegative(room.blockMaxHP, `HP комнаты ${room.index}`, 'Rooms', issues);
+  const nonIntegerRooms = known.rooms.filter((room) => !isIntegerLiteral(room.blockMaxHP));
+  if (nonIntegerRooms.length > 0) {
+    issues.push(issue(
+      'error',
+      'rooms.hp_integer',
+      'HP стен должен состоять только из целых чисел',
+      `Дробные или степенные значения найдены в комнатах: ${nonIntegerRooms.map((room) => room.index).join(', ')}. Игра принимает только полную запись целого числа без точки и e.`,
+      'Rooms',
+      '$/rooms',
+    ));
+  }
+  if (!isIntegerLiteral(known.beyondLastRoom.blockMaxHP) || !isIntegerLiteral(known.beyondLastRoom.maxBlockHP)) {
+    issues.push(issue(
+      'error',
+      'rooms.beyond_hp_integer',
+      'HP после последней комнаты должен быть целым',
+      'blockMaxHP и maxBlockHP должны быть записаны полными целыми числами без точки и e.',
+      'Rooms',
+      '$/beyondLastRoom',
+    ));
+  }
   for (const item of known.sellItems) nonNegative(item.sellPrice, `Цена ${item.id}`, 'SellItems', issues);
   for (const item of known.pickaxes) {
     nonNegative(item.currencyPrice, `Цена ${item.modelName}`, 'Pickaxes', issues);
@@ -315,6 +336,10 @@ function nonNegative(value: string, label: string, configName: string, issues: V
   if (new Decimal(value).isNegative()) {
     issues.push(issue('error', 'number.negative', `${label}: отрицательное значение`, value, configName));
   }
+}
+
+function isIntegerLiteral(value: string) {
+  return /^(?:0|[1-9]\d*)$/.test(value);
 }
 
 function issue(

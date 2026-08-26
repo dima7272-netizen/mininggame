@@ -8,18 +8,23 @@ export function ExactInput({
   onCommit,
   label,
   compact = false,
+  integerOnly = false,
 }: {
   value: string;
   onCommit: (value: string) => void;
   label: string;
   compact?: boolean;
+  integerOnly?: boolean;
 }) {
   const [state, setState] = useState({ source: value, draft: value, invalid: false });
   const draft = state.source === value ? state.draft : value;
   const invalid = state.source === value ? state.invalid : false;
 
   const commit = () => {
-    if (!/^-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?$/.test(draft)) {
+    const valid = integerOnly
+      ? /^(?:0|[1-9]\d*)$/.test(draft)
+      : /^-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?$/.test(draft);
+    if (!valid) {
       setState({ source: value, draft, invalid: true });
       return;
     }
@@ -35,7 +40,8 @@ export function ExactInput({
       <input
         aria-label={label}
         className={invalid ? 'invalid' : ''}
-        inputMode="decimal"
+        inputMode={integerOnly ? 'numeric' : 'decimal'}
+        pattern={integerOnly ? '[0-9]*' : undefined}
         value={draft}
         onBlur={commit}
         onChange={(event) => setState({ source: value, draft: event.target.value, invalid: false })}
