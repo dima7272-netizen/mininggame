@@ -1,5 +1,14 @@
 import type { ConfigTextMap } from './config-model';
-import { canonicalExactJson } from './exact-json';
+import {
+  asArray,
+  asNumberText,
+  asObject,
+  asString,
+  canonicalExactJson,
+  parseExactJson,
+  stringifyExactJson,
+  type ExactJson,
+} from './exact-json';
 
 export type VersionStatus =
   | 'draft'
@@ -133,16 +142,23 @@ export function mergeRemoteConfigBundle(input: MergeInput): {
   const userChanged: string[] = [];
 
   for (const name of Object.keys(input.target).sort()) {
-    const base = canonicalOrMissing(input.base[name]);
-    const remote = canonicalOrMissing(input.remote[name]);
+    const base = canonicalForMerge(name, input.base[name]);
+    const remote = canonicalForMerge(name, input.remote[name]);
     const target = canonicalExactJson(input.target[name]);
-    const userDidChange = target !== base;
+    const comparableTarget = canonicalForMerge(name, input.target[name]);
+    const userDidChange = comparableTarget !== base;
     const remoteDidChange = remote !== base;
 
     if (userDidChange) userChanged.push(name);
     if (remoteDidChange) remoteChanged.push(name);
-    if (userDidChange && remoteDidChange && target !== remote) conflicts.push(name);
-    configs[name] = userDidChange ? target : (input.remote[name] ? canonicalExactJson(input.remote[name]) : target);
+    const hierarchyMerge = name === 'SellItems' && userDidChange && remoteDidChange
+      ? mergeSellItemsHierarchy(input.base[name], input.remote[name], input.target[name])
+      : undefined;
+    if (userDidChange && remoteDidChange && comparableTarget !== remote && hierarchyMerge === undefined) {
+      conflicts.push(name);
+    }
+    configs[name] = hierarchyMerge
+      ?? (userDidChange ? target : (input.remote[name] ? canonicalExactJson(input.remote[name]) : target));
   }
 
   if (conflicts.length > 0) {
@@ -431,6 +447,94 @@ export function assertProdEligibility(input: {
 
 function canonicalOrMissing(source: string | undefined) {
   return source === undefined ? '__MISSING_CONFIG__' : canonicalExactJson(source);
+}
+
+/**
+ * SellItems order is presentation metadata rather than a gameplay value. The
+ * reward hierarchy migration deliberately reordered the same id/price pairs,
+ * so an older balance draft must not conflict with GitHub solely because those
+ * array rows moved. Real setting, membership or price changes still conflict.
+ */
+function canonicalForMerge(name: string, source: string | undefined) {
+  if (name !== 'SellItems' || source === undefined) return canonicalOrMissing(source);
+  const root = asObject(parseExactJson(source), 'SellItems');
+  const items = asArray(root.items, 'SellItems.items')
+    .map((item) => asObject(item, 'SellItems item'))
+    .sort((left, right) => asString(left.id, 'SellItems.id').localeCompare(asString(right.id, 'SellItems.id')));
+  return stringifyExactJson({ ...root, items });
+}
+
+/**
+ * The reward hierarchy migration intentionally moved item ids between the
+ * existing ascending price slots. A balance draft made from the previous base
+ * can simultaneously replace that price ladder and retire some items. This is
+ * safe to merge only when GitHub changed no settings, ids or price slots: keep
+ * GitHub's new id order, keep the draft's active id set, and lay the draft's
+ * ascending integer prices over the resulting hierarchy.
+ */
+function mergeSellItemsHierarchy(
+  baseSource: string | undefined,
+  remoteSource: string | undefined,
+  targetSource: string,
+): string | undefined {
+  if (!baseSource || !remoteSource) return undefined;
+
+  const baseRoot = asObject(parseExactJson(baseSource), 'SellItems base');
+  const remoteRoot = asObject(parseExactJson(remoteSource), 'SellItems remote');
+  const targetRoot = asObject(parseExactJson(targetSource), 'SellItems target');
+  if (canonicalValue({ ...baseRoot, items: [] }) !== canonicalValue({ ...remoteRoot, items: [] })) {
+    return undefined;
+  }
+
+  const baseItems = sellItemRows(baseRoot.items, 'SellItems base.items');
+  const remoteItems = sellItemRows(remoteRoot.items, 'SellItems remote.items');
+  const targetItems = sellItemRows(targetRoot.items, 'SellItems target.items');
+  if (!sameStrings(baseItems.map((item) => item.id), remoteItems.map((item) => item.id))) return undefined;
+  if (!sameStrings(baseItems.map((item) => item.price), remoteItems.map((item) => item.price))) return undefined;
+
+  const remoteIds = new Set(remoteItems.map((item) => item.id));
+  const targetIds = new Set(targetItems.map((item) => item.id));
+  if (targetIds.size !== targetItems.length) return undefined;
+  if (targetItems.some((item) => !remoteIds.has(item.id))) return undefined;
+  if (!isAscendingIntegerPrices(targetItems.map((item) => item.price))) return undefined;
+
+  const orderedActiveItems = remoteItems.filter((item) => targetIds.has(item.id));
+  if (orderedActiveItems.length !== targetItems.length) return undefined;
+  const items = orderedActiveItems.map((item, index): ExactJson => ({
+    ...item.object,
+    sellPrice: targetItems[index].object.sellPrice,
+  }));
+  return stringifyExactJson({ ...targetRoot, items });
+}
+
+function sellItemRows(value: ExactJson, label: string) {
+  return asArray(value, label).map((entry) => {
+    const object = asObject(entry, `${label} item`);
+    if (Object.keys(object).some((key) => key !== 'id' && key !== 'sellPrice')) {
+      throw new Error(`Неподдерживаемое поле в ${label}`);
+    }
+    return {
+      id: asString(object.id, `${label}.id`),
+      price: asNumberText(object.sellPrice, `${label}.sellPrice`),
+      object,
+    };
+  });
+}
+
+function canonicalValue(value: ExactJson | undefined) {
+  return value === undefined ? '__MISSING__' : stringifyExactJson(value);
+}
+
+function sameStrings(left: string[], right: string[]) {
+  if (left.length !== right.length) return false;
+  const sortedLeft = [...left].sort();
+  const sortedRight = [...right].sort();
+  return sortedLeft.every((value, index) => value === sortedRight[index]);
+}
+
+function isAscendingIntegerPrices(prices: string[]) {
+  if (prices.some((price) => !/^(0|[1-9]\d*)$/.test(price))) return false;
+  return prices.every((price, index) => index === 0 || BigInt(price) >= BigInt(prices[index - 1]));
 }
 
 async function githubError(response: Response) {

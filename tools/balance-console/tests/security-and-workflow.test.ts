@@ -87,6 +87,51 @@ describe('publishing workflow', () => {
     })).toThrow('одновременно изменили');
   });
 
+  it('does not treat a SellItems-only row reorder as a GitHub conflict', () => {
+    const base = '{"settings":{"minimumItemsPerRoom":7,"maximumItemsPerRoom":8},"items":[{"id":"A","sellPrice":10},{"id":"B","sellPrice":20}]}';
+    const remote = '{"settings":{"minimumItemsPerRoom":7,"maximumItemsPerRoom":8},"items":[{"id":"B","sellPrice":20},{"id":"A","sellPrice":10}]}';
+    const target = '{"settings":{"minimumItemsPerRoom":7,"maximumItemsPerRoom":8},"items":[{"id":"A","sellPrice":15},{"id":"B","sellPrice":20}]}';
+    const result = mergeRemoteConfigBundle({
+      base: { SellItems: base },
+      remote: { SellItems: remote },
+      target: { SellItems: target },
+    });
+    expect(result.userChanged).toEqual(['SellItems']);
+    expect(result.remoteChanged).toEqual([]);
+    expect(result.configs.SellItems).toContain('"sellPrice": 15');
+  });
+
+  it('still blocks a real concurrent SellItems price change', () => {
+    const base = '{"settings":{"minimumItemsPerRoom":7,"maximumItemsPerRoom":8},"items":[{"id":"A","sellPrice":10}]}';
+    const remote = '{"settings":{"minimumItemsPerRoom":7,"maximumItemsPerRoom":8},"items":[{"id":"A","sellPrice":12}]}';
+    const target = '{"settings":{"minimumItemsPerRoom":7,"maximumItemsPerRoom":8},"items":[{"id":"A","sellPrice":15}]}';
+    expect(() => mergeRemoteConfigBundle({
+      base: { SellItems: base },
+      remote: { SellItems: remote },
+      target: { SellItems: target },
+    })).toThrow('одновременно изменили');
+  });
+
+  it('transplants a draft price ladder onto a safe GitHub hierarchy migration', () => {
+    const base = '{"settings":{"minimumItemsPerRoom":7,"maximumItemsPerRoom":8},"items":[{"id":"A","sellPrice":10},{"id":"B","sellPrice":20},{"id":"C","sellPrice":30}]}';
+    const remote = '{"settings":{"minimumItemsPerRoom":7,"maximumItemsPerRoom":8},"items":[{"id":"B","sellPrice":10},{"id":"A","sellPrice":20},{"id":"C","sellPrice":30}]}';
+    const target = '{"settings":{"minimumItemsPerRoom":10,"maximumItemsPerRoom":10},"items":[{"id":"A","sellPrice":15},{"id":"B","sellPrice":40}]}';
+    const result = mergeRemoteConfigBundle({
+      base: { SellItems: base },
+      remote: { SellItems: remote },
+      target: { SellItems: target },
+    });
+    expect(result.remoteChanged).toEqual(['SellItems']);
+    expect(result.userChanged).toEqual(['SellItems']);
+    expect(JSON.parse(result.configs.SellItems)).toEqual({
+      settings: { minimumItemsPerRoom: 10, maximumItemsPerRoom: 10 },
+      items: [
+        { id: 'B', sellPrice: 15 },
+        { id: 'A', sellPrice: 40 },
+      ],
+    });
+  });
+
   it('moves a stale publish request to the latest identical snapshot', () => {
     const requested = { id: 'v-old', contentHash: 'same' };
     const latest = { id: 'v-new', contentHash: 'same' };
