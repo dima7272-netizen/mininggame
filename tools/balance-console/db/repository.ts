@@ -25,6 +25,7 @@ import { diffConfigs, type ConfigChange } from '@/lib/config-diff';
 import { roundRoomHpToIntegers } from '@/lib/room-hp';
 import { arrangeRewardsByGameHierarchy } from '@/lib/reward-hierarchy';
 import { buildRewardExpansion } from '@/lib/reward-expansion';
+import { buildSmoothRewardPrices } from '@/lib/reward-smoothing';
 import { rewardHierarchyItemIds } from '@/lib/reward-groups';
 
 export const GAME_ID = 'dig-get-stronger';
@@ -193,6 +194,7 @@ export async function getWorkspace(user: AppUser) {
   if (member.role === 'owner') {
     await ensureRewardHierarchyDraft(user.userId);
     await ensureRewardExpansionDraft(user.userId);
+    await ensureSmoothRewardPricesDraft(user.userId);
   }
 
   const versionRows = await db.select().from(versions)
@@ -335,6 +337,29 @@ async function ensureRewardExpansionDraft(userId: string) {
     name: 'Награды без богоподобных · 50 комнат',
     notes: `Все ${report.retiredItemIds.length} богоподобных предметов исключены из SellItems и комнат — их модели сохранены для будущих золотых питомцев. ${rewardHierarchyItemIds.length} остальных наград перераспределены до комнаты 50, цены выстроены возрастающими круглыми числами, а проценты выпадения оставлены целыми. Для комнат 1–${report.existingRoomCount} средняя награда сохранена с максимальным отклонением ${report.maximumExistingRewardDeviationPercent.toFixed(2)}%. Комнаты 47–50 продолжают текущий рост награды и HP. Черновик не опубликован в DEV.`,
     source: 'remove_godly_extend_50',
+  });
+}
+
+async function ensureSmoothRewardPricesDraft(userId: string) {
+  const db = getDb();
+  const [latest] = await db.select().from(versions)
+    .where(eq(versions.gameId, GAME_ID))
+    .orderBy(desc(versions.createdAt))
+    .limit(1);
+  if (!latest || latest.source === 'smooth_reward_prices_50') return;
+
+  const configs = JSON.parse(latest.configsJson) as ConfigTextMap;
+  const { configs: smoothed, report } = buildSmoothRewardPrices(configs);
+  if (smoothed === configs) return;
+
+  await createVersion({
+    userId,
+    configs: smoothed,
+    baseVersionId: latest.id,
+    baseSha: latest.baseSha,
+    name: 'Плавный график наград · круглые цены',
+    notes: `Зелёная линия наград выровнена от комнаты 1 до комнаты ${report.roomCount} без внутренних скачков. Цены всех ${report.itemCount} активных наград оставлены целыми и округлены до понятной лестницы 10/12/15/20/25/30/40/50/70 с нужным количеством нулей. В каждой комнате 8–9 видов наград, проценты целые и в сумме дают 100%; переход между соседними наборами сделан постепенно. Средний рост награды — ×${report.averageGrowth.toFixed(4)} на комнату. Богоподобные предметы не возвращены. Черновик не опубликован в DEV.`,
+    source: 'smooth_reward_prices_50',
   });
 }
 

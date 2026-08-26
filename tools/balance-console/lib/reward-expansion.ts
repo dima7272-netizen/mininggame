@@ -123,7 +123,7 @@ function geometricMean(values: Decimal[]) {
   return Decimal.exp(values.reduce((sum, value) => sum.plus(Decimal.ln(value)), new Decimal(0)).div(values.length));
 }
 
-function buildStretchedPrices(items: SellItem[], targets: Decimal[]): SellItem[] {
+export function buildStretchedPrices(items: SellItem[], targets: Decimal[]): SellItem[] {
   const monotonicLogs: Decimal[] = [];
   targets.forEach((target, index) => {
     const log = Decimal.log(target, 10);
@@ -179,7 +179,7 @@ function ratioDistance(left: Decimal, right: Decimal) {
   return left.greaterThanOrEqualTo(right) ? left.div(right) : right.div(left);
 }
 
-function buildStretchedRoomDrops(items: SellItem[], prices: Map<string, Decimal>, targets: Decimal[]): RoomDrop[] {
+export function buildStretchedRoomDrops(items: SellItem[], prices: Map<string, Decimal>, targets: Decimal[]): RoomDrop[] {
   const maximumStart = items.length - ITEMS_PER_ROOM;
   let previousStart = 0;
   return targets.map((target, roomOffset) => {
