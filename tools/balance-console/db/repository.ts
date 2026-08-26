@@ -25,7 +25,12 @@ import { diffConfigs, type ConfigChange } from '@/lib/config-diff';
 import { roundRoomHpToIntegers } from '@/lib/room-hp';
 import { arrangeRewardsByGameHierarchy } from '@/lib/reward-hierarchy';
 import { buildRewardExpansion } from '@/lib/reward-expansion';
-import { buildCleanRewardLifecycles, buildRisingRewardLifecycles, buildSmoothRewardPrices } from '@/lib/reward-smoothing';
+import {
+  buildCleanRewardLifecycles,
+  buildRisingRewardLifecycles,
+  buildSmoothRewardPrices,
+  buildStraightRewardTrajectory,
+} from '@/lib/reward-smoothing';
 import { rewardHierarchyItemIds } from '@/lib/reward-groups';
 
 export const GAME_ID = 'dig-get-stronger';
@@ -197,6 +202,7 @@ export async function getWorkspace(user: AppUser) {
     await ensureSmoothRewardPricesDraft(user.userId);
     await ensureCleanRewardLifecyclesDraft(user.userId);
     await ensureRisingRewardLifecyclesDraft(user.userId);
+    await ensureStraightRewardTrajectoryDraft(user.userId);
   }
 
   const versionRows = await db.select().from(versions)
@@ -408,6 +414,29 @@ async function ensureRisingRewardLifecyclesDraft(userId: string) {
     name: 'Жизненный цикл наград 1→50% · 56 комнат',
     notes: `Все ${report.itemCount} активных наград растянуты на ${report.roomCount} комнат. Новый предмет входит с шансом 1%, затем его шанс только растёт по целой шкале 1/2/3/4/5/6/7/9/13/50% и после 50% сразу заменяется — падений вроде 69→29 больше нет. В каждой комнате ровно ${report.maximumTypesPerRoom} видов и сумма шансов равна 100%. Круглые цены и исключение богоподобных сохранены. Средний рост награды — ×${report.averageGrowth.toFixed(4)} на комнату. Черновик не опубликован в DEV.`,
     source: 'rising_reward_lifecycles_56',
+  });
+}
+
+async function ensureStraightRewardTrajectoryDraft(userId: string) {
+  const db = getDb();
+  const [latest] = await db.select().from(versions)
+    .where(eq(versions.gameId, GAME_ID))
+    .orderBy(desc(versions.createdAt))
+    .limit(1);
+  if (!latest || latest.source === 'straight_reward_trajectory_56') return;
+
+  const configs = JSON.parse(latest.configsJson) as ConfigTextMap;
+  const { configs: straightened, report } = buildStraightRewardTrajectory(configs);
+  if (straightened === configs) return;
+
+  await createVersion({
+    userId,
+    configs: straightened,
+    baseVersionId: latest.id,
+    baseSha: latest.baseSha,
+    name: 'Ровная траектория наград · круглые цены',
+    notes: `Рост ожидаемой награды выстроен по прямой логарифмической траектории, отмеченной красным на макете: примерно ×${report.averageGrowth.toFixed(4)} на комнату от комнаты 1 до комнаты ${report.roomCount}. Все ${report.itemCount} цен записаны целыми круглыми числами лестницы 10/12/15/20/25/30/40/50/70 с нужным количеством нулей. Жизненный цикл шансов 1→2→3→4→5→6→7→9→13→50% и 10 видов в комнате сохранены. Черновик не опубликован в DEV.`,
+    source: 'straight_reward_trajectory_56',
   });
 }
 

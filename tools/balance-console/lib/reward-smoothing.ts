@@ -16,6 +16,8 @@ const READABLE_MANTISSAS = new Set(['1', '1.2', '1.5', '2', '2.5', '3', '4', '5'
 const RISING_LIFECYCLE_ROOM_COUNT = 56;
 const RISING_LIFECYCLE_ITEMS_PER_ROOM = 10;
 const RISING_LIFECYCLE_ROOM_WEIGHTS = [50, 13, 9, 7, 6, 5, 4, 3, 2, 1];
+const STRAIGHT_TRAJECTORY_GROWTH = new Decimal('2.5');
+const STRAIGHT_TRAJECTORY_STARTER_PRICES = ['20', '25', '30', '40', '50', '70', '100', '120', '150', '200'];
 
 export type RewardSmoothingReport = {
   roomCount: number;
@@ -209,6 +211,80 @@ export function buildRisingRewardLifecycles(configs: ConfigTextMap): {
       maximumTypesPerRoom: RISING_LIFECYCLE_ITEMS_PER_ROOM,
     },
   };
+}
+
+/**
+ * Reprices the fixed 1→50% lifecycle so expected room rewards follow the
+ * straight red reference trajectory: roughly ×2.5 per room from log10 1.58
+ * to log10 23.47. Every stored price remains a readable whole number.
+ */
+export function buildStraightRewardTrajectory(configs: ConfigTextMap): {
+  configs: ConfigTextMap;
+  report: RewardSmoothingReport;
+} {
+  const known = parseKnownConfigs(configs);
+  const validLifecycle = known.rooms.length === RISING_LIFECYCLE_ROOM_COUNT
+    && hasRisingLifecycle(known.roomDrops, known.sellItems);
+  if (!validLifecycle || known.sellItems.length !== rewardHierarchyItemIds.length) {
+    return { configs, report: emptyReport(known.rooms.length, known.sellItems.length) };
+  }
+
+  const repricedItems = buildStraightTrajectoryPrices(known.sellItems);
+  const alreadyRepriced = known.sellItems.every((item, index) => item.sellPrice === repricedItems[index].sellPrice);
+  const nextConfigs = alreadyRepriced
+    ? configs
+    : { ...configs, SellItems: serializeReadableSellItems(known.sellSettings, repricedItems) };
+  const economy = buildRoomEconomy(nextConfigs);
+  const steps = rewardSteps(economy);
+  const mean = average(steps);
+  return {
+    configs: nextConfigs,
+    report: {
+      roomCount: known.rooms.length,
+      itemCount: repricedItems.length,
+      averageGrowth: 10 ** mean,
+      maximumLogStepDeviation: maximumDeviation(steps, mean),
+    },
+  };
+}
+
+function buildStraightTrajectoryPrices(items: SellItem[]): SellItem[] {
+  const prices = STRAIGHT_TRAJECTORY_STARTER_PRICES.map((price) => new Decimal(price));
+  const firstExpectedReward = expectedLifecycleReward(prices, 0);
+  for (let roomOffset = 1; roomOffset < RISING_LIFECYCLE_ROOM_COUNT; roomOffset += 1) {
+    const target = firstExpectedReward.mul(STRAIGHT_TRAJECTORY_GROWTH.pow(roomOffset));
+    const knownContribution = RISING_LIFECYCLE_ROOM_WEIGHTS.slice(0, -1).reduce((sum, weight, index) => (
+      sum.plus(prices[roomOffset + index].mul(weight).div(100))
+    ), new Decimal(0));
+    const idealNewPrice = target.minus(knownContribution).mul(100);
+    prices.push(nearestReadablePrice(idealNewPrice, prices.at(-1)!));
+  }
+  return items.map((item, index) => ({ id: item.id, sellPrice: prices[index].toFixed(0) }));
+}
+
+function expectedLifecycleReward(prices: Decimal[], offset: number) {
+  return RISING_LIFECYCLE_ROOM_WEIGHTS.reduce((sum, weight, index) => (
+    sum.plus(prices[offset + index].mul(weight).div(100))
+  ), new Decimal(0));
+}
+
+function nearestReadablePrice(ideal: Decimal, previous: Decimal) {
+  const safeIdeal = Decimal.max(previous.plus(1), ideal);
+  const exponent = Decimal.floor(Decimal.log(safeIdeal, 10)).toNumber();
+  const candidates: Decimal[] = [];
+  for (let candidateExponent = Math.max(0, exponent - 2); candidateExponent <= exponent + 3; candidateExponent += 1) {
+    READABLE_MANTISSAS.forEach((mantissa) => {
+      const candidate = new Decimal(mantissa).mul(new Decimal(10).pow(candidateExponent));
+      if (candidate.isInteger() && candidate.greaterThan(previous)) candidates.push(candidate);
+    });
+  }
+  return candidates.reduce((best, candidate) => (
+    ratioDistance(candidate, safeIdeal).lessThan(ratioDistance(best, safeIdeal)) ? candidate : best
+  ));
+}
+
+function ratioDistance(left: Decimal, right: Decimal) {
+  return left.greaterThanOrEqualTo(right) ? left.div(right) : right.div(left);
 }
 
 function buildRisingLifecycleDrops(items: SellItem[]): RoomDrop[] {

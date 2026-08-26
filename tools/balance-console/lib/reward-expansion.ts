@@ -39,8 +39,8 @@ export function buildRewardExpansion(configs: ConfigTextMap): {
   const hasEveryActiveItem = rewardHierarchyItemIds.every((itemId) => activeIds.includes(itemId));
   const alreadyExpanded = known.sellItems.length === rewardHierarchyItemIds.length
     && known.sellItems.every((item, index) => item.id === rewardHierarchyItemIds[index])
-    && known.rooms.length === TARGET_ROOM_COUNT
-    && known.roomDrops.length === TARGET_ROOM_COUNT
+    && known.rooms.length >= TARGET_ROOM_COUNT
+    && known.roomDrops.length >= TARGET_ROOM_COUNT
     && known.roomDrops.every((room) => room.drops.every((drop) => !retired.has(drop.itemId)));
 
   if (alreadyExpanded || !hasEveryActiveItem || known.rooms.length < 2 || known.roomDrops.length < 2) {

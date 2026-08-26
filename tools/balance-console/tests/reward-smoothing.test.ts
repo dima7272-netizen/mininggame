@@ -3,11 +3,12 @@ import { describe, expect, it } from 'vitest';
 import { buildRoomEconomy, log10ForChart } from '../lib/analytics';
 import { parseKnownConfigs } from '../lib/config-model';
 import { seedConfigText } from '../lib/generated/seed-configs';
-import { removeGodlyRewardsAndExtendTo50 } from '../lib/reward-expansion';
+import { buildRewardExpansion, removeGodlyRewardsAndExtendTo50 } from '../lib/reward-expansion';
 import {
   buildCleanRewardLifecycles,
   buildRisingRewardLifecycles,
   buildSmoothRewardPrices,
+  buildStraightRewardTrajectory,
   smoothRewardPrices,
 } from '../lib/reward-smoothing';
 import { retiredRewardItemIds } from '../lib/reward-groups';
@@ -106,6 +107,29 @@ describe('smooth round reward prices', () => {
     expect(rebuilt.report.maximumTypesPerRoom).toBe(10);
     expect(validateConfigs(rebuilt.configs).errorCount).toBe(0);
     expect(buildRisingRewardLifecycles(rebuilt.configs).configs).toBe(rebuilt.configs);
+  });
+
+  it('follows the drawn straight reward trajectory with readable round prices', () => {
+    const rising = buildRisingRewardLifecycles(buildCleanRewardLifecycles(result.configs).configs);
+    const straight = buildStraightRewardTrajectory(rising.configs);
+    const straightKnown = parseKnownConfigs(straight.configs);
+    const economy = buildRoomEconomy(straight.configs);
+    const rewardLogs = economy.map((room) => log10ForChart(room.expectedItemPrice));
+    const steps = rewardLogs.slice(1).map((value, index) => value - rewardLogs[index]);
+
+    expect(rewardLogs[0]).toBeGreaterThan(1.5);
+    expect(rewardLogs[0]).toBeLessThan(1.7);
+    expect(rewardLogs.at(-1)).toBeGreaterThan(23.3);
+    expect(rewardLogs.at(-1)).toBeLessThan(23.7);
+    expect(steps.every((step) => step > 0)).toBe(true);
+    expect(straight.report.averageGrowth).toBeCloseTo(2.5, 1);
+    expect(straight.report.maximumLogStepDeviation).toBeLessThan(0.05);
+    expect(straightKnown.sellItems.every((item) => /^\d+$/.test(item.sellPrice))).toBe(true);
+    expect(straightKnown.sellItems.every((item) => readableMantissa(item.sellPrice))).toBe(true);
+    expect(straightKnown.roomDrops).toEqual(parseKnownConfigs(rising.configs).roomDrops);
+    expect(validateConfigs(straight.configs).errorCount).toBe(0);
+    expect(buildRewardExpansion(straight.configs).configs).toBe(straight.configs);
+    expect(buildStraightRewardTrajectory(straight.configs).configs).toBe(straight.configs);
   });
 });
 
