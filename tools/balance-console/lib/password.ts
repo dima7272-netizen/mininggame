@@ -1,4 +1,4 @@
-const PASSWORD_ITERATIONS = 210_000;
+export const PASSWORD_ITERATIONS = 100_000;
 const HASH_BYTES = 32;
 const SALT_BYTES = 16;
 
@@ -21,6 +21,10 @@ export async function verifyPassword(
   password: string,
   digest: PasswordDigest,
 ): Promise<boolean> {
+  if (!Number.isInteger(digest.iterations)
+    || digest.iterations < 1
+    || digest.iterations > PASSWORD_ITERATIONS) return false;
+
   const expected = hexToBytes(digest.hash);
   const actual = await derivePassword(password, hexToBytes(digest.salt), digest.iterations);
   if (expected.length !== actual.length) return false;
