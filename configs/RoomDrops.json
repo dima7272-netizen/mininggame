@@ -4,74 +4,42 @@
     "drops": [
       {
         "itemId": "Cardboard_C",
-        "weight": 14
+        "weight": 50
       },
       {
         "itemId": "DinosaurEgg_C",
-        "weight": 14
-      },
-      {
-        "itemId": "PirateHat_u",
-        "weight": 11
+        "weight": 13
       },
       {
         "itemId": "Handle_C",
-        "weight": 11
+        "weight": 9
       },
       {
         "itemId": "barrel_C",
-        "weight": 8
-      },
-      {
-        "itemId": "crate-bottles_u",
-        "weight": 8
-      },
-      {
-        "itemId": "pot-stew_u",
-        "weight": 6
-      },
-      {
-        "itemId": "cannon-mobile_u",
-        "weight": 6
-      },
-      {
-        "itemId": "Low Poly_r",
-        "weight": 4
+        "weight": 7
       },
       {
         "itemId": "Burger_C",
+        "weight": 6
+      },
+      {
+        "itemId": "crate-bottles_u",
+        "weight": 5
+      },
+      {
+        "itemId": "pot-stew_u",
         "weight": 4
       },
       {
+        "itemId": "cannon-mobile_u",
+        "weight": 3
+      },
+      {
+        "itemId": "PirateHat_u",
+        "weight": 2
+      },
+      {
         "itemId": "Guitar_u",
-        "weight": 3
-      },
-      {
-        "itemId": "ship-wreck_r",
-        "weight": 3
-      },
-      {
-        "itemId": "ship-pirate-small_r",
-        "weight": 2
-      },
-      {
-        "itemId": "ship-small_r",
-        "weight": 2
-      },
-      {
-        "itemId": "Gift_box2_e",
-        "weight": 1
-      },
-      {
-        "itemId": "Low Poly1_r",
-        "weight": 1
-      },
-      {
-        "itemId": "Handle_u",
-        "weight": 1
-      },
-      {
-        "itemId": "crystal_r",
         "weight": 1
       }
     ]
@@ -80,75 +48,43 @@
     "index": 2,
     "drops": [
       {
-        "itemId": "PirateHat_u",
-        "weight": 14
+        "itemId": "DinosaurEgg_C",
+        "weight": 50
       },
       {
         "itemId": "Handle_C",
-        "weight": 14
+        "weight": 13
       },
       {
         "itemId": "barrel_C",
-        "weight": 11
-      },
-      {
-        "itemId": "crate-bottles_u",
-        "weight": 11
-      },
-      {
-        "itemId": "pot-stew_u",
-        "weight": 8
-      },
-      {
-        "itemId": "cannon-mobile_u",
-        "weight": 8
-      },
-      {
-        "itemId": "Low Poly_r",
-        "weight": 6
+        "weight": 9
       },
       {
         "itemId": "Burger_C",
+        "weight": 7
+      },
+      {
+        "itemId": "crate-bottles_u",
         "weight": 6
       },
       {
+        "itemId": "pot-stew_u",
+        "weight": 5
+      },
+      {
+        "itemId": "cannon-mobile_u",
+        "weight": 4
+      },
+      {
+        "itemId": "PirateHat_u",
+        "weight": 3
+      },
+      {
         "itemId": "Guitar_u",
-        "weight": 4
-      },
-      {
-        "itemId": "ship-wreck_r",
-        "weight": 4
-      },
-      {
-        "itemId": "ship-pirate-small_r",
-        "weight": 3
-      },
-      {
-        "itemId": "ship-small_r",
-        "weight": 3
-      },
-      {
-        "itemId": "Gift_box2_e",
-        "weight": 2
-      },
-      {
-        "itemId": "Low Poly1_r",
         "weight": 2
       },
       {
         "itemId": "Handle_u",
-        "weight": 1
-      },
-      {
-        "itemId": "crystal_r",
-        "weight": 1
-      },
-      {
-        "itemId": "Dimond_r",
-        "weight": 1
-      },
-      {
-        "itemId": "WoodCrate_e",
         "weight": 1
       }
     ]
@@ -157,51 +93,35 @@
     "index": 3,
     "drops": [
       {
+        "itemId": "Handle_C",
+        "weight": 50
+      },
+      {
         "itemId": "barrel_C",
-        "weight": 14
-      },
-      {
-        "itemId": "crate-bottles_u",
-        "weight": 14
-      },
-      {
-        "itemId": "pot-stew_u",
-        "weight": 11
-      },
-      {
-        "itemId": "cannon-mobile_u",
-        "weight": 11
-      },
-      {
-        "itemId": "Low Poly_r",
-        "weight": 8
+        "weight": 13
       },
       {
         "itemId": "Burger_C",
-        "weight": 8
+        "weight": 9
+      },
+      {
+        "itemId": "crate-bottles_u",
+        "weight": 7
+      },
+      {
+        "itemId": "pot-stew_u",
+        "weight": 6
+      },
+      {
+        "itemId": "cannon-mobile_u",
+        "weight": 5
+      },
+      {
+        "itemId": "PirateHat_u",
+        "weight": 4
       },
       {
         "itemId": "Guitar_u",
-        "weight": 6
-      },
-      {
-        "itemId": "ship-wreck_r",
-        "weight": 6
-      },
-      {
-        "itemId": "ship-pirate-small_r",
-        "weight": 4
-      },
-      {
-        "itemId": "ship-small_r",
-        "weight": 4
-      },
-      {
-        "itemId": "Gift_box2_e",
-        "weight": 3
-      },
-      {
-        "itemId": "Low Poly1_r",
         "weight": 3
       },
       {
@@ -209,23 +129,7 @@
         "weight": 2
       },
       {
-        "itemId": "crystal_r",
-        "weight": 2
-      },
-      {
-        "itemId": "Dimond_r",
-        "weight": 1
-      },
-      {
-        "itemId": "WoodCrate_e",
-        "weight": 1
-      },
-      {
-        "itemId": "oldtv_e",
-        "weight": 1
-      },
-      {
-        "itemId": "Gift_box1_e",
+        "itemId": "ship-wreck_r",
         "weight": 1
       }
     ]
@@ -234,43 +138,31 @@
     "index": 4,
     "drops": [
       {
-        "itemId": "pot-stew_u",
-        "weight": 14
-      },
-      {
-        "itemId": "cannon-mobile_u",
-        "weight": 14
-      },
-      {
-        "itemId": "Low Poly_r",
-        "weight": 11
+        "itemId": "barrel_C",
+        "weight": 50
       },
       {
         "itemId": "Burger_C",
-        "weight": 11
+        "weight": 13
+      },
+      {
+        "itemId": "crate-bottles_u",
+        "weight": 9
+      },
+      {
+        "itemId": "pot-stew_u",
+        "weight": 7
+      },
+      {
+        "itemId": "cannon-mobile_u",
+        "weight": 6
+      },
+      {
+        "itemId": "PirateHat_u",
+        "weight": 5
       },
       {
         "itemId": "Guitar_u",
-        "weight": 8
-      },
-      {
-        "itemId": "ship-wreck_r",
-        "weight": 8
-      },
-      {
-        "itemId": "ship-pirate-small_r",
-        "weight": 6
-      },
-      {
-        "itemId": "ship-small_r",
-        "weight": 6
-      },
-      {
-        "itemId": "Gift_box2_e",
-        "weight": 4
-      },
-      {
-        "itemId": "Low Poly1_r",
         "weight": 4
       },
       {
@@ -278,31 +170,11 @@
         "weight": 3
       },
       {
-        "itemId": "crystal_r",
-        "weight": 3
-      },
-      {
-        "itemId": "Dimond_r",
+        "itemId": "ship-wreck_r",
         "weight": 2
       },
       {
-        "itemId": "WoodCrate_e",
-        "weight": 2
-      },
-      {
-        "itemId": "oldtv_e",
-        "weight": 1
-      },
-      {
-        "itemId": "Gift_box1_e",
-        "weight": 1
-      },
-      {
-        "itemId": "turkey_L",
-        "weight": 1
-      },
-      {
-        "itemId": "Gift_box3_e",
+        "itemId": "ship-small_r",
         "weight": 1
       }
     ]
@@ -311,75 +183,43 @@
     "index": 5,
     "drops": [
       {
-        "itemId": "Low Poly_r",
-        "weight": 14
+        "itemId": "Burger_C",
+        "weight": 50
       },
       {
-        "itemId": "Burger_C",
-        "weight": 14
+        "itemId": "crate-bottles_u",
+        "weight": 13
+      },
+      {
+        "itemId": "pot-stew_u",
+        "weight": 9
+      },
+      {
+        "itemId": "cannon-mobile_u",
+        "weight": 7
+      },
+      {
+        "itemId": "PirateHat_u",
+        "weight": 6
       },
       {
         "itemId": "Guitar_u",
-        "weight": 11
-      },
-      {
-        "itemId": "ship-wreck_r",
-        "weight": 11
-      },
-      {
-        "itemId": "ship-pirate-small_r",
-        "weight": 8
-      },
-      {
-        "itemId": "ship-small_r",
-        "weight": 8
-      },
-      {
-        "itemId": "Gift_box2_e",
-        "weight": 6
-      },
-      {
-        "itemId": "Low Poly1_r",
-        "weight": 6
+        "weight": 5
       },
       {
         "itemId": "Handle_u",
         "weight": 4
       },
       {
-        "itemId": "crystal_r",
-        "weight": 4
-      },
-      {
-        "itemId": "Dimond_r",
+        "itemId": "ship-wreck_r",
         "weight": 3
       },
       {
-        "itemId": "WoodCrate_e",
-        "weight": 3
-      },
-      {
-        "itemId": "oldtv_e",
+        "itemId": "ship-small_r",
         "weight": 2
       },
       {
-        "itemId": "Gift_box1_e",
-        "weight": 2
-      },
-      {
-        "itemId": "turkey_L",
-        "weight": 1
-      },
-      {
-        "itemId": "Gift_box3_e",
-        "weight": 1
-      },
-      {
-        "itemId": "Egg_Ice_r",
-        "weight": 1
-      },
-      {
-        "itemId": "Raket_e",
+        "itemId": "ship-pirate-small_r",
         "weight": 1
       }
     ]
@@ -388,75 +228,43 @@
     "index": 6,
     "drops": [
       {
+        "itemId": "crate-bottles_u",
+        "weight": 50
+      },
+      {
+        "itemId": "pot-stew_u",
+        "weight": 13
+      },
+      {
+        "itemId": "cannon-mobile_u",
+        "weight": 9
+      },
+      {
+        "itemId": "PirateHat_u",
+        "weight": 7
+      },
+      {
         "itemId": "Guitar_u",
-        "weight": 14
-      },
-      {
-        "itemId": "ship-wreck_r",
-        "weight": 14
-      },
-      {
-        "itemId": "ship-pirate-small_r",
-        "weight": 11
-      },
-      {
-        "itemId": "ship-small_r",
-        "weight": 11
-      },
-      {
-        "itemId": "Gift_box2_e",
-        "weight": 8
-      },
-      {
-        "itemId": "Low Poly1_r",
-        "weight": 8
+        "weight": 6
       },
       {
         "itemId": "Handle_u",
-        "weight": 6
+        "weight": 5
       },
       {
-        "itemId": "crystal_r",
-        "weight": 6
-      },
-      {
-        "itemId": "Dimond_r",
+        "itemId": "ship-wreck_r",
         "weight": 4
       },
       {
-        "itemId": "WoodCrate_e",
-        "weight": 4
-      },
-      {
-        "itemId": "oldtv_e",
+        "itemId": "ship-small_r",
         "weight": 3
       },
       {
-        "itemId": "Gift_box1_e",
-        "weight": 3
-      },
-      {
-        "itemId": "turkey_L",
+        "itemId": "ship-pirate-small_r",
         "weight": 2
       },
       {
-        "itemId": "Gift_box3_e",
-        "weight": 2
-      },
-      {
-        "itemId": "Egg_Ice_r",
-        "weight": 1
-      },
-      {
-        "itemId": "Raket_e",
-        "weight": 1
-      },
-      {
-        "itemId": "Tort_e",
-        "weight": 1
-      },
-      {
-        "itemId": "Chest_L",
+        "itemId": "Low Poly_r",
         "weight": 1
       }
     ]
@@ -465,75 +273,43 @@
     "index": 7,
     "drops": [
       {
-        "itemId": "ship-pirate-small_r",
-        "weight": 14
+        "itemId": "pot-stew_u",
+        "weight": 50
       },
       {
-        "itemId": "ship-small_r",
-        "weight": 14
+        "itemId": "cannon-mobile_u",
+        "weight": 13
       },
       {
-        "itemId": "Gift_box2_e",
-        "weight": 11
+        "itemId": "PirateHat_u",
+        "weight": 9
       },
       {
-        "itemId": "Low Poly1_r",
-        "weight": 11
+        "itemId": "Guitar_u",
+        "weight": 7
       },
       {
         "itemId": "Handle_u",
-        "weight": 8
-      },
-      {
-        "itemId": "crystal_r",
-        "weight": 8
-      },
-      {
-        "itemId": "Dimond_r",
         "weight": 6
       },
       {
-        "itemId": "WoodCrate_e",
-        "weight": 6
+        "itemId": "ship-wreck_r",
+        "weight": 5
       },
       {
-        "itemId": "oldtv_e",
+        "itemId": "ship-small_r",
         "weight": 4
       },
       {
-        "itemId": "Gift_box1_e",
-        "weight": 4
-      },
-      {
-        "itemId": "turkey_L",
+        "itemId": "ship-pirate-small_r",
         "weight": 3
       },
       {
-        "itemId": "Gift_box3_e",
-        "weight": 3
-      },
-      {
-        "itemId": "Egg_Ice_r",
+        "itemId": "Low Poly_r",
         "weight": 2
       },
       {
-        "itemId": "Raket_e",
-        "weight": 2
-      },
-      {
-        "itemId": "Tort_e",
-        "weight": 1
-      },
-      {
-        "itemId": "Chest_L",
-        "weight": 1
-      },
-      {
-        "itemId": "crystal_e",
-        "weight": 1
-      },
-      {
-        "itemId": "Trophy_L",
+        "itemId": "Low Poly1_r",
         "weight": 1
       }
     ]
@@ -542,75 +318,43 @@
     "index": 8,
     "drops": [
       {
-        "itemId": "Gift_box2_e",
-        "weight": 14
+        "itemId": "cannon-mobile_u",
+        "weight": 50
       },
       {
-        "itemId": "Low Poly1_r",
-        "weight": 14
+        "itemId": "PirateHat_u",
+        "weight": 13
+      },
+      {
+        "itemId": "Guitar_u",
+        "weight": 9
       },
       {
         "itemId": "Handle_u",
-        "weight": 11
+        "weight": 7
+      },
+      {
+        "itemId": "ship-wreck_r",
+        "weight": 6
+      },
+      {
+        "itemId": "ship-small_r",
+        "weight": 5
+      },
+      {
+        "itemId": "ship-pirate-small_r",
+        "weight": 4
+      },
+      {
+        "itemId": "Low Poly_r",
+        "weight": 3
+      },
+      {
+        "itemId": "Low Poly1_r",
+        "weight": 2
       },
       {
         "itemId": "crystal_r",
-        "weight": 11
-      },
-      {
-        "itemId": "Dimond_r",
-        "weight": 8
-      },
-      {
-        "itemId": "WoodCrate_e",
-        "weight": 8
-      },
-      {
-        "itemId": "oldtv_e",
-        "weight": 6
-      },
-      {
-        "itemId": "Gift_box1_e",
-        "weight": 6
-      },
-      {
-        "itemId": "turkey_L",
-        "weight": 4
-      },
-      {
-        "itemId": "Gift_box3_e",
-        "weight": 4
-      },
-      {
-        "itemId": "Egg_Ice_r",
-        "weight": 3
-      },
-      {
-        "itemId": "Raket_e",
-        "weight": 3
-      },
-      {
-        "itemId": "Tort_e",
-        "weight": 2
-      },
-      {
-        "itemId": "Chest_L",
-        "weight": 2
-      },
-      {
-        "itemId": "crystal_e",
-        "weight": 1
-      },
-      {
-        "itemId": "Trophy_L",
-        "weight": 1
-      },
-      {
-        "itemId": "Crown_L",
-        "weight": 1
-      },
-      {
-        "itemId": "Money_L",
         "weight": 1
       }
     ]
@@ -619,75 +363,43 @@
     "index": 9,
     "drops": [
       {
+        "itemId": "PirateHat_u",
+        "weight": 50
+      },
+      {
+        "itemId": "Guitar_u",
+        "weight": 13
+      },
+      {
         "itemId": "Handle_u",
-        "weight": 14
+        "weight": 9
+      },
+      {
+        "itemId": "ship-wreck_r",
+        "weight": 7
+      },
+      {
+        "itemId": "ship-small_r",
+        "weight": 6
+      },
+      {
+        "itemId": "ship-pirate-small_r",
+        "weight": 5
+      },
+      {
+        "itemId": "Low Poly_r",
+        "weight": 4
+      },
+      {
+        "itemId": "Low Poly1_r",
+        "weight": 3
       },
       {
         "itemId": "crystal_r",
-        "weight": 14
+        "weight": 2
       },
       {
         "itemId": "Dimond_r",
-        "weight": 11
-      },
-      {
-        "itemId": "WoodCrate_e",
-        "weight": 11
-      },
-      {
-        "itemId": "oldtv_e",
-        "weight": 8
-      },
-      {
-        "itemId": "Gift_box1_e",
-        "weight": 8
-      },
-      {
-        "itemId": "turkey_L",
-        "weight": 6
-      },
-      {
-        "itemId": "Gift_box3_e",
-        "weight": 6
-      },
-      {
-        "itemId": "Egg_Ice_r",
-        "weight": 4
-      },
-      {
-        "itemId": "Raket_e",
-        "weight": 4
-      },
-      {
-        "itemId": "Tort_e",
-        "weight": 3
-      },
-      {
-        "itemId": "Chest_L",
-        "weight": 3
-      },
-      {
-        "itemId": "crystal_e",
-        "weight": 2
-      },
-      {
-        "itemId": "Trophy_L",
-        "weight": 2
-      },
-      {
-        "itemId": "Crown_L",
-        "weight": 1
-      },
-      {
-        "itemId": "Money_L",
-        "weight": 1
-      },
-      {
-        "itemId": "LuckyBlock1_L",
-        "weight": 1
-      },
-      {
-        "itemId": "Ocian_M",
         "weight": 1
       }
     ]
@@ -696,75 +408,43 @@
     "index": 10,
     "drops": [
       {
+        "itemId": "Guitar_u",
+        "weight": 50
+      },
+      {
+        "itemId": "Handle_u",
+        "weight": 13
+      },
+      {
+        "itemId": "ship-wreck_r",
+        "weight": 9
+      },
+      {
+        "itemId": "ship-small_r",
+        "weight": 7
+      },
+      {
+        "itemId": "ship-pirate-small_r",
+        "weight": 6
+      },
+      {
+        "itemId": "Low Poly_r",
+        "weight": 5
+      },
+      {
+        "itemId": "Low Poly1_r",
+        "weight": 4
+      },
+      {
+        "itemId": "crystal_r",
+        "weight": 3
+      },
+      {
         "itemId": "Dimond_r",
-        "weight": 14
-      },
-      {
-        "itemId": "WoodCrate_e",
-        "weight": 14
-      },
-      {
-        "itemId": "oldtv_e",
-        "weight": 11
-      },
-      {
-        "itemId": "Gift_box1_e",
-        "weight": 11
-      },
-      {
-        "itemId": "turkey_L",
-        "weight": 8
-      },
-      {
-        "itemId": "Gift_box3_e",
-        "weight": 8
+        "weight": 2
       },
       {
         "itemId": "Egg_Ice_r",
-        "weight": 6
-      },
-      {
-        "itemId": "Raket_e",
-        "weight": 6
-      },
-      {
-        "itemId": "Tort_e",
-        "weight": 4
-      },
-      {
-        "itemId": "Chest_L",
-        "weight": 4
-      },
-      {
-        "itemId": "crystal_e",
-        "weight": 3
-      },
-      {
-        "itemId": "Trophy_L",
-        "weight": 3
-      },
-      {
-        "itemId": "Crown_L",
-        "weight": 2
-      },
-      {
-        "itemId": "Money_L",
-        "weight": 2
-      },
-      {
-        "itemId": "LuckyBlock1_L",
-        "weight": 1
-      },
-      {
-        "itemId": "Ocian_M",
-        "weight": 1
-      },
-      {
-        "itemId": "crystal_M",
-        "weight": 1
-      },
-      {
-        "itemId": "Egg_Malicious_M",
         "weight": 1
       }
     ]
@@ -773,75 +453,43 @@
     "index": 11,
     "drops": [
       {
-        "itemId": "oldtv_e",
-        "weight": 14
+        "itemId": "Handle_u",
+        "weight": 50
       },
       {
-        "itemId": "Gift_box1_e",
-        "weight": 14
+        "itemId": "ship-wreck_r",
+        "weight": 13
       },
       {
-        "itemId": "turkey_L",
-        "weight": 11
+        "itemId": "ship-small_r",
+        "weight": 9
       },
       {
-        "itemId": "Gift_box3_e",
-        "weight": 11
+        "itemId": "ship-pirate-small_r",
+        "weight": 7
+      },
+      {
+        "itemId": "Low Poly_r",
+        "weight": 6
+      },
+      {
+        "itemId": "Low Poly1_r",
+        "weight": 5
+      },
+      {
+        "itemId": "crystal_r",
+        "weight": 4
+      },
+      {
+        "itemId": "Dimond_r",
+        "weight": 3
       },
       {
         "itemId": "Egg_Ice_r",
-        "weight": 8
-      },
-      {
-        "itemId": "Raket_e",
-        "weight": 8
-      },
-      {
-        "itemId": "Tort_e",
-        "weight": 6
-      },
-      {
-        "itemId": "Chest_L",
-        "weight": 6
-      },
-      {
-        "itemId": "crystal_e",
-        "weight": 4
-      },
-      {
-        "itemId": "Trophy_L",
-        "weight": 4
-      },
-      {
-        "itemId": "Crown_L",
-        "weight": 3
-      },
-      {
-        "itemId": "Money_L",
-        "weight": 3
-      },
-      {
-        "itemId": "LuckyBlock1_L",
         "weight": 2
       },
       {
-        "itemId": "Ocian_M",
-        "weight": 2
-      },
-      {
-        "itemId": "crystal_M",
-        "weight": 1
-      },
-      {
-        "itemId": "Egg_Malicious_M",
-        "weight": 1
-      },
-      {
-        "itemId": "bensrock_M",
-        "weight": 1
-      },
-      {
-        "itemId": "LuckyBlock2_L",
+        "itemId": "WoodCrate_e",
         "weight": 1
       }
     ]
@@ -850,75 +498,43 @@
     "index": 12,
     "drops": [
       {
-        "itemId": "turkey_L",
-        "weight": 14
+        "itemId": "ship-wreck_r",
+        "weight": 50
       },
       {
-        "itemId": "Gift_box3_e",
-        "weight": 14
+        "itemId": "ship-small_r",
+        "weight": 13
+      },
+      {
+        "itemId": "ship-pirate-small_r",
+        "weight": 9
+      },
+      {
+        "itemId": "Low Poly_r",
+        "weight": 7
+      },
+      {
+        "itemId": "Low Poly1_r",
+        "weight": 6
+      },
+      {
+        "itemId": "crystal_r",
+        "weight": 5
+      },
+      {
+        "itemId": "Dimond_r",
+        "weight": 4
       },
       {
         "itemId": "Egg_Ice_r",
-        "weight": 11
-      },
-      {
-        "itemId": "Raket_e",
-        "weight": 11
-      },
-      {
-        "itemId": "Tort_e",
-        "weight": 8
-      },
-      {
-        "itemId": "Chest_L",
-        "weight": 8
-      },
-      {
-        "itemId": "crystal_e",
-        "weight": 6
-      },
-      {
-        "itemId": "Trophy_L",
-        "weight": 6
-      },
-      {
-        "itemId": "Crown_L",
-        "weight": 4
-      },
-      {
-        "itemId": "Money_L",
-        "weight": 4
-      },
-      {
-        "itemId": "LuckyBlock1_L",
         "weight": 3
       },
       {
-        "itemId": "Ocian_M",
-        "weight": 3
-      },
-      {
-        "itemId": "crystal_M",
+        "itemId": "WoodCrate_e",
         "weight": 2
       },
       {
-        "itemId": "Egg_Malicious_M",
-        "weight": 2
-      },
-      {
-        "itemId": "bensrock_M",
-        "weight": 1
-      },
-      {
-        "itemId": "LuckyBlock2_L",
-        "weight": 1
-      },
-      {
-        "itemId": "Plan_M",
-        "weight": 1
-      },
-      {
-        "itemId": "Purke_M",
+        "itemId": "oldtv_e",
         "weight": 1
       }
     ]
@@ -927,75 +543,43 @@
     "index": 13,
     "drops": [
       {
+        "itemId": "ship-small_r",
+        "weight": 50
+      },
+      {
+        "itemId": "ship-pirate-small_r",
+        "weight": 13
+      },
+      {
+        "itemId": "Low Poly_r",
+        "weight": 9
+      },
+      {
+        "itemId": "Low Poly1_r",
+        "weight": 7
+      },
+      {
+        "itemId": "crystal_r",
+        "weight": 6
+      },
+      {
+        "itemId": "Dimond_r",
+        "weight": 5
+      },
+      {
         "itemId": "Egg_Ice_r",
-        "weight": 14
-      },
-      {
-        "itemId": "Raket_e",
-        "weight": 14
-      },
-      {
-        "itemId": "Tort_e",
-        "weight": 11
-      },
-      {
-        "itemId": "Chest_L",
-        "weight": 11
-      },
-      {
-        "itemId": "crystal_e",
-        "weight": 8
-      },
-      {
-        "itemId": "Trophy_L",
-        "weight": 8
-      },
-      {
-        "itemId": "Crown_L",
-        "weight": 6
-      },
-      {
-        "itemId": "Money_L",
-        "weight": 6
-      },
-      {
-        "itemId": "LuckyBlock1_L",
         "weight": 4
       },
       {
-        "itemId": "Ocian_M",
-        "weight": 4
-      },
-      {
-        "itemId": "crystal_M",
+        "itemId": "WoodCrate_e",
         "weight": 3
       },
       {
-        "itemId": "Egg_Malicious_M",
-        "weight": 3
-      },
-      {
-        "itemId": "bensrock_M",
+        "itemId": "oldtv_e",
         "weight": 2
       },
       {
-        "itemId": "LuckyBlock2_L",
-        "weight": 2
-      },
-      {
-        "itemId": "Plan_M",
-        "weight": 1
-      },
-      {
-        "itemId": "Purke_M",
-        "weight": 1
-      },
-      {
-        "itemId": "Lava_M",
-        "weight": 1
-      },
-      {
-        "itemId": "Egg_Galaxy_M",
+        "itemId": "Gift_box1_e",
         "weight": 1
       }
     ]
@@ -1004,71 +588,43 @@
     "index": 14,
     "drops": [
       {
-        "itemId": "Tort_e",
-        "weight": 15
+        "itemId": "ship-pirate-small_r",
+        "weight": 50
       },
       {
-        "itemId": "Chest_L",
-        "weight": 15
+        "itemId": "Low Poly_r",
+        "weight": 13
       },
       {
-        "itemId": "crystal_e",
-        "weight": 12
-      },
-      {
-        "itemId": "Trophy_L",
-        "weight": 12
-      },
-      {
-        "itemId": "Crown_L",
+        "itemId": "Low Poly1_r",
         "weight": 9
       },
       {
-        "itemId": "Money_L",
-        "weight": 8
+        "itemId": "crystal_r",
+        "weight": 7
       },
       {
-        "itemId": "LuckyBlock1_L",
+        "itemId": "Dimond_r",
         "weight": 6
       },
       {
-        "itemId": "Ocian_M",
-        "weight": 6
+        "itemId": "Egg_Ice_r",
+        "weight": 5
       },
       {
-        "itemId": "crystal_M",
+        "itemId": "WoodCrate_e",
         "weight": 4
       },
       {
-        "itemId": "Egg_Malicious_M",
-        "weight": 4
+        "itemId": "oldtv_e",
+        "weight": 3
       },
       {
-        "itemId": "bensrock_M",
+        "itemId": "Gift_box1_e",
         "weight": 2
       },
       {
-        "itemId": "LuckyBlock2_L",
-        "weight": 2
-      },
-      {
-        "itemId": "Plan_M",
-        "weight": 1
-      },
-      {
-        "itemId": "Purke_M",
-        "weight": 1
-      },
-      {
-        "itemId": "Lava_M",
-        "weight": 1
-      },
-      {
-        "itemId": "Egg_Galaxy_M",
-        "weight": 1
-      },
-      {
-        "itemId": "Egg_Aym_S",
+        "itemId": "Gift_box2_e",
         "weight": 1
       }
     ]
@@ -1077,67 +633,43 @@
     "index": 15,
     "drops": [
       {
-        "itemId": "crystal_e",
-        "weight": 15
+        "itemId": "Low Poly_r",
+        "weight": 50
       },
       {
-        "itemId": "Trophy_L",
-        "weight": 15
+        "itemId": "Low Poly1_r",
+        "weight": 13
       },
       {
-        "itemId": "Crown_L",
-        "weight": 12
-      },
-      {
-        "itemId": "Money_L",
-        "weight": 12
-      },
-      {
-        "itemId": "LuckyBlock1_L",
+        "itemId": "crystal_r",
         "weight": 9
       },
       {
-        "itemId": "Ocian_M",
-        "weight": 9
+        "itemId": "Dimond_r",
+        "weight": 7
       },
       {
-        "itemId": "crystal_M",
+        "itemId": "Egg_Ice_r",
         "weight": 6
       },
       {
-        "itemId": "Egg_Malicious_M",
-        "weight": 6
+        "itemId": "WoodCrate_e",
+        "weight": 5
       },
       {
-        "itemId": "bensrock_M",
+        "itemId": "oldtv_e",
         "weight": 4
       },
       {
-        "itemId": "LuckyBlock2_L",
-        "weight": 4
+        "itemId": "Gift_box1_e",
+        "weight": 3
       },
       {
-        "itemId": "Plan_M",
+        "itemId": "Gift_box2_e",
         "weight": 2
       },
       {
-        "itemId": "Purke_M",
-        "weight": 2
-      },
-      {
-        "itemId": "Lava_M",
-        "weight": 1
-      },
-      {
-        "itemId": "Egg_Galaxy_M",
-        "weight": 1
-      },
-      {
-        "itemId": "Egg_Aym_S",
-        "weight": 1
-      },
-      {
-        "itemId": "Moon_S",
+        "itemId": "Gift_box3_e",
         "weight": 1
       }
     ]
@@ -1146,63 +678,43 @@
     "index": 16,
     "drops": [
       {
-        "itemId": "Crown_L",
-        "weight": 15
+        "itemId": "Low Poly1_r",
+        "weight": 50
       },
       {
-        "itemId": "Money_L",
-        "weight": 15
+        "itemId": "crystal_r",
+        "weight": 13
       },
       {
-        "itemId": "LuckyBlock1_L",
-        "weight": 12
-      },
-      {
-        "itemId": "Ocian_M",
-        "weight": 12
-      },
-      {
-        "itemId": "crystal_M",
+        "itemId": "Dimond_r",
         "weight": 9
       },
       {
-        "itemId": "Egg_Malicious_M",
-        "weight": 9
+        "itemId": "Egg_Ice_r",
+        "weight": 7
       },
       {
-        "itemId": "bensrock_M",
+        "itemId": "WoodCrate_e",
         "weight": 6
       },
       {
-        "itemId": "LuckyBlock2_L",
-        "weight": 6
+        "itemId": "oldtv_e",
+        "weight": 5
       },
       {
-        "itemId": "Plan_M",
+        "itemId": "Gift_box1_e",
         "weight": 4
       },
       {
-        "itemId": "Purke_M",
-        "weight": 4
-      },
-      {
-        "itemId": "Lava_M",
+        "itemId": "Gift_box2_e",
         "weight": 3
       },
       {
-        "itemId": "Egg_Galaxy_M",
+        "itemId": "Gift_box3_e",
         "weight": 2
       },
       {
-        "itemId": "Egg_Aym_S",
-        "weight": 1
-      },
-      {
-        "itemId": "Moon_S",
-        "weight": 1
-      },
-      {
-        "itemId": "Egg_RockCandy_M",
+        "itemId": "Raket_e",
         "weight": 1
       }
     ]
@@ -1211,59 +723,43 @@
     "index": 17,
     "drops": [
       {
-        "itemId": "LuckyBlock1_L",
-        "weight": 15
+        "itemId": "crystal_r",
+        "weight": 50
       },
       {
-        "itemId": "Ocian_M",
-        "weight": 15
+        "itemId": "Dimond_r",
+        "weight": 13
       },
       {
-        "itemId": "crystal_M",
-        "weight": 12
-      },
-      {
-        "itemId": "Egg_Malicious_M",
-        "weight": 12
-      },
-      {
-        "itemId": "bensrock_M",
+        "itemId": "Egg_Ice_r",
         "weight": 9
       },
       {
-        "itemId": "LuckyBlock2_L",
-        "weight": 9
-      },
-      {
-        "itemId": "Plan_M",
+        "itemId": "WoodCrate_e",
         "weight": 7
       },
       {
-        "itemId": "Purke_M",
+        "itemId": "oldtv_e",
         "weight": 6
       },
       {
-        "itemId": "Lava_M",
+        "itemId": "Gift_box1_e",
+        "weight": 5
+      },
+      {
+        "itemId": "Gift_box2_e",
         "weight": 4
       },
       {
-        "itemId": "Egg_Galaxy_M",
-        "weight": 4
-      },
-      {
-        "itemId": "Egg_Aym_S",
+        "itemId": "Gift_box3_e",
         "weight": 3
       },
       {
-        "itemId": "Moon_S",
+        "itemId": "Raket_e",
         "weight": 2
       },
       {
-        "itemId": "Egg_RockCandy_M",
-        "weight": 1
-      },
-      {
-        "itemId": "crystal_S",
+        "itemId": "Tort_e",
         "weight": 1
       }
     ]
@@ -1272,55 +768,43 @@
     "index": 18,
     "drops": [
       {
-        "itemId": "crystal_M",
-        "weight": 16
+        "itemId": "Dimond_r",
+        "weight": 50
       },
       {
-        "itemId": "Egg_Malicious_M",
-        "weight": 16
-      },
-      {
-        "itemId": "bensrock_M",
+        "itemId": "Egg_Ice_r",
         "weight": 13
       },
       {
-        "itemId": "LuckyBlock2_L",
-        "weight": 13
-      },
-      {
-        "itemId": "Plan_M",
+        "itemId": "WoodCrate_e",
         "weight": 9
       },
       {
-        "itemId": "Purke_M",
-        "weight": 9
-      },
-      {
-        "itemId": "Lava_M",
+        "itemId": "oldtv_e",
         "weight": 7
       },
       {
-        "itemId": "Egg_Galaxy_M",
+        "itemId": "Gift_box1_e",
         "weight": 6
       },
       {
-        "itemId": "Egg_Aym_S",
+        "itemId": "Gift_box2_e",
+        "weight": 5
+      },
+      {
+        "itemId": "Gift_box3_e",
         "weight": 4
       },
       {
-        "itemId": "Moon_S",
+        "itemId": "Raket_e",
         "weight": 3
       },
       {
-        "itemId": "Egg_RockCandy_M",
+        "itemId": "Tort_e",
         "weight": 2
       },
       {
-        "itemId": "crystal_S",
-        "weight": 1
-      },
-      {
-        "itemId": "Poop_S",
+        "itemId": "crystal_e",
         "weight": 1
       }
     ]
@@ -1329,51 +813,43 @@
     "index": 19,
     "drops": [
       {
-        "itemId": "bensrock_M",
-        "weight": 17
+        "itemId": "Egg_Ice_r",
+        "weight": 50
       },
       {
-        "itemId": "LuckyBlock2_L",
-        "weight": 17
-      },
-      {
-        "itemId": "Plan_M",
-        "weight": 14
-      },
-      {
-        "itemId": "Purke_M",
+        "itemId": "WoodCrate_e",
         "weight": 13
       },
       {
-        "itemId": "Lava_M",
-        "weight": 10
+        "itemId": "oldtv_e",
+        "weight": 9
       },
       {
-        "itemId": "Egg_Galaxy_M",
-        "weight": 10
-      },
-      {
-        "itemId": "Egg_Aym_S",
+        "itemId": "Gift_box1_e",
         "weight": 7
       },
       {
-        "itemId": "Moon_S",
+        "itemId": "Gift_box2_e",
+        "weight": 6
+      },
+      {
+        "itemId": "Gift_box3_e",
         "weight": 5
       },
       {
-        "itemId": "Egg_RockCandy_M",
+        "itemId": "Raket_e",
+        "weight": 4
+      },
+      {
+        "itemId": "Tort_e",
         "weight": 3
       },
       {
-        "itemId": "crystal_S",
+        "itemId": "crystal_e",
         "weight": 2
       },
       {
-        "itemId": "Poop_S",
-        "weight": 1
-      },
-      {
-        "itemId": "Egg_Dragon_S",
+        "itemId": "Chest_L",
         "weight": 1
       }
     ]
@@ -1382,47 +858,43 @@
     "index": 20,
     "drops": [
       {
-        "itemId": "Plan_M",
-        "weight": 19
+        "itemId": "WoodCrate_e",
+        "weight": 50
       },
       {
-        "itemId": "Purke_M",
-        "weight": 19
+        "itemId": "oldtv_e",
+        "weight": 13
       },
       {
-        "itemId": "Lava_M",
-        "weight": 15
+        "itemId": "Gift_box1_e",
+        "weight": 9
       },
       {
-        "itemId": "Egg_Galaxy_M",
-        "weight": 15
+        "itemId": "Gift_box2_e",
+        "weight": 7
       },
       {
-        "itemId": "Egg_Aym_S",
-        "weight": 11
+        "itemId": "Gift_box3_e",
+        "weight": 6
       },
       {
-        "itemId": "Moon_S",
-        "weight": 8
-      },
-      {
-        "itemId": "Egg_RockCandy_M",
+        "itemId": "Raket_e",
         "weight": 5
       },
       {
-        "itemId": "crystal_S",
+        "itemId": "Tort_e",
+        "weight": 4
+      },
+      {
+        "itemId": "crystal_e",
         "weight": 3
       },
       {
-        "itemId": "Poop_S",
+        "itemId": "Chest_L",
         "weight": 2
       },
       {
-        "itemId": "Egg_Dragon_S",
-        "weight": 2
-      },
-      {
-        "itemId": "Simpol_G",
+        "itemId": "Trophy_L",
         "weight": 1
       }
     ]
@@ -1431,43 +903,43 @@
     "index": 21,
     "drops": [
       {
-        "itemId": "Lava_M",
-        "weight": 23
+        "itemId": "oldtv_e",
+        "weight": 50
       },
       {
-        "itemId": "Egg_Galaxy_M",
-        "weight": 22
-      },
-      {
-        "itemId": "Egg_Aym_S",
-        "weight": 18
-      },
-      {
-        "itemId": "Moon_S",
+        "itemId": "Gift_box1_e",
         "weight": 13
       },
       {
-        "itemId": "Egg_RockCandy_M",
+        "itemId": "Gift_box2_e",
         "weight": 9
       },
       {
-        "itemId": "crystal_S",
+        "itemId": "Gift_box3_e",
+        "weight": 7
+      },
+      {
+        "itemId": "Raket_e",
         "weight": 6
       },
       {
-        "itemId": "Poop_S",
+        "itemId": "Tort_e",
+        "weight": 5
+      },
+      {
+        "itemId": "crystal_e",
         "weight": 4
       },
       {
-        "itemId": "Egg_Dragon_S",
+        "itemId": "Chest_L",
+        "weight": 3
+      },
+      {
+        "itemId": "Trophy_L",
         "weight": 2
       },
       {
-        "itemId": "Simpol_G",
-        "weight": 2
-      },
-      {
-        "itemId": "Duck_S",
+        "itemId": "Crown_L",
         "weight": 1
       }
     ]
@@ -1476,39 +948,43 @@
     "index": 22,
     "drops": [
       {
-        "itemId": "Egg_Aym_S",
-        "weight": 29
+        "itemId": "Gift_box1_e",
+        "weight": 50
       },
       {
-        "itemId": "Moon_S",
-        "weight": 23
+        "itemId": "Gift_box2_e",
+        "weight": 13
       },
       {
-        "itemId": "Egg_RockCandy_M",
-        "weight": 17
+        "itemId": "Gift_box3_e",
+        "weight": 9
       },
       {
-        "itemId": "crystal_S",
-        "weight": 12
+        "itemId": "Raket_e",
+        "weight": 7
       },
       {
-        "itemId": "Poop_S",
-        "weight": 8
+        "itemId": "Tort_e",
+        "weight": 6
       },
       {
-        "itemId": "Egg_Dragon_S",
+        "itemId": "crystal_e",
         "weight": 5
       },
       {
-        "itemId": "Simpol_G",
+        "itemId": "Chest_L",
+        "weight": 4
+      },
+      {
+        "itemId": "Trophy_L",
         "weight": 3
       },
       {
-        "itemId": "Duck_S",
+        "itemId": "Crown_L",
         "weight": 2
       },
       {
-        "itemId": "Toilet_G",
+        "itemId": "turkey_L",
         "weight": 1
       }
     ]
@@ -1517,39 +993,43 @@
     "index": 23,
     "drops": [
       {
-        "itemId": "Moon_S",
-        "weight": 29
+        "itemId": "Gift_box2_e",
+        "weight": 50
       },
       {
-        "itemId": "Egg_RockCandy_M",
-        "weight": 23
+        "itemId": "Gift_box3_e",
+        "weight": 13
       },
       {
-        "itemId": "crystal_S",
-        "weight": 17
+        "itemId": "Raket_e",
+        "weight": 9
       },
       {
-        "itemId": "Poop_S",
-        "weight": 12
+        "itemId": "Tort_e",
+        "weight": 7
       },
       {
-        "itemId": "Egg_Dragon_S",
-        "weight": 8
+        "itemId": "crystal_e",
+        "weight": 6
       },
       {
-        "itemId": "Simpol_G",
+        "itemId": "Chest_L",
         "weight": 5
       },
       {
-        "itemId": "Duck_S",
+        "itemId": "Trophy_L",
+        "weight": 4
+      },
+      {
+        "itemId": "Crown_L",
         "weight": 3
       },
       {
-        "itemId": "Toilet_G",
+        "itemId": "turkey_L",
         "weight": 2
       },
       {
-        "itemId": "Shrimp_G",
+        "itemId": "Money_L",
         "weight": 1
       }
     ]
@@ -1558,39 +1038,43 @@
     "index": 24,
     "drops": [
       {
-        "itemId": "Egg_RockCandy_M",
-        "weight": 29
+        "itemId": "Gift_box3_e",
+        "weight": 50
       },
       {
-        "itemId": "crystal_S",
-        "weight": 23
+        "itemId": "Raket_e",
+        "weight": 13
       },
       {
-        "itemId": "Poop_S",
-        "weight": 17
+        "itemId": "Tort_e",
+        "weight": 9
       },
       {
-        "itemId": "Egg_Dragon_S",
-        "weight": 12
+        "itemId": "crystal_e",
+        "weight": 7
       },
       {
-        "itemId": "Simpol_G",
-        "weight": 8
+        "itemId": "Chest_L",
+        "weight": 6
       },
       {
-        "itemId": "Duck_S",
+        "itemId": "Trophy_L",
         "weight": 5
       },
       {
-        "itemId": "Toilet_G",
+        "itemId": "Crown_L",
+        "weight": 4
+      },
+      {
+        "itemId": "turkey_L",
         "weight": 3
       },
       {
-        "itemId": "Shrimp_G",
+        "itemId": "Money_L",
         "weight": 2
       },
       {
-        "itemId": "Shark_G",
+        "itemId": "LuckyBlock1_L",
         "weight": 1
       }
     ]
@@ -1599,39 +1083,43 @@
     "index": 25,
     "drops": [
       {
-        "itemId": "crystal_S",
-        "weight": 29
+        "itemId": "Raket_e",
+        "weight": 50
       },
       {
-        "itemId": "Poop_S",
-        "weight": 23
+        "itemId": "Tort_e",
+        "weight": 13
       },
       {
-        "itemId": "Egg_Dragon_S",
-        "weight": 17
+        "itemId": "crystal_e",
+        "weight": 9
       },
       {
-        "itemId": "Simpol_G",
-        "weight": 12
+        "itemId": "Chest_L",
+        "weight": 7
       },
       {
-        "itemId": "Duck_S",
-        "weight": 8
+        "itemId": "Trophy_L",
+        "weight": 6
       },
       {
-        "itemId": "Toilet_G",
+        "itemId": "Crown_L",
         "weight": 5
       },
       {
-        "itemId": "Shrimp_G",
+        "itemId": "turkey_L",
+        "weight": 4
+      },
+      {
+        "itemId": "Money_L",
         "weight": 3
       },
       {
-        "itemId": "Shark_G",
+        "itemId": "LuckyBlock1_L",
         "weight": 2
       },
       {
-        "itemId": "Crocodile_G",
+        "itemId": "LuckyBlock2_L",
         "weight": 1
       }
     ]
@@ -1640,39 +1128,43 @@
     "index": 26,
     "drops": [
       {
-        "itemId": "Poop_S",
-        "weight": 29
+        "itemId": "Tort_e",
+        "weight": 50
       },
       {
-        "itemId": "Egg_Dragon_S",
-        "weight": 23
+        "itemId": "crystal_e",
+        "weight": 13
       },
       {
-        "itemId": "Simpol_G",
-        "weight": 17
+        "itemId": "Chest_L",
+        "weight": 9
       },
       {
-        "itemId": "Duck_S",
-        "weight": 12
+        "itemId": "Trophy_L",
+        "weight": 7
       },
       {
-        "itemId": "Toilet_G",
-        "weight": 8
+        "itemId": "Crown_L",
+        "weight": 6
       },
       {
-        "itemId": "Shrimp_G",
+        "itemId": "turkey_L",
         "weight": 5
       },
       {
-        "itemId": "Shark_G",
+        "itemId": "Money_L",
+        "weight": 4
+      },
+      {
+        "itemId": "LuckyBlock1_L",
         "weight": 3
       },
       {
-        "itemId": "Crocodile_G",
+        "itemId": "LuckyBlock2_L",
         "weight": 2
       },
       {
-        "itemId": "Pork_G",
+        "itemId": "crystal_M",
         "weight": 1
       }
     ]
@@ -1681,39 +1173,43 @@
     "index": 27,
     "drops": [
       {
-        "itemId": "Egg_Dragon_S",
-        "weight": 29
+        "itemId": "crystal_e",
+        "weight": 50
       },
       {
-        "itemId": "Simpol_G",
-        "weight": 23
+        "itemId": "Chest_L",
+        "weight": 13
       },
       {
-        "itemId": "Duck_S",
-        "weight": 17
+        "itemId": "Trophy_L",
+        "weight": 9
       },
       {
-        "itemId": "Toilet_G",
-        "weight": 12
+        "itemId": "Crown_L",
+        "weight": 7
       },
       {
-        "itemId": "Shrimp_G",
-        "weight": 8
+        "itemId": "turkey_L",
+        "weight": 6
       },
       {
-        "itemId": "Shark_G",
+        "itemId": "Money_L",
         "weight": 5
       },
       {
-        "itemId": "Crocodile_G",
+        "itemId": "LuckyBlock1_L",
+        "weight": 4
+      },
+      {
+        "itemId": "LuckyBlock2_L",
         "weight": 3
       },
       {
-        "itemId": "Pork_G",
+        "itemId": "crystal_M",
         "weight": 2
       },
       {
-        "itemId": "Reporter_G",
+        "itemId": "Egg_Malicious_M",
         "weight": 1
       }
     ]
@@ -1722,39 +1218,43 @@
     "index": 28,
     "drops": [
       {
-        "itemId": "Simpol_G",
-        "weight": 29
+        "itemId": "Chest_L",
+        "weight": 50
       },
       {
-        "itemId": "Duck_S",
-        "weight": 23
+        "itemId": "Trophy_L",
+        "weight": 13
       },
       {
-        "itemId": "Toilet_G",
-        "weight": 17
+        "itemId": "Crown_L",
+        "weight": 9
       },
       {
-        "itemId": "Shrimp_G",
-        "weight": 12
+        "itemId": "turkey_L",
+        "weight": 7
       },
       {
-        "itemId": "Shark_G",
-        "weight": 8
+        "itemId": "Money_L",
+        "weight": 6
       },
       {
-        "itemId": "Crocodile_G",
+        "itemId": "LuckyBlock1_L",
         "weight": 5
       },
       {
-        "itemId": "Pork_G",
+        "itemId": "LuckyBlock2_L",
+        "weight": 4
+      },
+      {
+        "itemId": "crystal_M",
         "weight": 3
       },
       {
-        "itemId": "Reporter_G",
+        "itemId": "Egg_Malicious_M",
         "weight": 2
       },
       {
-        "itemId": "SeagullCar_G",
+        "itemId": "bensrock_M",
         "weight": 1
       }
     ]
@@ -1763,39 +1263,43 @@
     "index": 29,
     "drops": [
       {
-        "itemId": "Duck_S",
-        "weight": 29
+        "itemId": "Trophy_L",
+        "weight": 50
       },
       {
-        "itemId": "Toilet_G",
-        "weight": 23
+        "itemId": "Crown_L",
+        "weight": 13
       },
       {
-        "itemId": "Shrimp_G",
-        "weight": 17
+        "itemId": "turkey_L",
+        "weight": 9
       },
       {
-        "itemId": "Shark_G",
-        "weight": 12
+        "itemId": "Money_L",
+        "weight": 7
       },
       {
-        "itemId": "Crocodile_G",
-        "weight": 8
+        "itemId": "LuckyBlock1_L",
+        "weight": 6
       },
       {
-        "itemId": "Pork_G",
+        "itemId": "LuckyBlock2_L",
         "weight": 5
       },
       {
-        "itemId": "Reporter_G",
+        "itemId": "crystal_M",
+        "weight": 4
+      },
+      {
+        "itemId": "Egg_Malicious_M",
         "weight": 3
       },
       {
-        "itemId": "SeagullCar_G",
+        "itemId": "bensrock_M",
         "weight": 2
       },
       {
-        "itemId": "Sushi_G",
+        "itemId": "Ocian_M",
         "weight": 1
       }
     ]
@@ -1804,39 +1308,43 @@
     "index": 30,
     "drops": [
       {
-        "itemId": "Toilet_G",
-        "weight": 29
+        "itemId": "Crown_L",
+        "weight": 50
       },
       {
-        "itemId": "Shrimp_G",
-        "weight": 23
+        "itemId": "turkey_L",
+        "weight": 13
       },
       {
-        "itemId": "Shark_G",
-        "weight": 17
+        "itemId": "Money_L",
+        "weight": 9
       },
       {
-        "itemId": "Crocodile_G",
-        "weight": 12
+        "itemId": "LuckyBlock1_L",
+        "weight": 7
       },
       {
-        "itemId": "Pork_G",
-        "weight": 8
+        "itemId": "LuckyBlock2_L",
+        "weight": 6
       },
       {
-        "itemId": "Reporter_G",
+        "itemId": "crystal_M",
         "weight": 5
       },
       {
-        "itemId": "SeagullCar_G",
+        "itemId": "Egg_Malicious_M",
+        "weight": 4
+      },
+      {
+        "itemId": "bensrock_M",
         "weight": 3
       },
       {
-        "itemId": "Sushi_G",
+        "itemId": "Ocian_M",
         "weight": 2
       },
       {
-        "itemId": "Bomb_D",
+        "itemId": "Plan_M",
         "weight": 1
       }
     ]
@@ -1845,39 +1353,43 @@
     "index": 31,
     "drops": [
       {
-        "itemId": "Shrimp_G",
-        "weight": 29
+        "itemId": "turkey_L",
+        "weight": 50
       },
       {
-        "itemId": "Shark_G",
-        "weight": 23
+        "itemId": "Money_L",
+        "weight": 13
       },
       {
-        "itemId": "Crocodile_G",
-        "weight": 17
+        "itemId": "LuckyBlock1_L",
+        "weight": 9
       },
       {
-        "itemId": "Pork_G",
-        "weight": 12
+        "itemId": "LuckyBlock2_L",
+        "weight": 7
       },
       {
-        "itemId": "Reporter_G",
-        "weight": 8
+        "itemId": "crystal_M",
+        "weight": 6
       },
       {
-        "itemId": "SeagullCar_G",
+        "itemId": "Egg_Malicious_M",
         "weight": 5
       },
       {
-        "itemId": "Sushi_G",
+        "itemId": "bensrock_M",
+        "weight": 4
+      },
+      {
+        "itemId": "Ocian_M",
         "weight": 3
       },
       {
-        "itemId": "Bomb_D",
+        "itemId": "Plan_M",
         "weight": 2
       },
       {
-        "itemId": "Elephant_G",
+        "itemId": "Lava_M",
         "weight": 1
       }
     ]
@@ -1886,39 +1398,43 @@
     "index": 32,
     "drops": [
       {
-        "itemId": "Shark_G",
-        "weight": 29
+        "itemId": "Money_L",
+        "weight": 50
       },
       {
-        "itemId": "Crocodile_G",
-        "weight": 23
+        "itemId": "LuckyBlock1_L",
+        "weight": 13
       },
       {
-        "itemId": "Pork_G",
-        "weight": 17
+        "itemId": "LuckyBlock2_L",
+        "weight": 9
       },
       {
-        "itemId": "Reporter_G",
-        "weight": 12
+        "itemId": "crystal_M",
+        "weight": 7
       },
       {
-        "itemId": "SeagullCar_G",
-        "weight": 8
+        "itemId": "Egg_Malicious_M",
+        "weight": 6
       },
       {
-        "itemId": "Sushi_G",
+        "itemId": "bensrock_M",
         "weight": 5
       },
       {
-        "itemId": "Bomb_D",
+        "itemId": "Ocian_M",
+        "weight": 4
+      },
+      {
+        "itemId": "Plan_M",
         "weight": 3
       },
       {
-        "itemId": "Elephant_G",
+        "itemId": "Lava_M",
         "weight": 2
       },
       {
-        "itemId": "Flame_D",
+        "itemId": "Egg_Galaxy_M",
         "weight": 1
       }
     ]
@@ -1927,39 +1443,43 @@
     "index": 33,
     "drops": [
       {
-        "itemId": "Crocodile_G",
-        "weight": 29
+        "itemId": "LuckyBlock1_L",
+        "weight": 50
       },
       {
-        "itemId": "Pork_G",
-        "weight": 23
+        "itemId": "LuckyBlock2_L",
+        "weight": 13
       },
       {
-        "itemId": "Reporter_G",
-        "weight": 17
+        "itemId": "crystal_M",
+        "weight": 9
       },
       {
-        "itemId": "SeagullCar_G",
-        "weight": 12
+        "itemId": "Egg_Malicious_M",
+        "weight": 7
       },
       {
-        "itemId": "Sushi_G",
-        "weight": 8
+        "itemId": "bensrock_M",
+        "weight": 6
       },
       {
-        "itemId": "Bomb_D",
+        "itemId": "Ocian_M",
         "weight": 5
       },
       {
-        "itemId": "Elephant_G",
+        "itemId": "Plan_M",
+        "weight": 4
+      },
+      {
+        "itemId": "Lava_M",
         "weight": 3
       },
       {
-        "itemId": "Flame_D",
+        "itemId": "Egg_Galaxy_M",
         "weight": 2
       },
       {
-        "itemId": "Frost_D",
+        "itemId": "Purke_M",
         "weight": 1
       }
     ]
@@ -1968,39 +1488,43 @@
     "index": 34,
     "drops": [
       {
-        "itemId": "Pork_G",
-        "weight": 29
+        "itemId": "LuckyBlock2_L",
+        "weight": 50
       },
       {
-        "itemId": "Reporter_G",
-        "weight": 23
+        "itemId": "crystal_M",
+        "weight": 13
       },
       {
-        "itemId": "SeagullCar_G",
-        "weight": 17
+        "itemId": "Egg_Malicious_M",
+        "weight": 9
       },
       {
-        "itemId": "Sushi_G",
-        "weight": 12
+        "itemId": "bensrock_M",
+        "weight": 7
       },
       {
-        "itemId": "Bomb_D",
-        "weight": 8
+        "itemId": "Ocian_M",
+        "weight": 6
       },
       {
-        "itemId": "Elephant_G",
+        "itemId": "Plan_M",
         "weight": 5
       },
       {
-        "itemId": "Flame_D",
+        "itemId": "Lava_M",
+        "weight": 4
+      },
+      {
+        "itemId": "Egg_Galaxy_M",
         "weight": 3
       },
       {
-        "itemId": "Frost_D",
+        "itemId": "Purke_M",
         "weight": 2
       },
       {
-        "itemId": "Shadow_D",
+        "itemId": "Egg_RockCandy_M",
         "weight": 1
       }
     ]
@@ -2009,39 +1533,43 @@
     "index": 35,
     "drops": [
       {
-        "itemId": "Reporter_G",
-        "weight": 29
+        "itemId": "crystal_M",
+        "weight": 50
       },
       {
-        "itemId": "SeagullCar_G",
-        "weight": 23
+        "itemId": "Egg_Malicious_M",
+        "weight": 13
       },
       {
-        "itemId": "Sushi_G",
-        "weight": 17
+        "itemId": "bensrock_M",
+        "weight": 9
       },
       {
-        "itemId": "Bomb_D",
-        "weight": 12
+        "itemId": "Ocian_M",
+        "weight": 7
       },
       {
-        "itemId": "Elephant_G",
-        "weight": 8
+        "itemId": "Plan_M",
+        "weight": 6
       },
       {
-        "itemId": "Flame_D",
+        "itemId": "Lava_M",
         "weight": 5
       },
       {
-        "itemId": "Frost_D",
+        "itemId": "Egg_Galaxy_M",
+        "weight": 4
+      },
+      {
+        "itemId": "Purke_M",
         "weight": 3
       },
       {
-        "itemId": "Shadow_D",
+        "itemId": "Egg_RockCandy_M",
         "weight": 2
       },
       {
-        "itemId": "Growth_D",
+        "itemId": "Moon_S",
         "weight": 1
       }
     ]
@@ -2050,39 +1578,43 @@
     "index": 36,
     "drops": [
       {
-        "itemId": "SeagullCar_G",
-        "weight": 29
+        "itemId": "Egg_Malicious_M",
+        "weight": 50
       },
       {
-        "itemId": "Sushi_G",
-        "weight": 23
+        "itemId": "bensrock_M",
+        "weight": 13
       },
       {
-        "itemId": "Bomb_D",
-        "weight": 17
+        "itemId": "Ocian_M",
+        "weight": 9
       },
       {
-        "itemId": "Elephant_G",
-        "weight": 12
+        "itemId": "Plan_M",
+        "weight": 7
       },
       {
-        "itemId": "Flame_D",
-        "weight": 8
+        "itemId": "Lava_M",
+        "weight": 6
       },
       {
-        "itemId": "Frost_D",
+        "itemId": "Egg_Galaxy_M",
         "weight": 5
       },
       {
-        "itemId": "Shadow_D",
+        "itemId": "Purke_M",
+        "weight": 4
+      },
+      {
+        "itemId": "Egg_RockCandy_M",
         "weight": 3
       },
       {
-        "itemId": "Growth_D",
+        "itemId": "Moon_S",
         "weight": 2
       },
       {
-        "itemId": "Rainbow_D",
+        "itemId": "crystal_S",
         "weight": 1
       }
     ]
@@ -2091,39 +1623,43 @@
     "index": 37,
     "drops": [
       {
-        "itemId": "Sushi_G",
-        "weight": 29
+        "itemId": "bensrock_M",
+        "weight": 50
       },
       {
-        "itemId": "Bomb_D",
-        "weight": 23
+        "itemId": "Ocian_M",
+        "weight": 13
       },
       {
-        "itemId": "Elephant_G",
-        "weight": 17
+        "itemId": "Plan_M",
+        "weight": 9
       },
       {
-        "itemId": "Flame_D",
-        "weight": 12
+        "itemId": "Lava_M",
+        "weight": 7
       },
       {
-        "itemId": "Frost_D",
-        "weight": 8
+        "itemId": "Egg_Galaxy_M",
+        "weight": 6
       },
       {
-        "itemId": "Shadow_D",
+        "itemId": "Purke_M",
         "weight": 5
       },
       {
-        "itemId": "Growth_D",
+        "itemId": "Egg_RockCandy_M",
+        "weight": 4
+      },
+      {
+        "itemId": "Moon_S",
         "weight": 3
       },
       {
-        "itemId": "Rainbow_D",
+        "itemId": "crystal_S",
         "weight": 2
       },
       {
-        "itemId": "Egg_Lava_D",
+        "itemId": "Egg_Aym_S",
         "weight": 1
       }
     ]
@@ -2132,39 +1668,43 @@
     "index": 38,
     "drops": [
       {
-        "itemId": "Bomb_D",
-        "weight": 29
+        "itemId": "Ocian_M",
+        "weight": 50
       },
       {
-        "itemId": "Elephant_G",
-        "weight": 23
+        "itemId": "Plan_M",
+        "weight": 13
       },
       {
-        "itemId": "Flame_D",
-        "weight": 17
+        "itemId": "Lava_M",
+        "weight": 9
       },
       {
-        "itemId": "Frost_D",
-        "weight": 12
+        "itemId": "Egg_Galaxy_M",
+        "weight": 7
       },
       {
-        "itemId": "Shadow_D",
-        "weight": 8
+        "itemId": "Purke_M",
+        "weight": 6
       },
       {
-        "itemId": "Growth_D",
+        "itemId": "Egg_RockCandy_M",
         "weight": 5
       },
       {
-        "itemId": "Rainbow_D",
+        "itemId": "Moon_S",
+        "weight": 4
+      },
+      {
+        "itemId": "crystal_S",
         "weight": 3
       },
       {
-        "itemId": "Egg_Lava_D",
+        "itemId": "Egg_Aym_S",
         "weight": 2
       },
       {
-        "itemId": "Planet_Ce",
+        "itemId": "Poop_S",
         "weight": 1
       }
     ]
@@ -2173,39 +1713,43 @@
     "index": 39,
     "drops": [
       {
-        "itemId": "Elephant_G",
-        "weight": 29
+        "itemId": "Plan_M",
+        "weight": 50
       },
       {
-        "itemId": "Flame_D",
-        "weight": 23
+        "itemId": "Lava_M",
+        "weight": 13
       },
       {
-        "itemId": "Frost_D",
-        "weight": 17
+        "itemId": "Egg_Galaxy_M",
+        "weight": 9
       },
       {
-        "itemId": "Shadow_D",
-        "weight": 12
+        "itemId": "Purke_M",
+        "weight": 7
       },
       {
-        "itemId": "Growth_D",
-        "weight": 8
+        "itemId": "Egg_RockCandy_M",
+        "weight": 6
       },
       {
-        "itemId": "Rainbow_D",
+        "itemId": "Moon_S",
         "weight": 5
       },
       {
-        "itemId": "Egg_Lava_D",
+        "itemId": "crystal_S",
+        "weight": 4
+      },
+      {
+        "itemId": "Egg_Aym_S",
         "weight": 3
       },
       {
-        "itemId": "Planet_Ce",
+        "itemId": "Poop_S",
         "weight": 2
       },
       {
-        "itemId": "Blue_D",
+        "itemId": "Egg_Dragon_S",
         "weight": 1
       }
     ]
@@ -2214,39 +1758,43 @@
     "index": 40,
     "drops": [
       {
-        "itemId": "Flame_D",
-        "weight": 29
+        "itemId": "Lava_M",
+        "weight": 50
       },
       {
-        "itemId": "Frost_D",
-        "weight": 23
+        "itemId": "Egg_Galaxy_M",
+        "weight": 13
       },
       {
-        "itemId": "Shadow_D",
-        "weight": 17
+        "itemId": "Purke_M",
+        "weight": 9
       },
       {
-        "itemId": "Growth_D",
-        "weight": 12
+        "itemId": "Egg_RockCandy_M",
+        "weight": 7
       },
       {
-        "itemId": "Rainbow_D",
-        "weight": 8
+        "itemId": "Moon_S",
+        "weight": 6
       },
       {
-        "itemId": "Egg_Lava_D",
+        "itemId": "crystal_S",
         "weight": 5
       },
       {
-        "itemId": "Planet_Ce",
+        "itemId": "Egg_Aym_S",
+        "weight": 4
+      },
+      {
+        "itemId": "Poop_S",
         "weight": 3
       },
       {
-        "itemId": "Blue_D",
+        "itemId": "Egg_Dragon_S",
         "weight": 2
       },
       {
-        "itemId": "PlanetTune_Ce",
+        "itemId": "Duck_S",
         "weight": 1
       }
     ]
@@ -2255,39 +1803,43 @@
     "index": 41,
     "drops": [
       {
-        "itemId": "Frost_D",
-        "weight": 29
+        "itemId": "Egg_Galaxy_M",
+        "weight": 50
       },
       {
-        "itemId": "Shadow_D",
-        "weight": 23
+        "itemId": "Purke_M",
+        "weight": 13
       },
       {
-        "itemId": "Growth_D",
-        "weight": 17
+        "itemId": "Egg_RockCandy_M",
+        "weight": 9
       },
       {
-        "itemId": "Rainbow_D",
-        "weight": 12
+        "itemId": "Moon_S",
+        "weight": 7
       },
       {
-        "itemId": "Egg_Lava_D",
-        "weight": 8
+        "itemId": "crystal_S",
+        "weight": 6
       },
       {
-        "itemId": "Planet_Ce",
+        "itemId": "Egg_Aym_S",
         "weight": 5
       },
       {
-        "itemId": "Blue_D",
+        "itemId": "Poop_S",
+        "weight": 4
+      },
+      {
+        "itemId": "Egg_Dragon_S",
         "weight": 3
       },
       {
-        "itemId": "PlanetTune_Ce",
+        "itemId": "Duck_S",
         "weight": 2
       },
       {
-        "itemId": "Egg_DarkStar_Ce",
+        "itemId": "Flame_D",
         "weight": 1
       }
     ]
@@ -2296,28 +1848,437 @@
     "index": 42,
     "drops": [
       {
+        "itemId": "Purke_M",
+        "weight": 50
+      },
+      {
+        "itemId": "Egg_RockCandy_M",
+        "weight": 13
+      },
+      {
+        "itemId": "Moon_S",
+        "weight": 9
+      },
+      {
+        "itemId": "crystal_S",
+        "weight": 7
+      },
+      {
+        "itemId": "Egg_Aym_S",
+        "weight": 6
+      },
+      {
+        "itemId": "Poop_S",
+        "weight": 5
+      },
+      {
+        "itemId": "Egg_Dragon_S",
+        "weight": 4
+      },
+      {
+        "itemId": "Duck_S",
+        "weight": 3
+      },
+      {
+        "itemId": "Flame_D",
+        "weight": 2
+      },
+      {
+        "itemId": "Frost_D",
+        "weight": 1
+      }
+    ]
+  },
+  {
+    "index": 43,
+    "drops": [
+      {
+        "itemId": "Egg_RockCandy_M",
+        "weight": 50
+      },
+      {
+        "itemId": "Moon_S",
+        "weight": 13
+      },
+      {
+        "itemId": "crystal_S",
+        "weight": 9
+      },
+      {
+        "itemId": "Egg_Aym_S",
+        "weight": 7
+      },
+      {
+        "itemId": "Poop_S",
+        "weight": 6
+      },
+      {
+        "itemId": "Egg_Dragon_S",
+        "weight": 5
+      },
+      {
+        "itemId": "Duck_S",
+        "weight": 4
+      },
+      {
+        "itemId": "Flame_D",
+        "weight": 3
+      },
+      {
+        "itemId": "Frost_D",
+        "weight": 2
+      },
+      {
+        "itemId": "Bomb_D",
+        "weight": 1
+      }
+    ]
+  },
+  {
+    "index": 44,
+    "drops": [
+      {
+        "itemId": "Moon_S",
+        "weight": 50
+      },
+      {
+        "itemId": "crystal_S",
+        "weight": 13
+      },
+      {
+        "itemId": "Egg_Aym_S",
+        "weight": 9
+      },
+      {
+        "itemId": "Poop_S",
+        "weight": 7
+      },
+      {
+        "itemId": "Egg_Dragon_S",
+        "weight": 6
+      },
+      {
+        "itemId": "Duck_S",
+        "weight": 5
+      },
+      {
+        "itemId": "Flame_D",
+        "weight": 4
+      },
+      {
+        "itemId": "Frost_D",
+        "weight": 3
+      },
+      {
+        "itemId": "Bomb_D",
+        "weight": 2
+      },
+      {
         "itemId": "Shadow_D",
-        "weight": 29
+        "weight": 1
+      }
+    ]
+  },
+  {
+    "index": 45,
+    "drops": [
+      {
+        "itemId": "crystal_S",
+        "weight": 50
+      },
+      {
+        "itemId": "Egg_Aym_S",
+        "weight": 13
+      },
+      {
+        "itemId": "Poop_S",
+        "weight": 9
+      },
+      {
+        "itemId": "Egg_Dragon_S",
+        "weight": 7
+      },
+      {
+        "itemId": "Duck_S",
+        "weight": 6
+      },
+      {
+        "itemId": "Flame_D",
+        "weight": 5
+      },
+      {
+        "itemId": "Frost_D",
+        "weight": 4
+      },
+      {
+        "itemId": "Bomb_D",
+        "weight": 3
+      },
+      {
+        "itemId": "Shadow_D",
+        "weight": 2
       },
       {
         "itemId": "Growth_D",
-        "weight": 23
+        "weight": 1
+      }
+    ]
+  },
+  {
+    "index": 46,
+    "drops": [
+      {
+        "itemId": "Egg_Aym_S",
+        "weight": 50
+      },
+      {
+        "itemId": "Poop_S",
+        "weight": 13
+      },
+      {
+        "itemId": "Egg_Dragon_S",
+        "weight": 9
+      },
+      {
+        "itemId": "Duck_S",
+        "weight": 7
+      },
+      {
+        "itemId": "Flame_D",
+        "weight": 6
+      },
+      {
+        "itemId": "Frost_D",
+        "weight": 5
+      },
+      {
+        "itemId": "Bomb_D",
+        "weight": 4
+      },
+      {
+        "itemId": "Shadow_D",
+        "weight": 3
+      },
+      {
+        "itemId": "Growth_D",
+        "weight": 2
       },
       {
         "itemId": "Rainbow_D",
-        "weight": 17
+        "weight": 1
+      }
+    ]
+  },
+  {
+    "index": 47,
+    "drops": [
+      {
+        "itemId": "Poop_S",
+        "weight": 50
+      },
+      {
+        "itemId": "Egg_Dragon_S",
+        "weight": 13
+      },
+      {
+        "itemId": "Duck_S",
+        "weight": 9
+      },
+      {
+        "itemId": "Flame_D",
+        "weight": 7
+      },
+      {
+        "itemId": "Frost_D",
+        "weight": 6
+      },
+      {
+        "itemId": "Bomb_D",
+        "weight": 5
+      },
+      {
+        "itemId": "Shadow_D",
+        "weight": 4
+      },
+      {
+        "itemId": "Growth_D",
+        "weight": 3
+      },
+      {
+        "itemId": "Rainbow_D",
+        "weight": 2
       },
       {
         "itemId": "Egg_Lava_D",
-        "weight": 12
+        "weight": 1
+      }
+    ]
+  },
+  {
+    "index": 48,
+    "drops": [
+      {
+        "itemId": "Egg_Dragon_S",
+        "weight": 50
       },
       {
-        "itemId": "Planet_Ce",
-        "weight": 8
+        "itemId": "Duck_S",
+        "weight": 13
+      },
+      {
+        "itemId": "Flame_D",
+        "weight": 9
+      },
+      {
+        "itemId": "Frost_D",
+        "weight": 7
+      },
+      {
+        "itemId": "Bomb_D",
+        "weight": 6
+      },
+      {
+        "itemId": "Shadow_D",
+        "weight": 5
+      },
+      {
+        "itemId": "Growth_D",
+        "weight": 4
+      },
+      {
+        "itemId": "Rainbow_D",
+        "weight": 3
+      },
+      {
+        "itemId": "Egg_Lava_D",
+        "weight": 2
       },
       {
         "itemId": "Blue_D",
+        "weight": 1
+      }
+    ]
+  },
+  {
+    "index": 49,
+    "drops": [
+      {
+        "itemId": "Duck_S",
+        "weight": 50
+      },
+      {
+        "itemId": "Flame_D",
+        "weight": 13
+      },
+      {
+        "itemId": "Frost_D",
+        "weight": 9
+      },
+      {
+        "itemId": "Bomb_D",
+        "weight": 7
+      },
+      {
+        "itemId": "Shadow_D",
+        "weight": 6
+      },
+      {
+        "itemId": "Growth_D",
         "weight": 5
+      },
+      {
+        "itemId": "Rainbow_D",
+        "weight": 4
+      },
+      {
+        "itemId": "Egg_Lava_D",
+        "weight": 3
+      },
+      {
+        "itemId": "Blue_D",
+        "weight": 2
+      },
+      {
+        "itemId": "PlanetTune_Ce",
+        "weight": 1
+      }
+    ]
+  },
+  {
+    "index": 50,
+    "drops": [
+      {
+        "itemId": "Flame_D",
+        "weight": 50
+      },
+      {
+        "itemId": "Frost_D",
+        "weight": 13
+      },
+      {
+        "itemId": "Bomb_D",
+        "weight": 9
+      },
+      {
+        "itemId": "Shadow_D",
+        "weight": 7
+      },
+      {
+        "itemId": "Growth_D",
+        "weight": 6
+      },
+      {
+        "itemId": "Rainbow_D",
+        "weight": 5
+      },
+      {
+        "itemId": "Egg_Lava_D",
+        "weight": 4
+      },
+      {
+        "itemId": "Blue_D",
+        "weight": 3
+      },
+      {
+        "itemId": "PlanetTune_Ce",
+        "weight": 2
+      },
+      {
+        "itemId": "Egg_DarkStar_Ce",
+        "weight": 1
+      }
+    ]
+  },
+  {
+    "index": 51,
+    "drops": [
+      {
+        "itemId": "Frost_D",
+        "weight": 50
+      },
+      {
+        "itemId": "Bomb_D",
+        "weight": 13
+      },
+      {
+        "itemId": "Shadow_D",
+        "weight": 9
+      },
+      {
+        "itemId": "Growth_D",
+        "weight": 7
+      },
+      {
+        "itemId": "Rainbow_D",
+        "weight": 6
+      },
+      {
+        "itemId": "Egg_Lava_D",
+        "weight": 5
+      },
+      {
+        "itemId": "Blue_D",
+        "weight": 4
       },
       {
         "itemId": "PlanetTune_Ce",
@@ -2334,31 +2295,35 @@
     ]
   },
   {
-    "index": 43,
+    "index": 52,
     "drops": [
       {
+        "itemId": "Bomb_D",
+        "weight": 50
+      },
+      {
+        "itemId": "Shadow_D",
+        "weight": 13
+      },
+      {
         "itemId": "Growth_D",
-        "weight": 29
+        "weight": 9
       },
       {
         "itemId": "Rainbow_D",
-        "weight": 23
+        "weight": 7
       },
       {
         "itemId": "Egg_Lava_D",
-        "weight": 17
-      },
-      {
-        "itemId": "Planet_Ce",
-        "weight": 12
+        "weight": 6
       },
       {
         "itemId": "Blue_D",
-        "weight": 8
+        "weight": 5
       },
       {
         "itemId": "PlanetTune_Ce",
-        "weight": 5
+        "weight": 4
       },
       {
         "itemId": "Egg_DarkStar_Ce",
@@ -2366,6 +2331,51 @@
       },
       {
         "itemId": "Saturn_Ce",
+        "weight": 2
+      },
+      {
+        "itemId": "Planet_Ce",
+        "weight": 1
+      }
+    ]
+  },
+  {
+    "index": 53,
+    "drops": [
+      {
+        "itemId": "Shadow_D",
+        "weight": 50
+      },
+      {
+        "itemId": "Growth_D",
+        "weight": 13
+      },
+      {
+        "itemId": "Rainbow_D",
+        "weight": 9
+      },
+      {
+        "itemId": "Egg_Lava_D",
+        "weight": 7
+      },
+      {
+        "itemId": "Blue_D",
+        "weight": 6
+      },
+      {
+        "itemId": "PlanetTune_Ce",
+        "weight": 5
+      },
+      {
+        "itemId": "Egg_DarkStar_Ce",
+        "weight": 4
+      },
+      {
+        "itemId": "Saturn_Ce",
+        "weight": 3
+      },
+      {
+        "itemId": "Planet_Ce",
         "weight": 2
       },
       {
@@ -2375,27 +2385,27 @@
     ]
   },
   {
-    "index": 44,
+    "index": 54,
     "drops": [
       {
+        "itemId": "Growth_D",
+        "weight": 50
+      },
+      {
         "itemId": "Rainbow_D",
-        "weight": 29
+        "weight": 13
       },
       {
         "itemId": "Egg_Lava_D",
-        "weight": 23
-      },
-      {
-        "itemId": "Planet_Ce",
-        "weight": 17
+        "weight": 9
       },
       {
         "itemId": "Blue_D",
-        "weight": 12
+        "weight": 7
       },
       {
         "itemId": "PlanetTune_Ce",
-        "weight": 8
+        "weight": 6
       },
       {
         "itemId": "Egg_DarkStar_Ce",
@@ -2403,6 +2413,10 @@
       },
       {
         "itemId": "Saturn_Ce",
+        "weight": 4
+      },
+      {
+        "itemId": "Planet_Ce",
         "weight": 3
       },
       {
@@ -2416,31 +2430,35 @@
     ]
   },
   {
-    "index": 45,
+    "index": 55,
     "drops": [
       {
-        "itemId": "Egg_Lava_D",
-        "weight": 29
+        "itemId": "Rainbow_D",
+        "weight": 50
       },
       {
-        "itemId": "Planet_Ce",
-        "weight": 23
+        "itemId": "Egg_Lava_D",
+        "weight": 13
       },
       {
         "itemId": "Blue_D",
-        "weight": 17
+        "weight": 9
       },
       {
         "itemId": "PlanetTune_Ce",
-        "weight": 12
+        "weight": 7
       },
       {
         "itemId": "Egg_DarkStar_Ce",
-        "weight": 8
+        "weight": 6
       },
       {
         "itemId": "Saturn_Ce",
         "weight": 5
+      },
+      {
+        "itemId": "Planet_Ce",
+        "weight": 4
       },
       {
         "itemId": "Earth_Ce",
@@ -2457,31 +2475,35 @@
     ]
   },
   {
-    "index": 46,
+    "index": 56,
     "drops": [
       {
-        "itemId": "Planet_Ce",
-        "weight": 29
+        "itemId": "Egg_Lava_D",
+        "weight": 50
       },
       {
         "itemId": "Blue_D",
-        "weight": 23
+        "weight": 13
       },
       {
         "itemId": "PlanetTune_Ce",
-        "weight": 17
+        "weight": 9
       },
       {
         "itemId": "Egg_DarkStar_Ce",
-        "weight": 12
+        "weight": 7
       },
       {
         "itemId": "Saturn_Ce",
-        "weight": 8
+        "weight": 6
+      },
+      {
+        "itemId": "Planet_Ce",
+        "weight": 5
       },
       {
         "itemId": "Earth_Ce",
-        "weight": 5
+        "weight": 4
       },
       {
         "itemId": "Mars_Ce",
