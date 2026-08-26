@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import { acceptInvitation } from '@/db/repository';
 import { getCurrentUser } from '@/lib/current-user';
+import { assertSameOrigin } from '@/lib/app-auth';
 
 export const dynamic = 'force-dynamic';
 
@@ -9,6 +10,7 @@ const schema = z.object({ token: z.string().min(20).max(200) });
 
 export async function POST(request: Request) {
   try {
+    assertSameOrigin(request);
     const input = schema.parse(await request.json());
     const result = await acceptInvitation({ user: await getCurrentUser(), token: input.token });
     return NextResponse.json({ ok: true, ...result }, {

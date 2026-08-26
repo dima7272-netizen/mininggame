@@ -266,6 +266,20 @@ export function BalanceConsole({ initialConfigs, initialSha }: { initialConfigs:
     }
   }
 
+  async function logout() {
+    setBusy(true);
+    setMessage(null);
+    try {
+      const response = await fetch('/api/auth/logout', { method: 'POST' });
+      const body = await response.json() as { error?: string; redirectTo?: string };
+      if (!response.ok) throw new Error(body.error ?? 'Не удалось выйти.');
+      location.assign(body.redirectTo ?? '/login');
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : 'Не удалось выйти.');
+      setBusy(false);
+    }
+  }
+
   async function saveDraft() {
     const result = await apiAction({
       action: 'save',
@@ -349,6 +363,7 @@ export function BalanceConsole({ initialConfigs, initialSha }: { initialConfigs:
         <div className="sidebar-footer">
           <div className="owner-avatar">{workspace?.user.displayName.slice(0, 2).toUpperCase() ?? 'ДТ'}</div>
           <span className="owner-info"><strong>{workspace?.user.displayName ?? 'Локальный владелец'}</strong><small>{roleLabels[workspace?.access.role ?? 'owner']}</small></span>
+          <button className="logout-button" disabled={busy} onClick={() => void logout()} title="Выйти из аккаунта">Выйти</button>
           <div className="theme-switcher" role="group" aria-label="Режим оформления">
             {themeModes.map((mode) => (
               <button

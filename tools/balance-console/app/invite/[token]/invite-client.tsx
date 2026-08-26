@@ -32,7 +32,7 @@ export function InviteClient({ token }: { token: string }) {
         <div className="brand-mark">D</div>
         <p className="eyebrow">Dig Get Stronger</p>
         <h1>Приглашение в баланс-центр</h1>
-        <p>Войдите в Codex и подтвердите доступ. Открытая регистрация отключена.</p>
+        <p>Подтвердите подключение к команде. Роль и права назначены владельцем приглашения.</p>
         {message && <div className={`invite-message ${state}`}>{message}</div>}
         {state === 'done' ? (
           <Link className="button primary invite-action" href="/">Открыть сервис</Link>

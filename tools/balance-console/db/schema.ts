@@ -24,6 +24,25 @@ export const users = sqliteTable('users', {
   createdAt: integer('created_at').notNull(),
 }, (table) => [uniqueIndex('idx_users_email').on(table.email)]);
 
+export const authCredentials = sqliteTable('auth_credentials', {
+  userId: text('user_id').primaryKey().references(() => users.id),
+  passwordSalt: text('password_salt').notNull(),
+  passwordHash: text('password_hash').notNull(),
+  passwordIterations: integer('password_iterations').notNull(),
+  createdAt: integer('created_at').notNull(),
+  updatedAt: integer('updated_at').notNull(),
+});
+
+export const authSessions = sqliteTable('auth_sessions', {
+  tokenHash: text('token_hash').primaryKey(),
+  userId: text('user_id').notNull().references(() => users.id),
+  createdAt: integer('created_at').notNull(),
+  expiresAt: integer('expires_at').notNull(),
+}, (table) => [
+  index('idx_auth_sessions_user').on(table.userId),
+  index('idx_auth_sessions_expires').on(table.expiresAt),
+]);
+
 export const gameMembers = sqliteTable('game_members', {
   gameId: text('game_id').notNull().references(() => games.id),
   userId: text('user_id').notNull().references(() => users.id),

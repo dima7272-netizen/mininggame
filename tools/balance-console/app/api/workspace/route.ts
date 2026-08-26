@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import { getCurrentUser } from '@/lib/current-user';
+import { assertSameOrigin } from '@/lib/app-auth';
 import {
   createInvitation,
   createVersion,
@@ -91,6 +92,7 @@ export async function GET() {
 
 export async function POST(request: Request) {
   try {
+    assertSameOrigin(request);
     const user = await getCurrentUser();
     const workspace = await getWorkspace(user);
     const input = actionSchema.parse(await request.json());
