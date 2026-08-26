@@ -1,0 +1,94 @@
+{
+  "schemaVersion": 1,
+  "source": {
+    "placeId": "104830450645212",
+    "placeVersion": 89,
+    "rarityPath": "ReplicatedStorage.Game.Rarities.RarityConfig",
+    "itemPath": "ReplicatedStorage.Game.Selling.SellItemConfig",
+    "readOnly": true
+  },
+  "groupCount": 10,
+  "itemCount": 75,
+  "groups": [
+    {
+      "id": "Common",
+      "nameRu": "Обычные",
+      "displayName": "COMMON",
+      "primaryColor": "#696f79",
+      "colors": ["#696f79"],
+      "itemIds": ["Cardboard_C", "DinosaurEgg_C", "Handle_C", "barrel_C", "Burger_C"]
+    },
+    {
+      "id": "Uncommon",
+      "nameRu": "Необычные",
+      "displayName": "UNCOMMON",
+      "primaryColor": "#37a856",
+      "colors": ["#37a856"],
+      "itemIds": ["crate-bottles_u", "pot-stew_u", "cannon-mobile_u", "PirateHat_u", "Guitar_u", "Handle_u"]
+    },
+    {
+      "id": "Rare",
+      "nameRu": "Редкие",
+      "displayName": "RARE",
+      "primaryColor": "#3470da",
+      "colors": ["#3470da"],
+      "itemIds": ["ship-wreck_r", "ship-small_r", "ship-pirate-small_r", "Low Poly_r", "Low Poly1_r", "crystal_r", "Dimond_r", "Egg_Ice_r"]
+    },
+    {
+      "id": "Epic",
+      "nameRu": "Эпические",
+      "displayName": "EPIC",
+      "primaryColor": "#713dcd",
+      "colors": ["#713dcd", "#d35ae7", "#713dcd"],
+      "itemIds": ["WoodCrate_e", "oldtv_e", "Gift_box1_e", "Gift_box2_e", "Gift_box3_e", "Raket_e", "Tort_e", "crystal_e"]
+    },
+    {
+      "id": "Legendary",
+      "nameRu": "Легендарные",
+      "displayName": "LEGENDARY",
+      "primaryColor": "#d66823",
+      "colors": ["#d66823", "#ffd65b", "#d66823"],
+      "itemIds": ["Chest_L", "Trophy_L", "Crown_L", "turkey_L", "Money_L", "LuckyBlock1_L", "LuckyBlock2_L"]
+    },
+    {
+      "id": "Mythic",
+      "nameRu": "Мифические",
+      "displayName": "MYTHIC",
+      "primaryColor": "#9f255f",
+      "colors": ["#9f255f", "#ff5f9d", "#9f255f"],
+      "itemIds": ["crystal_M", "Egg_Malicious_M", "bensrock_M", "Ocian_M", "Plan_M", "Lava_M", "Egg_Galaxy_M", "Purke_M", "Egg_RockCandy_M"]
+    },
+    {
+      "id": "Secret",
+      "nameRu": "Секретные",
+      "displayName": "SECRET",
+      "primaryColor": "#2a1c41",
+      "colors": ["#2a1c41", "#8f39a6", "#2a1c41"],
+      "itemIds": ["Moon_S", "crystal_S", "Egg_Aym_S", "Poop_S", "Egg_Dragon_S", "Duck_S"]
+    },
+    {
+      "id": "Godly",
+      "nameRu": "Богоподобные",
+      "displayName": "GODLY",
+      "primaryColor": "#d23d2a",
+      "colors": ["#d23d2a", "#ffe07e", "#d23d2a"],
+      "itemIds": ["Toilet_G", "Shrimp_G", "Shark_G", "Simpol_G", "Crocodile_G", "Pork_G", "Reporter_G", "SeagullCar_G", "Sushi_G", "Elephant_G"]
+    },
+    {
+      "id": "Divine",
+      "nameRu": "Божественные",
+      "displayName": "DIVINE",
+      "primaryColor": "#54cbde",
+      "colors": ["#54cbde", "#fff7b7", "#bf79e7", "#54cbde"],
+      "itemIds": ["Flame_D", "Frost_D", "Bomb_D", "Shadow_D", "Growth_D", "Rainbow_D", "Egg_Lava_D", "Blue_D"]
+    },
+    {
+      "id": "Celestial",
+      "nameRu": "Небесные",
+      "displayName": "CELESTIAL",
+      "primaryColor": "#455ad2",
+      "colors": ["#455ad2", "#59dcd6", "#ffe081", "#db64dc", "#455ad2"],
+      "itemIds": ["PlanetTune_Ce", "Egg_DarkStar_Ce", "Saturn_Ce", "Planet_Ce", "Earth_Ce", "Mars_Ce", "Water_Ce", "Vulcan_Ce"]
+    }
+  ]
+}

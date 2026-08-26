@@ -3,10 +3,12 @@
 import Decimal from 'decimal.js';
 import { useEffect, useMemo, useState, type CSSProperties, type ReactNode } from 'react';
 import { ItemIcon, ItemIconDiagnostics } from './item-icon';
+import { RewardGroupBadge, RewardGroupLabel } from './reward-group-badge';
 import { LineChart } from './line-chart';
 import { formatExact, type RoomEconomy } from '@/lib/analytics';
 import type { KnownConfigs, RoomDrop } from '@/lib/config-model';
 import { itemsForRoom } from '@/lib/game-formulas';
+import { getRewardGroup, rewardGroups } from '@/lib/reward-groups';
 import {
   analyzeRewardProgression,
   applyRewardSuggestion,
@@ -28,11 +30,10 @@ import {
   type RewardSuggestion,
 } from '@/lib/reward-progression';
 
-type ViewMode = 'map' | 'neighbors' | 'analytics' | 'catalog' | 'suggestions' | 'generator' | 'icons';
+type ViewMode = 'map' | 'neighbors' | 'analytics' | 'catalog' | 'groups' | 'suggestions' | 'generator' | 'icons';
 
 type RewardMetadata = Record<string, {
   manualRank?: number;
-  group?: string;
   protected?: boolean;
   event?: boolean;
 }>;
@@ -268,7 +269,12 @@ export function RewardMapEditor({
   }
 
   const filteredLifecycles = analysis.lifecycles.filter((item) => {
-    const matchesSearch = !search.trim() || item.itemId.toLocaleLowerCase('ru-RU').includes(search.trim().toLocaleLowerCase('ru-RU'));
+    const query = search.trim().toLocaleLowerCase('ru-RU');
+    const group = getRewardGroup(item.itemId);
+    const matchesSearch = !query
+      || item.itemId.toLocaleLowerCase('ru-RU').includes(query)
+      || group?.id.toLocaleLowerCase('ru-RU').includes(query)
+      || group?.nameRu.toLocaleLowerCase('ru-RU').includes(query);
     const matchesRoom = !onlySelectedRoom || item.placements.some((placement) => placement.roomIndex === selectedRoom);
     return matchesSearch && matchesRoom;
   });
@@ -276,7 +282,7 @@ export function RewardMapEditor({
   return <div className="reward-map-page">
     <header className="reward-map-heading">
       <div><p className="eyebrow">Визуальный редактор RoomDrops</p><h1>Карта наград</h1><p>{known.sellItems.length} наград × {known.rooms.length} комнат · точные проценты, жизненные циклы, предложения и безопасный генератор черновика.</p></div>
-      <div className="reward-map-summary"><ItemIcon itemId={selectedItem} size="lg" /><div><span>Выбрано</span><strong>{selectedItem || '—'}</strong><small>Комната {selectedRoom} · {selectedDrop?.weight ?? 0}%</small></div></div>
+      <div className="reward-map-summary"><ItemIcon itemId={selectedItem} size="lg" /><div><span>Выбрано</span><strong>{selectedItem || '—'}</strong><RewardGroupBadge itemId={selectedItem} compact /><small>Комната {selectedRoom} · {selectedDrop?.weight ?? 0}%</small></div></div>
     </header>
 
     <nav className="reward-view-tabs" aria-label="Режим карты наград">
@@ -285,6 +291,7 @@ export function RewardMapEditor({
         ['neighbors', 'Комната и следующие'],
         ['analytics', 'Графики и показатели'],
         ['catalog', 'Каталог и цены'],
+        ['groups', `Группы наград · ${rewardGroups.length}`],
         ['suggestions', `Предложения · ${suggestions.filter((item) => !dismissed[item.id]).length}`],
         ['generator', 'Автогенератор'],
         ['icons', 'Проверка иконок'],
@@ -388,6 +395,8 @@ export function RewardMapEditor({
 
     {mode === 'catalog' && <RewardCatalog known={known} analysis={analysis} commitNumber={commitNumber} onSelect={(itemId) => { setSelectedItem(itemId); setMode('map'); }} />}
 
+    {mode === 'groups' && <RewardGroupsView known={known} analysis={analysis} onSelect={(itemId) => { setSelectedItem(itemId); setMode('map'); }} />}
+
     {mode === 'suggestions' && <section className="suggestion-layout">
       <article className="panel suggestion-rules"><h2>Как формируются предложения</h2><p>Правила объяснимы и работают локально: вход новой награды выше 3%, небезопасное удаление после большого шанса, больше 11 типов, слабые предметы выше 20% пула, три комнаты без новизны, повторные появления и отставание награды от HP.</p><details><summary>Защита резкого удаления</summary><p>Удаление сразу в 0% считается нормальным только когда более сильные награды действительно получают освободившийся шанс, ожидаемая ценность не падает и шанс хорошей награды не ухудшается.</p></details><details><summary>Условные показатели</summary><p><b>Новизна</b> — число новых предметов и их джекпотная доля. <b>Захламление</b> — число типов сверх девяти и доля предметов дешевле 20% средней цены. <b>Джекпот</b> — доля новых предметов дороже средней цены. Это расчётные индикаторы, не поведение игроков.</p></details></article>
       <div className="suggestion-list">{suggestions.filter((suggestion) => !dismissed[suggestion.id]).map((suggestion) => <article className={`panel suggestion-card ${suggestion.severity}`} key={suggestion.id}><header><span>{suggestion.severity === 'warning' ? '!' : 'i'}</span><div><small>{suggestion.rooms.map((room) => `Комната ${room}`).join(' · ')}</small><h3>{suggestion.title}</h3></div></header><p>{suggestion.reason}</p><div className="suggestion-proposal"><strong>Предлагаемое изменение</strong><span>{suggestion.proposal}</span><small>Прогноз: {suggestion.impact}</small></div>{suggestion.itemIds.length > 0 && <div className="suggestion-items">{suggestion.itemIds.slice(0, 8).map((itemId) => <span className="suggestion-item" key={itemId}><ItemIcon itemId={itemId} size="xs" /><code>{itemId}</code></span>)}</div>}<footer><button className="button secondary" onClick={() => { setSelectedRoom(suggestion.rooms[0]); if (suggestion.itemIds[0]) setSelectedItem(suggestion.itemIds[0]); setMode('map'); }}>Показать на карте</button><button className="button primary" disabled={!canEdit} onClick={() => makeSuggestionPreview(suggestion)}>Предпросмотр</button><button className="text-button" onClick={() => setDismissTarget(suggestion.id)}>Отклонить</button></footer>{dismissTarget === suggestion.id && <div className="dismiss-reason"><label>Причина<input value={dismissReason} onChange={(event) => setDismissReason(event.target.value)} /></label><button disabled={dismissReason.trim().length < 3} onClick={() => { const next = { ...dismissed, [suggestion.id]: dismissReason.trim() }; setDismissed(next); localStorage.setItem('dig-reward-map-dismissed', JSON.stringify(next)); setDismissTarget(null); }}>Сохранить отклонение</button></div>}</article>)}</div>
@@ -475,7 +484,7 @@ function RewardCellEditor({
     : !new Decimal(draft).equals(weight));
   const needsNormalization = !new Decimal(roomTotal).equals(100);
   return <article className="panel map-cell-editor">
-    <div className="cell-editor-heading"><ItemIcon itemId={itemId} size="lg" /><span className={`stage-icon ${stage}`}>{stageSymbol(stage)}</span><div><small>Комната {roomIndex} · {stageLabel(stage)}</small><h2>{itemId || 'Выберите награду'}</h2><p>Сумма комнаты сейчас <b className={new Decimal(roomTotal).equals(100) ? 'sum-ok' : 'sum-error'}>{roomTotal}%</b></p></div></div>
+    <div className="cell-editor-heading"><ItemIcon itemId={itemId} size="lg" /><span className={`stage-icon ${stage}`}>{stageSymbol(stage)}</span><div><small>Комната {roomIndex} · {stageLabel(stage)}</small><h2>{itemId || 'Выберите награду'}</h2><RewardGroupBadge itemId={itemId} compact /><p>Сумма комнаты сейчас <b className={new Decimal(roomTotal).equals(100) ? 'sum-ok' : 'sum-error'}>{roomTotal}%</b></p></div></div>
     <label className="weight-editor"><span>Точный процент</span><div><input inputMode="decimal" value={draft} disabled={!canEdit || locked} onChange={(event) => onDraft(event.target.value)} /><b>%</b></div><input type="range" min="0" max="100" step="0.1" value={Math.min(100, Math.max(0, Number(draft) || 0))} disabled={!canEdit || locked} onChange={(event) => onDraft(event.target.value)} /></label>
     <div className="cell-primary-actions"><button className="button primary" disabled={!canEdit || locked || !validWeight(draft) || (!weightChanged && !needsNormalization)} onClick={() => onApply(true)}>{weight === null ? 'Добавить и нормализовать' : 'Изменить + нормализовать'}</button><button className="button secondary" disabled={!canEdit || locked || !weightChanged} onClick={() => onApply(false)}>Оставить временную сумму</button>{weight !== null && <button className="button secondary danger-outline" disabled={!canEdit || locked} onClick={onRemove}>Удалить</button>}</div>
     <div className="cell-tools"><button className={locked ? 'active' : ''} disabled={!canEdit} onClick={onToggleLock}>{locked ? '■ Значение заблокировано' : '□ Заблокировать ячейку'}</button><button disabled={!canEdit || !needsNormalization} onClick={onNormalize}>Нормализовать комнату</button><button disabled={!canEdit || roomIndex <= 1} onClick={onCopyPrevious}>Копировать предыдущую</button><button disabled={!canEdit} onClick={() => onShift(-1)}>← Схема назад</button><button disabled={!canEdit} onClick={() => onShift(1)}>Схема вперёд →</button></div>
@@ -493,7 +502,7 @@ function RewardHeatmapRow({ lifecycle, known, selectedItem, selectedRoom, locked
   onSelect: (itemId: string, roomIndex: number) => void;
 }) {
   const price = known.sellItems.find((item) => item.id === lifecycle.itemId)?.sellPrice ?? '0';
-  return <tr className={lifecycle.itemId === selectedItem ? 'selected-row' : ''}><th className="reward-name-column"><button onClick={() => onSelect(lifecycle.itemId, selectedRoom)}><ItemIcon itemId={lifecycle.itemId} size="md" /><span><strong>{lifecycle.itemId}</strong><small>{formatExact(price).short} · комнаты {lifecycle.firstRoom ?? '—'}–{lifecycle.lastRoom ?? '—'}</small></span></button></th>{known.rooms.map((room) => {
+  return <tr className={lifecycle.itemId === selectedItem ? 'selected-row' : ''}><th className="reward-name-column"><button onClick={() => onSelect(lifecycle.itemId, selectedRoom)}><ItemIcon itemId={lifecycle.itemId} size="md" /><span><strong>{lifecycle.itemId}</strong><RewardGroupBadge itemId={lifecycle.itemId} compact /><small>{formatExact(price).short} · комнаты {lifecycle.firstRoom ?? '—'}–{lifecycle.lastRoom ?? '—'}</small></span></button></th>{known.rooms.map((room) => {
     const placement = lifecycle.placements.find((item) => item.roomIndex === room.index);
     const weight = placement?.weight ?? '0';
     const stage = rewardStage(lifecycle, room.index);
@@ -511,7 +520,7 @@ function LifecyclePanel({ lifecycle, known, metadata, onMetadata }: {
   onMetadata: (patch: RewardMetadata[string]) => void;
 }) {
   const values = known.rooms.map((room) => Number(lifecycle.placements.find((placement) => placement.roomIndex === room.index)?.weight ?? 0));
-  return <article className="panel lifecycle-panel"><div className="lifecycle-details"><p className="eyebrow">Жизненный цикл награды</p><div className="lifecycle-title"><ItemIcon itemId={lifecycle.itemId} size="xl" /><h2>{lifecycle.itemId}</h2></div><div className="lifecycle-stats"><span><small>Цена</small><strong>{formatExact(lifecycle.sellPrice).short}</strong></span><span><small>Авторанг по цене</small><strong>#{lifecycle.automaticRank}</strong></span><span><small>Первая комната</small><strong>{lifecycle.firstRoom ?? '—'}</strong></span><span><small>Большой шанс</small><strong>{lifecycle.peakRoom ?? '—'} · {lifecycle.maximumWeight}%</strong></span><span><small>Последняя перед 0%</small><strong>{lifecycle.lastRoom ?? '—'}</strong></span><span><small>Длина жизни</small><strong>{lifecycle.activeRoomCount} комн.</strong></span></div><label className="manual-rank"><span>Ручной ранг прогрессии</span><input type="number" min="1" max={known.sellItems.length} value={metadata?.manualRank ?? lifecycle.automaticRank} onChange={(event) => onMetadata({ manualRank: Number(event.target.value) })} /><small>{metadata?.manualRank && metadata.manualRank !== lifecycle.automaticRank ? 'Ручной ранг отличается от порядка цены — это допустимое наблюдение.' : 'Сейчас совпадает с автоматическим рангом по цене.'}</small></label><label className="manual-rank"><span>Служебная группа</span><input value={metadata?.group ?? ''} placeholder="Например: космос, событие" onChange={(event) => onMetadata({ group: event.target.value })} /></label></div><div className="lifecycle-chart"><LineChart labels={known.rooms.map((room) => String(room.index))} xAxisLabel="Номер комнаты" yAxisLabel="Вероятность, %" height={360} series={[{ label: lifecycle.itemId, color: '#6b5ce7', values }]} ariaLabel={`Процент ${lifecycle.itemId} по комнатам`} /></div></article>;
+  return <article className="panel lifecycle-panel"><div className="lifecycle-details"><p className="eyebrow">Жизненный цикл награды</p><div className="lifecycle-title"><ItemIcon itemId={lifecycle.itemId} size="xl" /><div><h2>{lifecycle.itemId}</h2><RewardGroupBadge itemId={lifecycle.itemId} /></div></div><div className="lifecycle-stats"><span><small>Цена</small><strong>{formatExact(lifecycle.sellPrice).short}</strong></span><span><small>Авторанг по цене</small><strong>#{lifecycle.automaticRank}</strong></span><span><small>Первая комната</small><strong>{lifecycle.firstRoom ?? '—'}</strong></span><span><small>Большой шанс</small><strong>{lifecycle.peakRoom ?? '—'} · {lifecycle.maximumWeight}%</strong></span><span><small>Последняя перед 0%</small><strong>{lifecycle.lastRoom ?? '—'}</strong></span><span><small>Длина жизни</small><strong>{lifecycle.activeRoomCount} комн.</strong></span></div><label className="manual-rank"><span>Ручной ранг прогрессии</span><input type="number" min="1" max={known.sellItems.length} value={metadata?.manualRank ?? lifecycle.automaticRank} onChange={(event) => onMetadata({ manualRank: Number(event.target.value) })} /><small>{metadata?.manualRank && metadata.manualRank !== lifecycle.automaticRank ? 'Ручной ранг отличается от порядка цены — это допустимое наблюдение.' : 'Сейчас совпадает с автоматическим рангом по цене.'}</small></label><div className="real-group-source"><strong>Группа задана в игре</strong><span>Источник: SellItemConfig → rarity. В сервисе она не вычисляется по цене и не редактируется.</span></div></div><div className="lifecycle-chart"><LineChart labels={known.rooms.map((room) => String(room.index))} xAxisLabel="Номер комнаты" yAxisLabel="Вероятность, %" height={360} series={[{ label: lifecycle.itemId, color: getRewardGroup(lifecycle.itemId)?.primaryColor ?? '#6b5ce7', values }]} ariaLabel={`Процент ${lifecycle.itemId} по комнатам`} /></div></article>;
 }
 
 function NeighborsView({ known, analysis, selectedRoom, selectedItem, onRoom, onCell }: {
@@ -525,7 +534,7 @@ function NeighborsView({ known, analysis, selectedRoom, selectedItem, onRoom, on
   const rooms = known.rooms.filter((room) => room.index >= selectedRoom - 2 && room.index <= selectedRoom + 5);
   const items = Array.from(new Set(rooms.flatMap((room) => known.roomDrops.find((dropRoom) => dropRoom.index === room.index)?.drops.map((drop) => drop.itemId) ?? [])))
     .sort((left, right) => (analysis.ranks.get(left) ?? 0) - (analysis.ranks.get(right) ?? 0));
-  return <article className="panel neighbor-panel"><header><div><p className="eyebrow">Сравнение соседних комнат</p><h2>Комната {selectedRoom} и следующие</h2><p>Две предыдущие, выбранная и пять следующих комнат. Строки наград выровнены для быстрого сравнения.</p></div><label>Центральная комната<select value={selectedRoom} onChange={(event) => onRoom(Number(event.target.value))}>{known.rooms.map((room) => <option key={room.index} value={room.index}>{room.index}</option>)}</select></label></header><div className="neighbor-scroll"><table className="neighbor-table"><thead><tr><th>Награда · цена</th>{rooms.map((room) => { const metric = analysis.metricByRoom.get(room.index); return <th className={room.index === selectedRoom ? 'current' : ''} key={room.index}><strong>Комната {room.index}</strong><small>{metric?.activeCount} типов · +{metric?.newCount} новых · {metric?.lastCount} последних</small><span>Средняя {formatExact(metric?.expectedItemPrice ?? '0').short}</span></th>; })}</tr></thead><tbody>{items.map((itemId) => { const lifecycle = analysis.lifecycleByItem.get(itemId); const price = known.sellItems.find((item) => item.id === itemId)?.sellPrice ?? '0'; return <tr className={itemId === selectedItem ? 'selected' : ''} key={itemId}><th><button onClick={() => onCell(itemId, selectedRoom)}><ItemIcon itemId={itemId} size="sm" /><span><strong>{itemId}</strong><small>#{analysis.ranks.get(itemId)} · {formatExact(price).short}</small></span></button></th>{rooms.map((room) => { const current = known.roomDrops.find((dropRoom) => dropRoom.index === room.index)?.drops.find((drop) => drop.itemId === itemId); const previous = known.roomDrops.find((dropRoom) => dropRoom.index === room.index - 1)?.drops.find((drop) => drop.itemId === itemId); const delta = new Decimal(current?.weight ?? 0).minus(previous?.weight ?? 0); const stage = rewardStage(lifecycle, room.index); const roomAttemptCount = itemsForRoom(room.index, known.sellSettings); return <td className={`${stage} ${room.index === selectedRoom ? 'current' : ''}`} key={room.index}><button onClick={() => onCell(itemId, room.index)}>{current ? <><strong>{current.weight}%</strong><small>{delta.isZero() ? '0' : `${delta.isPositive() ? '+' : ''}${delta.toString()} п.п.`}</small><span>{stageSymbol(stage)} {stageLabel(stage)}</span><small className="attempt-chance">≥1 из {roomAttemptCount}: {probabilityAtLeastOnce(current.weight, roomAttemptCount)}%</small></> : <i>{stage === 'removed' ? '0% · удалена' : '—'}</i>}</button></td>; })}</tr>; })}</tbody></table></div><footer className="mechanics-footnote">Игровой расчёт 1−(1−p)ⁿ: n=7 в нечётных комнатах и n=8 в чётных. Каждый столбец использует собственное точное n.</footer></article>;
+  return <article className="panel neighbor-panel"><header><div><p className="eyebrow">Сравнение соседних комнат</p><h2>Комната {selectedRoom} и следующие</h2><p>Две предыдущие, выбранная и пять следующих комнат. Строки наград выровнены для быстрого сравнения.</p></div><label>Центральная комната<select value={selectedRoom} onChange={(event) => onRoom(Number(event.target.value))}>{known.rooms.map((room) => <option key={room.index} value={room.index}>{room.index}</option>)}</select></label></header><div className="neighbor-scroll"><table className="neighbor-table"><thead><tr><th>Награда · группа · цена</th>{rooms.map((room) => { const metric = analysis.metricByRoom.get(room.index); return <th className={room.index === selectedRoom ? 'current' : ''} key={room.index}><strong>Комната {room.index}</strong><small>{metric?.activeCount} типов · +{metric?.newCount} новых · {metric?.lastCount} последних</small><span>Средняя {formatExact(metric?.expectedItemPrice ?? '0').short}</span></th>; })}</tr></thead><tbody>{items.map((itemId) => { const lifecycle = analysis.lifecycleByItem.get(itemId); const price = known.sellItems.find((item) => item.id === itemId)?.sellPrice ?? '0'; return <tr className={itemId === selectedItem ? 'selected' : ''} key={itemId}><th><button onClick={() => onCell(itemId, selectedRoom)}><ItemIcon itemId={itemId} size="sm" /><span><strong>{itemId}</strong><RewardGroupBadge itemId={itemId} compact /><small>#{analysis.ranks.get(itemId)} · {formatExact(price).short}</small></span></button></th>{rooms.map((room) => { const current = known.roomDrops.find((dropRoom) => dropRoom.index === room.index)?.drops.find((drop) => drop.itemId === itemId); const previous = known.roomDrops.find((dropRoom) => dropRoom.index === room.index - 1)?.drops.find((drop) => drop.itemId === itemId); const delta = new Decimal(current?.weight ?? 0).minus(previous?.weight ?? 0); const stage = rewardStage(lifecycle, room.index); const roomAttemptCount = itemsForRoom(room.index, known.sellSettings); return <td className={`${stage} ${room.index === selectedRoom ? 'current' : ''}`} key={room.index}><button onClick={() => onCell(itemId, room.index)}>{current ? <><strong>{current.weight}%</strong><small>{delta.isZero() ? '0' : `${delta.isPositive() ? '+' : ''}${delta.toString()} п.п.`}</small><span>{stageSymbol(stage)} {stageLabel(stage)}</span><small className="attempt-chance">≥1 из {roomAttemptCount}: {probabilityAtLeastOnce(current.weight, roomAttemptCount)}%</small></> : <i>{stage === 'removed' ? '0% · удалена' : '—'}</i>}</button></td>; })}</tr>; })}</tbody></table></div><footer className="mechanics-footnote">Игровой расчёт 1−(1−p)ⁿ: n=7 в нечётных комнатах и n=8 в чётных. Каждый столбец использует собственное точное n.</footer></article>;
 }
 
 function RewardAnalyticsView({ known, analysis, selectedRoom, selectedItem, onRoom }: {
@@ -540,10 +549,6 @@ function RewardAnalyticsView({ known, analysis, selectedRoom, selectedItem, onRo
   const labels = known.rooms.map((room) => String(room.index));
   const colors = ['#6658e8', '#12a47c', '#e58b2b', '#d05475'];
   const priceByItem = new Map(known.sellItems.map((item) => [item.id, new Decimal(item.sellPrice)]));
-  const sortedItems = [...known.sellItems].sort((left, right) => new Decimal(left.sellPrice).comparedTo(right.sellPrice));
-  const groupNames = ['Базовые 25%', 'Развитие 25%', 'Сильные 25%', 'Топ 25%'];
-  const groupColors = ['#8d84dc', '#4d86d9', '#13a47b', '#e58b2b'];
-  const groupByItem = new Map(sortedItems.map((item, index) => [item.id, Math.min(3, Math.floor(index * 4 / Math.max(sortedItems.length, 1)))]));
   const selectedRoomDrops = [...(known.roomDrops.find((room) => room.index === selectedRoom)?.drops ?? [])]
     .sort((left, right) => new Decimal(right.weight).comparedTo(left.weight));
   const newRewardChance = known.roomDrops.map((room) => {
@@ -557,10 +562,10 @@ function RewardAnalyticsView({ known, analysis, selectedRoom, selectedItem, onRo
     color: colors[index],
     values: known.rooms.map((room) => Number(known.roomDrops.find((dropRoom) => dropRoom.index === room.index)?.drops.find((drop) => drop.itemId === itemId)?.weight ?? 0)),
   }));
-  const groupSeries = groupNames.map((name, groupIndex) => ({
-    label: name,
-    color: groupColors[groupIndex],
-    values: known.roomDrops.map((room) => room.drops.reduce((sum, drop) => groupByItem.get(drop.itemId) === groupIndex ? sum + Number(drop.weight) : sum, 0)),
+  const groupSeries = rewardGroups.map((group) => ({
+    label: group.nameRu,
+    color: group.primaryColor,
+    values: known.roomDrops.map((room) => room.drops.reduce((sum, drop) => getRewardGroup(drop.itemId)?.id === group.id ? sum + Number(drop.weight) : sum, 0)),
   }));
 
   return <section className="reward-analytics">
@@ -568,8 +573,8 @@ function RewardAnalyticsView({ known, analysis, selectedRoom, selectedItem, onRo
 
     <div className="analytics-grid">
       <AnalyticsChart title="Выбранные награды" note="До четырёх линий; основная награда выбирается на тепловой карте."><LineChart labels={labels} xAxisLabel="Номер комнаты" yAxisLabel="Вероятность, %" height={330} series={comparisonSeries} ariaLabel="Сравнение выбранных наград" /></AnalyticsChart>
-      <article className="panel analytics-card room-composition"><header><h3>Состав комнаты {selectedRoom}</h3><p>Точные доли активных наград.</p></header><div>{selectedRoomDrops.map((drop) => <span key={drop.itemId}><ItemIcon itemId={drop.itemId} size="sm" /><label><b>{drop.itemId}</b><small>{formatExact(priceByItem.get(drop.itemId)?.toString() ?? '0').short}</small></label><i><em style={{ width: `${Math.min(100, Number(drop.weight))}%` }} /></i><strong>{drop.weight}%</strong></span>)}</div></article>
-      <AnalyticsChart title="Группы ценности" note="Награды разбиты на четыре равные группы по цене продажи."><LineChart labels={labels} xAxisLabel="Номер комнаты" yAxisLabel="Доля группы, %" height={330} series={groupSeries} ariaLabel="Состав выпадения по группам ценности" /></AnalyticsChart>
+      <article className="panel analytics-card room-composition"><header><h3>Состав комнаты {selectedRoom}</h3><p>Точные доли активных наград и их реальные игровые группы.</p></header><div>{selectedRoomDrops.map((drop) => <span key={drop.itemId}><ItemIcon itemId={drop.itemId} size="sm" /><label><b>{drop.itemId}</b><RewardGroupBadge itemId={drop.itemId} compact /><small>{formatExact(priceByItem.get(drop.itemId)?.toString() ?? '0').short}</small></label><i><em style={{ width: `${Math.min(100, Number(drop.weight))}%` }} /></i><strong>{drop.weight}%</strong></span>)}</div></article>
+      <AnalyticsChart title="Игровые группы наград" note="Точные rarity-группы из RarityConfig и SellItemConfig, а не деление по цене."><LineChart labels={labels} xAxisLabel="Номер комнаты" yAxisLabel="Доля группы, %" height={330} series={groupSeries} ariaLabel="Состав выпадения по игровым группам наград" /></AnalyticsChart>
       <AnalyticsChart title="Ожидаемая цена предмета" note="Σ(вес × цена); подтверждённый расчёт по RoomDrops и SellItems."><LineChart labels={labels} xAxisLabel="Номер комнаты" yAxisLabel="Ожидаемая цена" height={330} series={[{ label: 'Ожидаемая цена', color: '#12a47c', values: analysis.metrics.map((metric) => Number(metric.expectedItemPrice) || 0) }]} ariaLabel="Ожидаемая цена награды по комнатам" /></AnalyticsChart>
       <AnalyticsChart title="HP и ожидаемая награда" note="Обе величины показаны в log₁₀, чтобы сравнить темп роста."><LineChart labels={labels} xAxisLabel="Номер комнаты" yAxisLabel="Значение · log₁₀" height={330} series={[{ label: 'HP блока', color: '#6658e8', values: known.rooms.map((room) => safeLog10(room.blockMaxHP)) }, { label: 'Ожидаемая награда', color: '#12a47c', values: analysis.metrics.map((metric) => safeLog10(metric.expectedItemPrice)) }]} ariaLabel="Связанные графики HP и ожидаемой награды" /></AnalyticsChart>
       <AnalyticsChart title="Шанс увидеть новую награду" note="Хотя бы один раз: 7 бросков в нечётных комнатах и 8 в чётных."><LineChart labels={labels} xAxisLabel="Номер комнаты" yAxisLabel="Шанс, %" height={330} series={[{ label: '≥1 из 7/8', color: '#e58b2b', values: newRewardChance }]} ariaLabel="Шанс увидеть новую награду" /></AnalyticsChart>
@@ -591,13 +596,59 @@ function RewardCatalog({ known, analysis, commitNumber, onSelect }: {
 }) {
   const [query, setQuery] = useState('');
   const [sort, setSort] = useState<'rank' | 'price-asc' | 'price-desc' | 'name'>('rank');
-  const rows = analysis.lifecycles.filter((item) => !query.trim() || item.itemId.toLowerCase().includes(query.toLowerCase())).sort((left, right) => {
+  const [groupId, setGroupId] = useState('all');
+  const normalizedQuery = query.trim().toLocaleLowerCase('ru-RU');
+  const rows = analysis.lifecycles.filter((item) => {
+    const group = getRewardGroup(item.itemId);
+    const matchesQuery = !normalizedQuery
+      || item.itemId.toLocaleLowerCase('ru-RU').includes(normalizedQuery)
+      || group?.nameRu.toLocaleLowerCase('ru-RU').includes(normalizedQuery)
+      || group?.id.toLocaleLowerCase('ru-RU').includes(normalizedQuery);
+    return matchesQuery && (groupId === 'all' || group?.id === groupId);
+  }).sort((left, right) => {
     if (sort === 'price-asc') return new Decimal(left.sellPrice).comparedTo(right.sellPrice);
     if (sort === 'price-desc') return new Decimal(right.sellPrice).comparedTo(left.sellPrice);
     if (sort === 'name') return left.itemId.localeCompare(right.itemId);
     return left.automaticRank - right.automaticRank;
   });
-  return <article className="panel editor-panel rewards-catalog"><div className="panel-heading"><div><h2>Все награды и стоимости</h2><p>{rows.length} из {known.sellItems.length} · цена редактируется точно</p></div></div><div className="rewards-toolbar"><label className="reward-search"><span>Поиск</span><input type="search" value={query} placeholder="Название награды" onChange={(event) => setQuery(event.target.value)} /></label><label className="reward-sort"><span>Порядок</span><select value={sort} onChange={(event) => setSort(event.target.value as typeof sort)}><option value="rank">По прогрессии</option><option value="price-asc">Сначала дешёвые</option><option value="price-desc">Сначала дорогие</option><option value="name">По названию</option></select></label></div><div className="table-scroll rewards-scroll"><table className="data-table rewards-table"><thead><tr><th>Ранг</th><th>Награда</th><th>Цена продажи</th><th>Коротко</th><th>Первая</th><th>Большой шанс</th><th>Последняя перед 0%</th><th>Комнат жизни</th></tr></thead><tbody>{rows.map((row) => { const itemIndex = known.sellItems.findIndex((item) => item.id === row.itemId); return <tr key={row.itemId}><td><strong className="reward-number">{row.automaticRank}</strong></td><td><button className="catalog-item-link" onClick={() => onSelect(row.itemId)}><ItemIcon itemId={row.itemId} size="md" /><span><strong>{row.itemId}</strong><small>Открыть на карте</small></span></button></td><td><InlineExactInput label={`Цена награды ${row.automaticRank} ${row.itemId}`} value={row.sellPrice} onCommit={(value) => commitNumber('SellItems', `$/items/${itemIndex}/sellPrice`, value)} /></td><td>{formatExact(row.sellPrice).short}</td><td>{row.firstRoom ?? '—'}</td><td>{row.peakRoom ?? '—'} · {row.maximumWeight}%</td><td>{row.lastRoom ?? '—'}</td><td>{row.activeRoomCount}</td></tr>; })}</tbody></table></div></article>;
+  return <article className="panel editor-panel rewards-catalog"><div className="panel-heading"><div><h2>Все награды и стоимости</h2><p>{rows.length} из {known.sellItems.length} · группа взята из игры, цена редактируется точно</p></div></div><div className="rewards-toolbar"><label className="reward-search"><span>Поиск</span><input type="search" value={query} placeholder="Награда или группа" onChange={(event) => setQuery(event.target.value)} /></label><label className="reward-sort"><span>Игровая группа</span><select value={groupId} onChange={(event) => setGroupId(event.target.value)}><option value="all">Все группы</option>{rewardGroups.map((group) => <option key={group.id} value={group.id}>{group.nameRu} · {group.id}</option>)}</select></label><label className="reward-sort"><span>Порядок</span><select value={sort} onChange={(event) => setSort(event.target.value as typeof sort)}><option value="rank">По прогрессии</option><option value="price-asc">Сначала дешёвые</option><option value="price-desc">Сначала дорогие</option><option value="name">По названию</option></select></label></div><div className="table-scroll rewards-scroll"><table className="data-table rewards-table"><thead><tr><th>Ранг</th><th>Награда</th><th>Группа из игры</th><th>Цена продажи</th><th>Коротко</th><th>Первая</th><th>Большой шанс</th><th>Последняя перед 0%</th><th>Комнат жизни</th></tr></thead><tbody>{rows.map((row) => { const itemIndex = known.sellItems.findIndex((item) => item.id === row.itemId); return <tr key={row.itemId}><td><strong className="reward-number">{row.automaticRank}</strong></td><td><button className="catalog-item-link" onClick={() => onSelect(row.itemId)}><ItemIcon itemId={row.itemId} size="md" /><span><strong>{row.itemId}</strong><small>Открыть на карте</small></span></button></td><td><RewardGroupBadge itemId={row.itemId} /></td><td><InlineExactInput label={`Цена награды ${row.automaticRank} ${row.itemId}`} value={row.sellPrice} onCommit={(value) => commitNumber('SellItems', `$/items/${itemIndex}/sellPrice`, value)} /></td><td>{formatExact(row.sellPrice).short}</td><td>{row.firstRoom ?? '—'}</td><td>{row.peakRoom ?? '—'} · {row.maximumWeight}%</td><td>{row.lastRoom ?? '—'}</td><td>{row.activeRoomCount}</td></tr>; })}</tbody></table></div></article>;
+}
+
+function RewardGroupsView({ known, analysis, onSelect }: {
+  known: KnownConfigs;
+  analysis: ReturnType<typeof analyzeRewardProgression>;
+  onSelect: (itemId: string) => void;
+}) {
+  const [query, setQuery] = useState('');
+  const normalizedQuery = query.trim().toLocaleLowerCase('ru-RU');
+  const priceByItem = new Map(known.sellItems.map((item) => [item.id, item.sellPrice]));
+  const groups = rewardGroups.map((group) => ({
+    group,
+    itemIds: group.itemIds.filter((itemId) => !normalizedQuery
+      || itemId.toLocaleLowerCase('ru-RU').includes(normalizedQuery)
+      || group.nameRu.toLocaleLowerCase('ru-RU').includes(normalizedQuery)
+      || group.id.toLocaleLowerCase('ru-RU').includes(normalizedQuery)),
+  })).filter(({ itemIds }) => itemIds.length > 0);
+
+  return <section className="reward-groups-view">
+    <header className="panel reward-groups-summary">
+      <div><p className="eyebrow">Точные данные Roblox place · версия 89</p><h2>Группы наград</h2><p>Группа каждой награды прочитана из <code>SellItemConfig.rarity</code>, а порядок и оформление — из <code>RarityConfig</code>. Это не расчёт по стоимости.</p></div>
+      <div className="reward-group-counts"><span><small>Групп</small><strong>{rewardGroups.length}</strong></span><span><small>Наград распределено</small><strong>{rewardGroups.reduce((sum, group) => sum + group.itemIds.length, 0)} / {known.sellItems.length}</strong></span><span><small>Без группы</small><strong>{known.sellItems.filter((item) => !getRewardGroup(item.id)).length}</strong></span></div>
+    </header>
+    <article className="panel reward-groups-toolbar"><label><span>Найти награду или группу</span><input type="search" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Например: Secret, Божественные, Flame_D" /></label></article>
+    <div className="reward-group-grid">{groups.map(({ group, itemIds }) => {
+      const firstPrice = priceByItem.get(group.itemIds[0]);
+      const lastPrice = priceByItem.get(group.itemIds.at(-1) ?? '');
+      return <article className="panel reward-group-card" key={group.id} style={{ '--group-color': group.primaryColor } as CSSProperties}>
+        <header><span className="reward-group-order">{rewardGroups.indexOf(group) + 1}</span><div><RewardGroupLabel group={group} /><p>{group.itemIds.length} наград · {formatExact(firstPrice ?? '0').short} — {formatExact(lastPrice ?? '0').short}</p></div></header>
+        <div className="reward-group-items">{itemIds.map((itemId) => {
+          const lifecycle = analysis.lifecycleByItem.get(itemId);
+          return <button key={itemId} onClick={() => onSelect(itemId)} title={`Открыть ${itemId} на карте`}><ItemIcon itemId={itemId} size="lg" /><span><strong>{itemId}</strong><small>{formatExact(priceByItem.get(itemId) ?? '0').short}</small><em>Комнаты {lifecycle?.firstRoom ?? '—'}–{lifecycle?.lastRoom ?? '—'}</em></span><i>→</i></button>;
+        })}</div>
+      </article>;
+    })}</div>
+    {groups.length === 0 && <article className="panel reward-groups-empty">По запросу ничего не найдено.</article>}
+  </section>;
 }
 
 function GeneratorView({ settings, setSettings, excludedRoomsText, setExcludedRoomsText, canGenerate, lockedCount, protectedCount, onPreview }: {

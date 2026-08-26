@@ -35,6 +35,11 @@ test('shows the complete numbered rewards catalog with editable prices', async (
   await page.getByRole('button', { name: 'Каталог и цены' }).click();
   await expect(page.getByText('75 из 75')).toBeVisible();
   await expect(page.getByRole('textbox', { name: /Цена награды 1 / })).toBeVisible();
+  await expect(page.getByRole('columnheader', { name: 'Группа из игры' })).toBeVisible();
+  await page.getByRole('button', { name: 'Группы наград · 10' }).click();
+  await expect(page.getByRole('heading', { name: 'Группы наград' })).toBeVisible();
+  await expect(page.getByText('75 / 75')).toBeVisible();
+  await expect(page.getByText('Божественные', { exact: true }).first()).toBeVisible();
   await page.getByRole('button', { name: 'Графики и показатели' }).click();
   await expect(page.getByRole('heading', { name: 'Графики прогрессии наград' })).toBeVisible();
   await expect(page.getByText('Состав комнаты 1')).toBeVisible();
