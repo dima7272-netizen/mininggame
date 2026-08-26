@@ -2,7 +2,6 @@
 import json
 import os
 import sys
-import time
 import urllib.error
 import urllib.request
 from pathlib import Path
@@ -218,47 +217,111 @@ def parse_json(raw, context):
         )
 
 
-def verify_published(base, api_key, configs, timeout_seconds=45):
-    deadline = time.monotonic() + timeout_seconds
-    mismatches = list(configs.keys())
-
-    while time.monotonic() < deadline:
-        _, verify_raw = request(
-            "GET",
-            base,
-            api_key,
-            allow_status=(200,),
-        )
-
-        verify = parse_json(
-            verify_raw,
-            "GET verify",
-        )
-
-        verify_entries = (
-            verify.get("entries", {}) or {}
-        )
-
-        mismatches = [
-            name
-            for name in configs.keys()
-            if verify_entries.get(name)
-            != configs[name]
-        ]
-
-        if not mismatches:
-            for name in configs.keys():
-                print(f"{name}: OK")
-
-            return
-
-        time.sleep(3)
-
-    fail(
-        "Published verification mismatch after waiting "
-        "for Roblox read consistency: "
-        + ", ".join(mismatches)
+def current_mismatches(base, api_key, configs):
+    _, verify_raw = request(
+        "GET",
+        base,
+        api_key,
+        allow_status=(200,),
     )
+
+    verify = parse_json(
+        verify_raw,
+        "GET verify",
+    )
+
+    verify_entries = (
+        verify.get("entries", {}) or {}
+    )
+
+    return [
+        name
+        for name in configs.keys()
+        if verify_entries.get(name)
+        != configs[name]
+    ]
+
+
+def verify_revision(
+    base,
+    api_key,
+    configs,
+    config_version,
+    changed_names,
+):
+    _, revisions_raw = request(
+        "GET",
+        f"{base}/revisions?MaxPageSize=20",
+        api_key,
+        allow_status=(200,),
+    )
+
+    revisions = parse_json(
+        revisions_raw,
+        "GET revisions",
+    ).get("revisions", [])
+
+    revision = next(
+        (
+            item
+            for item in revisions
+            if item.get("version") == config_version
+        ),
+        None,
+    )
+
+    if not revision:
+        fail(
+            "Published revision was not found in "
+            f"Roblox history: version {config_version}"
+        )
+
+    if revision.get("deploymentResult") != "Published":
+        fail(
+            "Roblox revision is not published: "
+            f"version {config_version}, "
+            f"status={revision.get('deploymentResult')}"
+        )
+
+    changes = revision.get("changes", {}) or {}
+    revision_mismatches = [
+        name
+        for name in changed_names
+        if (
+            changes.get(name, {}).get("after")
+            != configs[name]
+        )
+    ]
+
+    if revision_mismatches:
+        fail(
+            "Published revision verification mismatch for: "
+            + ", ".join(revision_mismatches)
+        )
+
+    print(
+        "Revision verified in Roblox history. "
+        f"configVersion={config_version}"
+    )
+
+
+def report_current_values(base, api_key, configs):
+    mismatches = current_mismatches(
+        base,
+        api_key,
+        configs,
+    )
+
+    if mismatches:
+        print(
+            "Roblox values endpoint is still refreshing: "
+            + ", ".join(mismatches)
+            + ". Published revision is already verified."
+        )
+        return
+
+    for name in configs.keys():
+        print(f"{name}: OK")
 
 
 def main():
@@ -356,12 +419,19 @@ def main():
         for name in configs.keys()
     )
 
+    changed_names = [
+        name
+        for name in configs.keys()
+        if published_entries.get(name)
+        != configs[name]
+    ]
+
     if all_equal and not draft_entries:
         print(
             "No config value changes. "
             "Roblox already matches GitHub."
         )
-        verify_published(base, api_key, configs)
+        report_current_values(base, api_key, configs)
         print(
             f"{environment} DEPLOY COMPLETE"
         )
@@ -419,10 +489,28 @@ def main():
     )
 
     if publish_status == 200:
+        config_version = publish_result.get(
+            "configVersion"
+        )
+
+        if config_version is None:
+            fail(
+                "POST publish response did not contain "
+                "configVersion"
+            )
+
         print(
             "Published Roblox Configs. "
             f"configVersion="
-            f"{publish_result.get('configVersion', 'unknown')}"
+            f"{config_version}"
+        )
+
+        verify_revision(
+            base,
+            api_key,
+            configs,
+            config_version,
+            changed_names,
         )
     else:
         error_codes = {
@@ -444,7 +532,7 @@ def main():
             "the same values are already published."
         )
 
-    verify_published(base, api_key, configs)
+    report_current_values(base, api_key, configs)
 
     print(
         f"{environment} DEPLOY COMPLETE"
