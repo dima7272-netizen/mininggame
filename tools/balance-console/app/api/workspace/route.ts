@@ -23,6 +23,7 @@ import {
   hashConfigBundle,
   isRealDeployment,
   nextStatus,
+  resolveLatestPublishVersion,
 } from '@/lib/publishing';
 import { validateConfigs } from '@/lib/validation';
 
@@ -136,10 +137,12 @@ export async function POST(request: Request) {
 
     if (input.action === 'publish_dev') {
       assertPermission(role, 'publish:dev', extra);
-      if (workspace.versions[0]?.id !== input.versionId) {
-        throw new Error('Публиковать можно только последнюю сохранённую версию.');
-      }
       let version = await getVersion(input.versionId);
+      const latestVersionId = workspace.versions[0]?.id;
+      const latestVersion = latestVersionId && latestVersionId !== version.id
+        ? await getVersion(latestVersionId)
+        : version;
+      version = resolveLatestPublishVersion(version, latestVersion);
       const alreadyReal = workspace.deployments.some((item) =>
         item.versionId === version.id && item.environment === 'DEV' && item.status === 'verified'
         && isRealDeployment(item.operationId, 'DEV'),

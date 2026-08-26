@@ -36,6 +36,28 @@ export type RebasePreparation = {
   userChanged: string[];
 };
 
+type PublishVersionIdentity = {
+  id: string;
+  contentHash: string;
+};
+
+/**
+ * A browser tab can keep an older version id after the service creates a newer
+ * audit snapshot automatically. Reuse the latest snapshot only when its exact
+ * config checksum matches; never let a stale tab publish different settings.
+ */
+export function resolveLatestPublishVersion<T extends PublishVersionIdentity>(
+  requested: T,
+  latest: T | undefined,
+): T {
+  if (!latest) throw new Error('Нет сохранённой версии для публикации.');
+  if (requested.id === latest.id) return requested;
+  if (requested.contentHash === latest.contentHash) return latest;
+  throw new Error(
+    'После открытия страницы сохранена более новая версия с другими настройками. Обновите страницу и публикуйте верхнюю карточку.',
+  );
+}
+
 type MergeInput = {
   base: Partial<ConfigTextMap>;
   remote: Partial<ConfigTextMap>;

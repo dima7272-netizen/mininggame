@@ -2,7 +2,13 @@ import { unzipSync, strFromU8 } from 'fflate';
 import { describe, expect, it } from 'vitest';
 import { buildConfigFiles, buildConfigZip } from '../lib/config-export';
 import { seedConfigText } from '../lib/generated/seed-configs';
-import { assertProdEligibility, mergeRemoteConfigBundle, MockPublisher, nextStatus } from '../lib/publishing';
+import {
+  assertProdEligibility,
+  mergeRemoteConfigBundle,
+  MockPublisher,
+  nextStatus,
+  resolveLatestPublishVersion,
+} from '../lib/publishing';
 import { hasPermission, permissionLabels, permissions, roleDescriptions, roleLabels, rolePermissions } from '../lib/rbac';
 import { redactSecrets } from '../lib/security';
 
@@ -79,6 +85,19 @@ describe('publishing workflow', () => {
       remote: { Pickaxes: '[3]' },
       target: { Pickaxes: '[2]' },
     })).toThrow('одновременно изменили');
+  });
+
+  it('moves a stale publish request to the latest identical snapshot', () => {
+    const requested = { id: 'v-old', contentHash: 'same' };
+    const latest = { id: 'v-new', contentHash: 'same' };
+    expect(resolveLatestPublishVersion(requested, latest)).toBe(latest);
+  });
+
+  it('blocks a stale publish request when newer settings are different', () => {
+    expect(() => resolveLatestPublishVersion(
+      { id: 'v-old', contentHash: 'old' },
+      { id: 'v-new', contentHash: 'new' },
+    )).toThrow('более новая версия с другими настройками');
   });
 });
 
