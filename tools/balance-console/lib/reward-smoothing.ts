@@ -9,6 +9,8 @@ import { serializeRoomDrops } from './reward-progression';
 const TARGET_ROOM_COUNT = 50;
 const ITEMS_PER_WINDOW = 8;
 const BASE_WEIGHTS = [30, 22, 16, 12, 8, 6, 4, 2];
+const LOWEST_VALUE_WEIGHTS = [93, 1, 1, 1, 1, 1, 1, 1];
+const HIGHEST_VALUE_WEIGHTS = [13, 13, 13, 13, 12, 12, 12, 12];
 const READABLE_MANTISSAS = new Set(['1', '1.2', '1.5', '2', '2.5', '3', '4', '5', '7']);
 
 export type RewardSmoothingReport = {
@@ -16,6 +18,10 @@ export type RewardSmoothingReport = {
   itemCount: number;
   averageGrowth: number;
   maximumLogStepDeviation: number;
+};
+
+export type RewardLifecycleReport = RewardSmoothingReport & {
+  maximumTypesPerRoom: number;
 };
 
 /**
@@ -67,7 +73,8 @@ export function buildSmoothRewardPrices(configs: ConfigTextMap): {
 
   const targets = geometricTargets(firstReward, lastReward, TARGET_ROOM_COUNT);
   const repricedItems = buildStretchedPrices(known.sellItems, targets);
-  const roomDrops = buildBlendedRoomDrops(repricedItems);
+  const prices = new Map(repricedItems.map((item) => [item.id, Number(item.sellPrice)]));
+  const roomDrops = buildMonotoneRoomDrops(repricedItems, prices, targets);
   const nextConfigs: ConfigTextMap = {
     ...configs,
     SellItems: serializeReadableSellItems(known.sellSettings, repricedItems),
@@ -90,37 +97,118 @@ export function buildSmoothRewardPrices(configs: ConfigTextMap): {
 }
 
 /**
- * Slides the familiar 30/22/16/12/8/6/4/2 distribution through the catalogue.
- * Between two catalogue positions the adjacent distributions are blended, so
- * a room contains eight or nine reward types and never needs a 90% filler.
+ * Removes low-percentage tails from cheaper rewards without changing the
+ * already-smoothed price ladder. Every active room is ordered from the older,
+ * cheaper reward to the newer, more expensive reward and its percentages may
+ * only stay equal or decrease in that direction.
  */
-function buildBlendedRoomDrops(items: SellItem[]): RoomDrop[] {
-  const maximumStart = Math.max(0, items.length - ITEMS_PER_WINDOW);
-  return Array.from({ length: TARGET_ROOM_COUNT }, (_, roomOffset) => {
-    const position = roomOffset * maximumStart / Math.max(TARGET_ROOM_COUNT - 1, 1);
-    const start = Math.min(maximumStart, Math.floor(position));
-    const fraction = Math.min(1, Math.max(0, position - start));
-    if (start === maximumStart || fraction < 1e-9) {
-      return {
-        index: roomOffset + 1,
-        drops: items.slice(start, start + ITEMS_PER_WINDOW)
-          .map((item, index) => ({ itemId: item.id, weight: String(BASE_WEIGHTS[index]) })),
-      };
-    }
+export function buildCleanRewardLifecycles(configs: ConfigTextMap): {
+  configs: ConfigTextMap;
+  report: RewardLifecycleReport;
+} {
+  const known = parseKnownConfigs(configs);
+  if (known.sellItems.length !== rewardHierarchyItemIds.length
+    || known.rooms.length !== TARGET_ROOM_COUNT
+    || known.roomDrops.length !== TARGET_ROOM_COUNT) {
+    return { configs, report: { ...emptyReport(known.rooms.length, known.sellItems.length), maximumTypesPerRoom: 0 } };
+  }
+  if (hasCleanLifecycles(known.roomDrops)) {
+    const economy = buildRoomEconomy(known);
+    const steps = rewardSteps(economy);
+    const mean = average(steps);
+    return {
+      configs,
+      report: {
+        roomCount: known.rooms.length,
+        itemCount: known.sellItems.length,
+        averageGrowth: 10 ** mean,
+        maximumLogStepDeviation: maximumDeviation(steps, mean),
+        maximumTypesPerRoom: Math.max(...known.roomDrops.map((room) => room.drops.length)),
+      },
+    };
+  }
 
-    const idealWeights = Array.from({ length: ITEMS_PER_WINDOW + 1 }, (_, index) => {
-      const outgoing = index < ITEMS_PER_WINDOW ? BASE_WEIGHTS[index] * (1 - fraction) : 0;
-      const incoming = index > 0 ? BASE_WEIGHTS[index - 1] * fraction : 0;
-      return outgoing + incoming;
-    });
-    const weights = apportionWholePercentages(idealWeights);
+  const economy = buildRoomEconomy(known);
+  const firstReward = new Decimal(economy[0].expectedItemPrice);
+  const lastReward = new Decimal(economy.at(-1)!.expectedItemPrice);
+  const targets = geometricTargets(firstReward, lastReward, TARGET_ROOM_COUNT);
+  const prices = new Map(known.sellItems.map((item) => [item.id, Number(item.sellPrice)]));
+  const roomDrops = buildMonotoneRoomDrops(known.sellItems, prices, targets);
+  const nextConfigs = { ...configs, RoomDrops: serializeRoomDrops(roomDrops) };
+  const nextEconomy = buildRoomEconomy(nextConfigs);
+  const steps = rewardSteps(nextEconomy);
+  const mean = average(steps);
+  return {
+    configs: nextConfigs,
+    report: {
+      roomCount: TARGET_ROOM_COUNT,
+      itemCount: known.sellItems.length,
+      averageGrowth: 10 ** mean,
+      maximumLogStepDeviation: maximumDeviation(steps, mean),
+      maximumTypesPerRoom: Math.max(...roomDrops.map((room) => room.drops.length)),
+    },
+  };
+}
+
+function buildMonotoneRoomDrops(items: SellItem[], prices: Map<string, number>, targets: Decimal[]): RoomDrop[] {
+  const maximumStart = items.length - ITEMS_PER_WINDOW;
+  let previousStart = 0;
+  return targets.map((target, roomOffset) => {
+    const expectedStart = roomOffset * maximumStart / Math.max(targets.length - 1, 1);
+    const expectedFloor = Math.floor(expectedStart);
+    const searchStart = Math.max(previousStart, expectedFloor - 5);
+    const searchEnd = Math.min(maximumStart, Math.ceil(expectedStart) + 5);
+    const starts = roomOffset === 0
+      ? [0]
+      : roomOffset === targets.length - 1
+        ? [maximumStart]
+        : Array.from({ length: Math.max(1, searchEnd - searchStart + 1) }, (_, index) => searchStart + index);
+    const targetNumber = target.toNumber();
+    const best = starts.flatMap((start) => {
+      const pool = items.slice(start, start + ITEMS_PER_WINDOW);
+      return monotoneWeightCandidates().map((weights) => {
+        const value = pool.reduce((sum, item, index) => (
+          sum + (prices.get(item.id) ?? 0) * weights[index] / 100
+        ), 0);
+        const targetDistance = Math.abs(Math.log10(value / targetNumber));
+        const positionPenalty = Math.abs(start - expectedStart) * 1e-8;
+        return { start, pool, weights, score: targetDistance + positionPenalty };
+      });
+    }).sort((left, right) => left.score - right.score || left.start - right.start)[0];
+    previousStart = best.start;
     return {
       index: roomOffset + 1,
-      drops: items.slice(start, start + ITEMS_PER_WINDOW + 1)
-        .map((item, index) => ({ itemId: item.id, weight: String(weights[index]) }))
-        .filter((drop) => drop.weight !== '0'),
+      drops: best.pool.map((item, index) => ({ itemId: item.id, weight: String(best.weights[index]) })),
     };
   });
+}
+
+let cachedWeightCandidates: number[][] | null = null;
+function monotoneWeightCandidates() {
+  if (cachedWeightCandidates) return cachedWeightCandidates;
+  const candidates: number[][] = [];
+  for (let step = 0; step <= 100; step += 2) {
+    const fraction = step / 100;
+    candidates.push(apportionWholePercentages(LOWEST_VALUE_WEIGHTS.map((weight, index) => (
+      weight + (BASE_WEIGHTS[index] - weight) * fraction
+    ))));
+    candidates.push(apportionWholePercentages(BASE_WEIGHTS.map((weight, index) => (
+      weight + (HIGHEST_VALUE_WEIGHTS[index] - weight) * fraction
+    ))));
+  }
+  cachedWeightCandidates = [...new Map(candidates.map((weights) => [weights.join(','), weights])).values()]
+    .filter((weights) => weights.every((weight, index) => index === 0 || weights[index - 1] >= weight));
+  return cachedWeightCandidates;
+}
+
+function hasCleanLifecycles(rooms: RoomDrop[]) {
+  return rooms.every((room) => room.drops.length === ITEMS_PER_WINDOW
+    && room.drops.every((drop, index) => {
+      const weight = Number(drop.weight);
+      return Number.isInteger(weight) && weight >= 1
+        && (index === 0 || Number(room.drops[index - 1].weight) >= weight);
+    })
+    && room.drops.reduce((sum, drop) => sum + Number(drop.weight), 0) === 100);
 }
 
 function apportionWholePercentages(ideals: number[]) {

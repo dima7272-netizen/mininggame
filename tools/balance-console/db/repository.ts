@@ -25,7 +25,7 @@ import { diffConfigs, type ConfigChange } from '@/lib/config-diff';
 import { roundRoomHpToIntegers } from '@/lib/room-hp';
 import { arrangeRewardsByGameHierarchy } from '@/lib/reward-hierarchy';
 import { buildRewardExpansion } from '@/lib/reward-expansion';
-import { buildSmoothRewardPrices } from '@/lib/reward-smoothing';
+import { buildCleanRewardLifecycles, buildSmoothRewardPrices } from '@/lib/reward-smoothing';
 import { rewardHierarchyItemIds } from '@/lib/reward-groups';
 
 export const GAME_ID = 'dig-get-stronger';
@@ -195,6 +195,7 @@ export async function getWorkspace(user: AppUser) {
     await ensureRewardHierarchyDraft(user.userId);
     await ensureRewardExpansionDraft(user.userId);
     await ensureSmoothRewardPricesDraft(user.userId);
+    await ensureCleanRewardLifecyclesDraft(user.userId);
   }
 
   const versionRows = await db.select().from(versions)
@@ -358,8 +359,31 @@ async function ensureSmoothRewardPricesDraft(userId: string) {
     baseVersionId: latest.id,
     baseSha: latest.baseSha,
     name: 'Плавный график наград · круглые цены',
-    notes: `Зелёная линия наград выровнена от комнаты 1 до комнаты ${report.roomCount} без внутренних скачков. Цены всех ${report.itemCount} активных наград оставлены целыми и округлены до понятной лестницы 10/12/15/20/25/30/40/50/70 с нужным количеством нулей. В каждой комнате 8–9 видов наград, проценты целые и в сумме дают 100%; переход между соседними наборами сделан постепенно. Средний рост награды — ×${report.averageGrowth.toFixed(4)} на комнату. Богоподобные предметы не возвращены. Черновик не опубликован в DEV.`,
+    notes: `Зелёная линия наград выровнена от комнаты 1 до комнаты ${report.roomCount} без внутренних скачков. Цены всех ${report.itemCount} активных наград оставлены целыми и округлены до понятной лестницы 10/12/15/20/25/30/40/50/70 с нужным количеством нулей. В каждой комнате 8 видов наград, проценты целые и в сумме дают 100%. Средний рост награды — ×${report.averageGrowth.toFixed(4)} на комнату. Богоподобные предметы не возвращены. Черновик не опубликован в DEV.`,
     source: 'smooth_reward_prices_50',
+  });
+}
+
+async function ensureCleanRewardLifecyclesDraft(userId: string) {
+  const db = getDb();
+  const [latest] = await db.select().from(versions)
+    .where(eq(versions.gameId, GAME_ID))
+    .orderBy(desc(versions.createdAt))
+    .limit(1);
+  if (!latest || latest.source === 'clean_reward_lifecycles_50') return;
+
+  const configs = JSON.parse(latest.configsJson) as ConfigTextMap;
+  const { configs: cleaned, report } = buildCleanRewardLifecycles(configs);
+  if (cleaned === configs) return;
+
+  await createVersion({
+    userId,
+    configs: cleaned,
+    baseVersionId: latest.id,
+    baseSha: latest.baseSha,
+    name: 'Награды без мусорных хвостов',
+    notes: `Дешёвый предмет больше не остаётся в следующей комнате с маленьким шансом, когда более дорогие предметы уже выпадают чаще. Пока награда активна, её процент не ниже процентов всех следующих, более дорогих наград; после пика она сразу заменяется новым набором. В комнате ровно ${report.maximumTypesPerRoom} видов, проценты целые и дают 100%. Плавная линия круглых цен сохранена, средний рост — ×${report.averageGrowth.toFixed(4)} на комнату. Черновик не опубликован в DEV.`,
+    source: 'clean_reward_lifecycles_50',
   });
 }
 
