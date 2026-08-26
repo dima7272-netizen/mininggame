@@ -1,7 +1,7 @@
 'use client';
 
 import Decimal from 'decimal.js';
-import { useCallback, useEffect, useMemo, useState, useSyncExternalStore } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react';
 import { ExactInput } from './exact-input';
 import { GameEntityIcon, getEntityIcon, hasItemIcon, ItemIcon, type EntityIconCategory } from './item-icon';
 import { getMonotoneTrend, LineChart } from './line-chart';
@@ -635,17 +635,40 @@ function ConfigsScreen({ configs, setConfigs, validation }: { configs: ConfigTex
   const [newName, setNewName] = useState('');
   const [listError, setListError] = useState<string | null>(null);
   function addConfig() { if (!/^[A-Za-z][A-Za-z0-9_-]*$/.test(newName) || configs[newName]) { setListError('Имя должно быть новым техническим ключом без пробелов.'); return; } setConfigs((current) => ({ ...current, [newName]: '{}\n' })); setSelected(newName); setNewName(''); setListError(null); }
-  return <><PageHeading eyebrow="Универсальный редактор" title="Все конфиги" subtitle="Известные и новые JSON-конфиги без изменения кода сервиса." /><section className="configs-layout"><aside className="panel config-list"><div className="panel-heading"><div><h2>Конфиги</h2><p>{Object.keys(configs).length} активных</p></div></div>{Object.keys(configs).sort().map((name) => <button className={selected === name ? 'active' : ''} onClick={() => { setSelected(name); setListError(null); }} key={name}><code>{name}.json</code><span>{name in spreadsheetPreviewSnapshot ? 'Игровой' : 'Новый'}</span></button>)}<div className="add-config"><input placeholder="NewConfig" value={newName} onChange={(event) => setNewName(event.target.value)} /><button onClick={addConfig}>+</button></div>{listError && <p className="raw-error">{listError}</p>}</aside><RawConfigEditor key={`${selected}:${configs[selected]}`} selected={selected} source={configs[selected]} onApply={(canonical) => setConfigs((current) => ({ ...current, [selected]: canonical }))} /></section><article className="panel validation-panel"><PanelHeading title="Проверки" subtitle={`${validation.errorCount} ошибок · ${validation.warningCount} предупреждений · ${validation.observationCount} наблюдений`} /><IssueList issues={validation.issues} /></article></>;
+  return <><PageHeading eyebrow="Универсальный редактор" title="Все конфиги" subtitle="Известные и новые JSON-конфиги без изменения кода сервиса." /><section className="configs-layout"><aside className="panel config-list"><div className="panel-heading"><div><h2>Конфиги</h2><p>{Object.keys(configs).length} активных</p></div></div>{Object.keys(configs).sort().map((name) => <button className={selected === name ? 'active' : ''} onClick={() => { setSelected(name); setListError(null); }} key={name}><code>{name}.json</code><span>{name in spreadsheetPreviewSnapshot ? 'Игровой' : 'Новый'}</span></button>)}<div className="add-config"><input placeholder="NewConfig" value={newName} onChange={(event) => setNewName(event.target.value)} /><button onClick={addConfig}>+</button></div>{listError && <p className="raw-error">{listError}</p>}</aside><RawConfigEditor key={selected} selected={selected} source={configs[selected]} onApply={(canonical) => setConfigs((current) => ({ ...current, [selected]: canonical }))} /></section><article className="panel validation-panel"><PanelHeading title="Проверки" subtitle={`${validation.errorCount} ошибок · ${validation.warningCount} предупреждений · ${validation.observationCount} наблюдений`} /><IssueList issues={validation.issues} /></article></>;
 }
 
 function RawConfigEditor({ selected, source, onApply }: { selected: string; source: string; onApply: (canonical: string) => void }) {
   const [draft, setDraft] = useState(source);
   const [rawError, setRawError] = useState<string | null>(null);
+  const [rawStatus, setRawStatus] = useState<string | null>(null);
+  const appliedSource = useRef(source);
+
+  useEffect(() => {
+    if (source === appliedSource.current) return;
+    appliedSource.current = source;
+    setDraft(source);
+    setRawError(null);
+    setRawStatus(null);
+  }, [source]);
+
   function applyRaw() {
-    try { onApply(stringifyExactJson(parseExactJson(draft))); setRawError(null); }
-    catch (error) { setRawError(error instanceof Error ? error.message : String(error)); }
+    try {
+      const canonical = stringifyExactJson(parseExactJson(draft));
+      const changed = canonical !== source;
+      appliedSource.current = canonical;
+      setDraft(canonical);
+      onApply(canonical);
+      setRawError(null);
+      setRawStatus(changed
+        ? 'JSON применён к черновику. Сохраните новую версию в панели снизу.'
+        : 'JSON корректный. Значения не изменились.');
+    } catch (error) {
+      setRawStatus(null);
+      setRawError(error instanceof Error ? error.message : String(error));
+    }
   }
-  return <article className="panel raw-editor"><PanelHeading title={`${selected}.json`} subtitle="Числа сохраняются без преобразования в JavaScript number" aside={<button className="button primary" onClick={applyRaw}>Применить JSON</button>} /><textarea spellCheck={false} value={draft} onChange={(event) => setDraft(event.target.value)} />{rawError && <p className="raw-error">{rawError}</p>}</article>;
+  return <article className="panel raw-editor"><PanelHeading title={`${selected}.json`} subtitle="Числа сохраняются без преобразования в JavaScript number" aside={<button type="button" className="button primary" onClick={applyRaw}>Применить JSON</button>} />{(rawError || rawStatus) && <p className={rawError ? 'raw-feedback error' : 'raw-feedback success'} role="status" aria-live="polite">{rawError ? `JSON не применён: ${rawError}` : rawStatus}</p>}<textarea spellCheck={false} value={draft} onChange={(event) => { setDraft(event.target.value); setRawError(null); setRawStatus(null); }} onKeyDown={(event) => { if ((event.metaKey || event.ctrlKey) && event.key === 'Enter') { event.preventDefault(); applyRaw(); } }} />{!rawError && !rawStatus && <p className="raw-hint">Нажмите «Применить JSON» или ⌘ Enter. После этого сохраните новую версию в панели снизу.</p>}</article>;
 }
 
 function SimulatorScreen({
