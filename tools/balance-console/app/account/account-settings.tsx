@@ -3,6 +3,7 @@
 
 import { useEffect, useRef, useState, type FormEvent } from 'react';
 import type { AccountState } from '@/lib/account';
+import { GameBrandIcon } from '@/components/game-brand-icon';
 
 const roleLabels: Record<string, string> = {
   owner: 'Владелец',
@@ -131,7 +132,7 @@ export function AccountSettings({
     <main className="account-page">
       <header className="account-topbar">
         <a className="account-back" href="/">← Вернуться в баланс-центр</a>
-        <div className="auth-brand"><span className="brand-mark">D</span><div><strong>Dig Get Stronger</strong><small>Мой аккаунт</small></div></div>
+        <div className="auth-brand"><GameBrandIcon priority /><div><strong>Dig Get Stronger</strong><small>Мой аккаунт</small></div></div>
         <button className="button secondary" disabled={busy === 'logout'} onClick={() => void logout()}>Выйти</button>
       </header>
       <div className="account-layout">

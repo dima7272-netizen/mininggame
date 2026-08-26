@@ -4,6 +4,10 @@ import './globals.css';
 export const metadata: Metadata = {
   title: 'Dig Get Stronger — Баланс-центр',
   description: 'Безопасное управление балансом и игровыми конфигами Dig Get Stronger.',
+  icons: {
+    icon: '/game-icon.png',
+    apple: '/game-icon.png',
+  },
 };
 
 const themeBootstrap = `(() => {

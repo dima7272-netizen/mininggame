@@ -135,7 +135,7 @@ button, a { -webkit-tap-highlight-color: transparent; }
 .app-shell { display: flex; min-height: 100vh; }
 .sidebar { position: fixed; inset: 0 auto 0 0; z-index: 4; display: flex; width: 242px; flex-direction: column; background: var(--nav); color: #e7eaf1; }
 .brand { display: flex; height: 77px; align-items: center; gap: 12px; border-bottom: 1px solid #273144; padding: 0 20px; }
-.brand-mark { display: grid; width: 36px; height: 36px; place-items: center; border-radius: 10px; background: linear-gradient(145deg, #776cff, #4f43d5); color: white; font-size: 18px; font-weight: 900; box-shadow: inset 0 0 0 1px #ffffff26; }
+.brand-mark { display: grid; width: 36px; height: 36px; place-items: center; border-radius: 10px; background: linear-gradient(145deg, #776cff, #4f43d5); color: white; font-size: 18px; font-weight: 900; object-fit: cover; box-shadow: inset 0 0 0 1px #ffffff26; }
 .brand strong, .brand small { display: block; }
 .brand strong { font-size: 13px; letter-spacing: .01em; }
 .brand small { margin-top: 3px; color: #929caf; font-size: 11px; }

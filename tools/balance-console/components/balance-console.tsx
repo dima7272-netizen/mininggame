@@ -20,6 +20,7 @@ import {
 import { hasPermission, permissionLabels, permissions, roleDescriptions, roleLabels, rolePermissions, type Permission, type Role } from '@/lib/rbac';
 import { serializeRoomDrops } from '@/lib/reward-progression';
 import { createSmoothProgressionDraft } from '@/lib/progression-draft';
+import { GameBrandIcon } from './game-brand-icon';
 import { spreadsheetPreviewSnapshot } from '@/lib/source-snapshots';
 import { validateConfigs, type ValidationIssue, type ValidationResult } from '@/lib/validation';
 import type { VersionStatus } from '@/lib/publishing';
@@ -350,7 +351,7 @@ export function BalanceConsole({ initialConfigs, initialSha }: { initialConfigs:
     <main className="app-shell">
       <aside className="sidebar">
         <button className="brand brand-button" onClick={() => setSection('overview')}>
-          <span className="brand-mark">D</span>
+          <GameBrandIcon priority />
           <span><strong>Dig Get Stronger</strong><small>Баланс-центр</small></span>
         </button>
         <nav aria-label="Разделы сервиса">

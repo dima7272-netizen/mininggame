@@ -2,6 +2,7 @@
 
 import { useState, type FormEvent } from 'react';
 import type { AuthPageState } from '@/lib/app-auth';
+import { GameBrandIcon } from '@/components/game-brand-icon';
 
 type Mode = 'login' | 'register';
 
@@ -60,7 +61,7 @@ export function AuthForm({
   return (
     <main className="auth-page">
       <section className="auth-showcase">
-        <div className="auth-brand"><span className="brand-mark">D</span><div><strong>Dig Get Stronger</strong><small>Баланс-центр</small></div></div>
+        <div className="auth-brand"><GameBrandIcon priority /><div><strong>Dig Get Stronger</strong><small>Баланс-центр</small></div></div>
         <div className="auth-intro">
           <p className="eyebrow">Настройка игры</p>
           <h1>Вся команда работает с одним актуальным балансом</h1>

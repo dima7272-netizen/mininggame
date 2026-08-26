@@ -2,6 +2,7 @@
 /* eslint-disable @next/next/no-html-link-for-pages -- Vinext's client Link runtime fails in the hosted build. */
 
 import { useState } from 'react';
+import { GameBrandIcon } from '@/components/game-brand-icon';
 
 export function InviteClient({ token }: { token: string }) {
   const [state, setState] = useState<'idle' | 'loading' | 'done' | 'error'>('idle');
@@ -29,7 +30,7 @@ export function InviteClient({ token }: { token: string }) {
   return (
     <main className="invite-page">
       <section className="invite-card">
-        <div className="brand-mark">D</div>
+        <GameBrandIcon priority />
         <p className="eyebrow">Dig Get Stronger</p>
         <h1>Приглашение в баланс-центр</h1>
         <p>Подтвердите подключение к команде. Роль и права назначены владельцем приглашения.</p>
