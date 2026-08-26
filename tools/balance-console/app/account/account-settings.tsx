@@ -1,7 +1,7 @@
 'use client';
+/* eslint-disable @next/next/no-html-link-for-pages -- Vinext's client Link runtime fails in the hosted build. */
 
 import { useEffect, useRef, useState, type FormEvent } from 'react';
-import Link from 'next/link';
 import type { AccountState } from '@/lib/account';
 
 const roleLabels: Record<string, string> = {
@@ -130,7 +130,7 @@ export function AccountSettings({
   return (
     <main className="account-page">
       <header className="account-topbar">
-        <Link className="account-back" href="/">← Вернуться в баланс-центр</Link>
+        <a className="account-back" href="/">← Вернуться в баланс-центр</a>
         <div className="auth-brand"><span className="brand-mark">D</span><div><strong>Dig Get Stronger</strong><small>Мой аккаунт</small></div></div>
         <button className="button secondary" disabled={busy === 'logout'} onClick={() => void logout()}>Выйти</button>
       </header>

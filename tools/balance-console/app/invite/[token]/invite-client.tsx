@@ -1,7 +1,7 @@
 'use client';
+/* eslint-disable @next/next/no-html-link-for-pages -- Vinext's client Link runtime fails in the hosted build. */
 
 import { useState } from 'react';
-import Link from 'next/link';
 
 export function InviteClient({ token }: { token: string }) {
   const [state, setState] = useState<'idle' | 'loading' | 'done' | 'error'>('idle');
@@ -35,7 +35,7 @@ export function InviteClient({ token }: { token: string }) {
         <p>Подтвердите подключение к команде. Роль и права назначены владельцем приглашения.</p>
         {message && <div className={`invite-message ${state}`}>{message}</div>}
         {state === 'done' ? (
-          <Link className="button primary invite-action" href="/">Открыть сервис</Link>
+          <a className="button primary invite-action" href="/">Открыть сервис</a>
         ) : (
           <button className="button primary invite-action" disabled={state === 'loading'} onClick={accept}>
             {state === 'loading' ? 'Проверяем…' : 'Принять приглашение'}
