@@ -23,7 +23,6 @@ test('shows source drift and calculates the connected game formulas', async ({ p
   await expect(page.getByText('5 полей')).toBeVisible();
 
   await page.getByRole('button', { name: 'Симулятор' }).click();
-  await expect(page.getByText('Формулы подключены из Roblox place · версия 89')).toBeVisible();
   await expect(page.getByText('Как игра посчитала')).toBeVisible();
   await expect(page.getByText('Урон за удар')).toBeVisible();
   await expect(page.getByLabel('Фактический урон за удар (из игры)')).toBeVisible();

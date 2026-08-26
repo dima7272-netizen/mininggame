@@ -731,10 +731,6 @@ function SimulatorScreen({
       title="Симулятор"
       subtitle="Настоящие формулы текущей версии игры: урон, Strength, питомцы, ребёрты, друзья и деньги."
     />
-    <div className="formula-connected-banner">
-      <span>✓</span>
-      <div><strong>Формулы подключены из Roblox place · версия 89</strong><p>Расчёт использует текущие значения черновика JSON. Изменили кирку, питомца, ребёрт, ауру, комнату или цену — результат пересчитывается сразу.</p></div>
-    </div>
     <section className="simulator-grid">
       <article className="panel simulator-controls">
         <PanelHeading title="Состояние игрока" subtitle="Что есть у игрока перед ударом" />
