@@ -147,6 +147,11 @@ describe('validation gates', () => {
     expect(codes(mutate(base, 'Rooms', '$/beyondLastRoom/maxBlockHP', exactNumber('1.3e30')))).toContain('rooms.beyond_hp_integer');
   });
 
+  it('blocks fractional and exponent notation for reward percentages', () => {
+    expect(codes(mutate(base, 'RoomDrops', '$/0/drops/0/weight', exactNumber('14.5')))).toContain('drops.weight_integer');
+    expect(codes(mutate(base, 'RoomDrops', '$/0/drops/0/weight', exactNumber('1.4e1')))).toContain('drops.weight_integer');
+  });
+
   it('accepts an unknown well-formed config without requiring a code change', () => {
     const result = validateConfigs({ ...base, FutureEconomy: '{"huge":999999999999999999999}\n' });
     expect(result.errorCount).toBe(0);

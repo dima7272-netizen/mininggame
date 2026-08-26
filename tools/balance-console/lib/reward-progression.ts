@@ -406,13 +406,17 @@ export function buildRewardSuggestions(known: KnownConfigs): RewardSuggestion[] 
 export function normalizeRoomDrop(
   room: RoomDrop,
   lockedCells: ReadonlySet<string>,
-  precision = '0.1',
+  precision = '1',
   minimumByItem: ReadonlyMap<string, string> = new Map(),
 ): RoomDrop {
   const step = new Decimal(precision);
-  if (!step.greaterThan(0) || step.greaterThan(100)) throw new Error('Некорректная точность нормализации.');
+  if (!step.equals(1)) throw new Error('Проценты выпадения могут быть только целыми числами.');
   const locked = room.drops.filter((drop) => lockedCells.has(cellKey(room.index, drop.itemId)));
   const unlocked = room.drops.filter((drop) => !lockedCells.has(cellKey(room.index, drop.itemId)));
+  const invalidLocked = locked.find((drop) => !isIntegerPercentLiteral(drop.weight));
+  if (invalidLocked) {
+    throw new Error(`Комната ${room.index}: заблокированный процент ${invalidLocked.itemId} должен быть целым числом.`);
+  }
   const lockedTotal = locked.reduce((sum, drop) => sum.plus(drop.weight), new Decimal(0));
   if (lockedTotal.greaterThan(100)) throw new Error(`Комната ${room.index}: заблокировано ${lockedTotal.toString()}%, больше 100%.`);
   const remaining = new Decimal(100).minus(lockedTotal);
@@ -605,7 +609,7 @@ export function applyRewardSuggestion(
   known: KnownConfigs,
   suggestion: RewardSuggestion,
   lockedCells: ReadonlySet<string>,
-  precision = '0.1',
+  precision = '1',
 ): RoomDrop[] {
   const rooms = cloneRoomDrops(known.roomDrops);
   const roomByIndex = new Map(rooms.map((room) => [room.index, room]));
@@ -664,19 +668,20 @@ export function setRoomRewardWeight(
   weight: string | null,
   normalize: boolean,
   lockedCells: ReadonlySet<string>,
-  precision = '0.1',
+  precision = '1',
 ) {
   const next = cloneRoomDrops(roomDrops);
   const room = next.find((item) => item.index === roomIndex);
   if (!room) throw new Error(`Комната ${roomIndex} не найдена.`);
   if (lockedCells.has(cellKey(roomIndex, itemId))) throw new Error('Эта ячейка заблокирована.');
   const existing = room.drops.find((drop) => drop.itemId === itemId);
-  if (weight === null || new Decimal(weight).isZero()) {
+  const parsedWeight = weight === null ? null : parseIntegerPercent(weight);
+  if (parsedWeight === null || parsedWeight.isZero()) {
     room.drops = room.drops.filter((drop) => drop.itemId !== itemId);
   } else if (existing) {
-    existing.weight = weight;
+    existing.weight = parsedWeight.toFixed(0);
   } else {
-    room.drops.push({ itemId, weight });
+    room.drops.push({ itemId, weight: parsedWeight.toFixed(0) });
   }
   if (room.drops.length === 0) throw new Error('В комнате должна оставаться хотя бы одна награда.');
   if (normalize) {
@@ -712,6 +717,11 @@ export function shiftRewardScheme(roomDrops: RoomDrop[], direction: -1 | 1, lock
 }
 
 export function serializeRoomDrops(roomDrops: RoomDrop[]) {
+  const invalid = roomDrops.flatMap((room) => room.drops.map((drop) => ({ room: room.index, ...drop })))
+    .find((drop) => !isIntegerPercentLiteral(drop.weight));
+  if (invalid) {
+    throw new Error(`Комната ${invalid.room}: процент ${invalid.itemId} должен быть целым числом от 0 до 100.`);
+  }
   const json: ExactJson = roomDrops.map((room) => ({
     index: exactNumber(String(room.index)),
     drops: room.drops.map((drop) => ({ itemId: drop.itemId, weight: exactNumber(drop.weight) })),
@@ -749,4 +759,18 @@ function expectedValue(room: RoomDrop | undefined, prices: ReadonlyMap<string, D
 
 function decimalText(value: Decimal) {
   return value.toFixed(6).replace(/\.?0+$/, '') || '0';
+}
+
+function isIntegerPercentLiteral(value: string) {
+  if (!/^(?:0|[1-9]\d*)$/.test(value.trim())) return false;
+  const parsed = new Decimal(value);
+  return parsed.lessThanOrEqualTo(100);
+}
+
+function parseIntegerPercent(value: string) {
+  const normalized = value.trim();
+  if (!isIntegerPercentLiteral(normalized)) {
+    throw new Error('Процент должен быть целым числом от 0 до 100, без точки и запятой.');
+  }
+  return new Decimal(normalized);
 }

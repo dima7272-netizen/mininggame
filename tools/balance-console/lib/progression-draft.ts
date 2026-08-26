@@ -7,6 +7,7 @@ import { roomHpUsesIntegerLiterals } from './room-hp';
 type Update = { pointer: string; value: ExactJson };
 
 export const REWARD_GROWTH_MULTIPLIER = 2.4568;
+const INTEGER_REWARD_STEP_SPREAD = 0.3;
 
 export function createSmoothProgressionDraft(configs: ConfigTextMap): ConfigTextMap {
   if (isSmoothProgression(configs)) return configs;
@@ -115,7 +116,7 @@ export function isSmoothProgression(configs: ConfigTextMap) {
     return hpSteps.every((step) => step > 0)
       && rewardSteps.every((step) => step > 0)
       && spread(hpSteps) < 0.01
-      && spread(rewardSteps) < 0.01
+      && spread(rewardSteps) < INTEGER_REWARD_STEP_SPREAD
       && Math.abs(averageRewardStep - Math.log10(REWARD_GROWTH_MULTIPLIER)) < 0.01;
   } catch {
     return false;
@@ -156,27 +157,28 @@ function fitWeightsToTarget(room: RoomDrop, target: number, prices: Map<string, 
   }
 
   const fitted = distribution((lower + upper) / 2).weights
-    .map((weight) => new Decimal(minimumWeight + remainingWeight * weight).toDecimalPlaces(6));
-  const largestIndex = fitted.reduce(
-    (largest, value, index) => value.greaterThan(fitted[largest]) ? index : largest,
-    0,
-  );
-  const total = fitted.reduce((sum, value) => sum.plus(value), new Decimal(0));
-  fitted[largestIndex] = fitted[largestIndex].plus(new Decimal(100).minus(total));
-  return fitted.map(decimalText);
+    .map((weight) => new Decimal(minimumWeight + remainingWeight * weight));
+  return apportionIntegerPercentages(fitted);
 }
 
 function normalizedOriginalWeights(room: RoomDrop) {
   const total = room.drops.reduce((sum, drop) => sum.plus(drop.weight), new Decimal(0));
-  return room.drops.map((drop, index) => {
-    const value = index === room.drops.length - 1
-      ? new Decimal(100).minus(room.drops.slice(0, -1).reduce(
-        (sum, item) => sum.plus(new Decimal(item.weight).div(total).mul(100).toDecimalPlaces(6)),
-        new Decimal(0),
-      ))
-      : new Decimal(drop.weight).div(total).mul(100).toDecimalPlaces(6);
-    return decimalText(value);
-  });
+  return apportionIntegerPercentages(room.drops.map((drop) => new Decimal(drop.weight).div(total).mul(100)));
+}
+
+function apportionIntegerPercentages(ideals: Decimal[]) {
+  const allocated = ideals.map((value) => Decimal.max(0, value).floor());
+  let residue = new Decimal(100).minus(allocated.reduce((sum, value) => sum.plus(value), new Decimal(0)));
+  const order = ideals.map((value, index) => ({ index, remainder: value.minus(value.floor()) }))
+    .sort((left, right) => right.remainder.comparedTo(left.remainder) || left.index - right.index);
+  let cursor = 0;
+  while (residue.greaterThan(0) && order.length > 0) {
+    const index = order[cursor % order.length].index;
+    allocated[index] = allocated[index].plus(1);
+    residue = residue.minus(1);
+    cursor += 1;
+  }
+  return allocated.map((value) => value.toFixed(0));
 }
 
 function targetAt(position: number, count: number, start: number, end: number) {
@@ -199,8 +201,4 @@ function stepSizes(values: number[]) {
 
 function spread(values: number[]) {
   return Math.max(...values) - Math.min(...values);
-}
-
-function decimalText(value: Decimal) {
-  return value.toFixed(6).replace(/\.?0+$/, '') || '0';
 }

@@ -485,7 +485,7 @@ function RewardCellEditor({
   const needsNormalization = !new Decimal(roomTotal).equals(100);
   return <article className="panel map-cell-editor">
     <div className="cell-editor-heading"><ItemIcon itemId={itemId} size="lg" /><span className={`stage-icon ${stage}`}>{stageSymbol(stage)}</span><div><small>Комната {roomIndex} · {stageLabel(stage)}</small><h2>{itemId || 'Выберите награду'}</h2><RewardGroupBadge itemId={itemId} compact /><p>Сумма комнаты сейчас <b className={new Decimal(roomTotal).equals(100) ? 'sum-ok' : 'sum-error'}>{roomTotal}%</b></p></div></div>
-    <label className="weight-editor"><span>Точный процент</span><div><input inputMode="decimal" value={draft} disabled={!canEdit || locked} onChange={(event) => onDraft(event.target.value)} /><b>%</b></div><input type="range" min="0" max="100" step="0.1" value={Math.min(100, Math.max(0, Number(draft) || 0))} disabled={!canEdit || locked} onChange={(event) => onDraft(event.target.value)} /></label>
+    <label className="weight-editor"><span>Точный процент</span><div><input type="text" inputMode="numeric" pattern="[0-9]*" maxLength={3} aria-label="Точный процент, целое число" value={draft} disabled={!canEdit || locked} onChange={(event) => { if (/^\d{0,3}$/.test(event.target.value)) onDraft(event.target.value); }} /><b>%</b></div><input type="range" min="0" max="100" step="1" value={Math.min(100, Math.max(0, Number(draft) || 0))} disabled={!canEdit || locked} onChange={(event) => onDraft(event.target.value)} /><small>Только целое число от 0 до 100.</small></label>
     <div className="cell-primary-actions"><button className="button primary" disabled={!canEdit || locked || !validWeight(draft) || (!weightChanged && !needsNormalization)} onClick={() => onApply(true)}>{weight === null ? 'Добавить и нормализовать' : 'Изменить + нормализовать'}</button><button className="button secondary" disabled={!canEdit || locked || !weightChanged} onClick={() => onApply(false)}>Оставить временную сумму</button>{weight !== null && <button className="button secondary danger-outline" disabled={!canEdit || locked} onClick={onRemove}>Удалить</button>}</div>
     <div className="cell-tools"><button className={locked ? 'active' : ''} disabled={!canEdit} onClick={onToggleLock}>{locked ? '■ Значение заблокировано' : '□ Заблокировать ячейку'}</button><button disabled={!canEdit || !needsNormalization} onClick={onNormalize}>Нормализовать комнату</button><button disabled={!canEdit || roomIndex <= 1} onClick={onCopyPrevious}>Копировать предыдущую</button><button disabled={!canEdit} onClick={() => onShift(-1)}>← Схема назад</button><button disabled={!canEdit} onClick={() => onShift(1)}>Схема вперёд →</button></div>
     <div className="cell-bulk-tools"><strong>Массовая правка выбранной награды</strong><button disabled={!canEdit} onClick={() => onScale('0.9')}>Все активные −10%</button><button disabled={!canEdit} onClick={() => onScale('1.1')}>Все активные +10%</button><label>Протянуть {draft}% до комнаты <input type="number" min="1" max="46" value={spreadEnd} onChange={(event) => onSpreadEnd(Number(event.target.value))} /></label><button disabled={!canEdit || !validWeight(draft)} onClick={onSpread}>Протянуть и нормализовать</button></div>
@@ -679,7 +679,7 @@ function GeneratorView({ settings, setSettings, excludedRoomsText, setExcludedRo
         <GeneratorField label="Комнат с большим шансом"><input type="number" min="1" max="6" step="1" value={settings.highChanceHoldRooms ?? 1} onChange={(event) => setSettings({ ...settings, highChanceHoldRooms: Number(event.target.value) })} /></GeneratorField>
         <GeneratorField label="Минимум сильных замен"><input type="number" min="1" max="8" step="1" value={settings.minimumReplacementCount ?? 1} onChange={(event) => setSettings({ ...settings, minimumReplacementCount: Number(event.target.value) })} /></GeneratorField>
         <GeneratorField label="Минимум сильной замены, п.п."><input type="number" min="1" max="100" step="1" value={settings.minimumReplacementPercent ?? 29} onChange={(event) => setSettings({ ...settings, minimumReplacementPercent: Number(event.target.value) })} /></GeneratorField>
-        <GeneratorField label="Точность процентов"><select value={settings.precision} onChange={(event) => setSettings({ ...settings, precision: event.target.value })}><option value="1">Целые проценты</option><option value="0.1">До 0,1%</option><option value="0.01">До 0,01%</option></select></GeneratorField>
+        <GeneratorField label="Точность процентов"><select aria-label="Точность процентов" value="1" disabled><option value="1">Только целые проценты</option></select></GeneratorField>
         <GeneratorField label="Исключить специальные комнаты"><input placeholder="Например: 10, 20, 30" value={excludedRoomsText} onChange={(event) => setExcludedRoomsText(event.target.value)} /></GeneratorField>
       </div>
       <div className="generator-safety"><span>■ {lockedCount} заблокированных ячеек</span><span>◆ {protectedCount} наград «не удалять»</span><span>✓ Каждой новой награде не меньше {settings.minimumJackpotPercent}%</span><span>✓ Только черновик</span><span>✓ Сумма комнаты ровно 100%</span></div>
@@ -734,8 +734,10 @@ function stageSymbol(stage: RewardStage) {
 }
 
 function validWeight(value: string, capAtHundred = true) {
+  const normalized = value.trim();
+  if (!/^(?:0|[1-9]\d*)$/.test(normalized)) return false;
   try {
-    const parsed = new Decimal(value);
+    const parsed = new Decimal(normalized);
     return parsed.isFinite() && !parsed.isNegative() && (!capAtHundred || parsed.lessThanOrEqualTo(100));
   } catch {
     return false;

@@ -115,6 +115,16 @@ export function validateConfigs(
       ));
     }
     for (const drop of room.drops) {
+      if (!isIntegerLiteral(drop.weight) || new Decimal(drop.weight).greaterThan(100)) {
+        issues.push(issue(
+          'error',
+          'drops.weight_integer',
+          `Комната ${room.index}: процент ${drop.itemId} должен быть целым`,
+          `Получено ${drop.weight}%. Допустимы только целые значения от 0 до 100 без точки, запятой и e.`,
+          'RoomDrops',
+          `$/room/${room.index}/drops/${drop.itemId}/weight`,
+        ));
+      }
       if (!sellIds.has(drop.itemId)) {
         issues.push(issue(
           'error',

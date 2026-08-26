@@ -72,16 +72,22 @@ describe('reward lifecycle analysis', () => {
 describe('exact deterministic normalization', () => {
   it('preserves locked weights and reaches exactly 100 with stable rounding', () => {
     const room = { index: 1, drops: [
-      { itemId: 'A', weight: '33.3' },
+      { itemId: 'A', weight: '33' },
       { itemId: 'B', weight: '20' },
       { itemId: 'C', weight: '10' },
     ] };
     const locks = new Set([cellKey(1, 'A')]);
-    const first = normalizeRoomDrop(room, locks, '0.1');
-    const second = normalizeRoomDrop(room, locks, '0.1');
+    const first = normalizeRoomDrop(room, locks, '1');
+    const second = normalizeRoomDrop(room, locks, '1');
     expect(first).toEqual(second);
-    expect(first.drops.find((drop) => drop.itemId === 'A')?.weight).toBe('33.3');
+    expect(first.drops.find((drop) => drop.itemId === 'A')?.weight).toBe('33');
+    expect(first.drops.every((drop) => /^(?:0|[1-9]\d*)$/.test(drop.weight))).toBe(true);
     expect(first.drops.reduce((sum, drop) => sum.plus(drop.weight), new Decimal(0)).equals(100)).toBe(true);
+  });
+
+  it('rejects fractional percentages in manual edits and serialization', () => {
+    expect(() => setRoomRewardWeight(known.roomDrops, 1, 'Cardboard_C', '26.8', true, new Set())).toThrow('целым числом');
+    expect(() => serializeRoomDrops([{ index: 1, drops: [{ itemId: 'Cardboard_C', weight: '26.8' }] }])).toThrow('целым числом');
   });
 
   it('blocks impossible locked sums above 100', () => {
