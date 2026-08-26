@@ -176,10 +176,7 @@ export function AccountSettings({
               <div className={account.hasPassword ? 'login-method connected' : 'login-method'}>
                 <i>@</i><div><strong>Email и пароль</strong><small>{account.hasPassword ? account.user.email : 'Создайте пароль ниже'}</small></div><b>{account.hasPassword ? 'Подключено' : 'Не настроено'}</b>
               </div>
-              <div className="login-method external-route"><i className="google-mark">G</i><div><strong>Google</strong><small>Выбирается на защищённой странице OpenAI</small></div><b>Через ChatGPT</b></div>
-              <div className="login-method external-route"><i className="apple-mark">●</i><div><strong>Apple</strong><small>Выбирается на защищённой странице OpenAI</small></div><b>Через ChatGPT</b></div>
             </div>
-            <p className="oauth-note"><strong>Почему через ChatGPT:</strong> Google и Apple подтверждают личность на странице OpenAI, а сервис получает только стабильную учётную запись и email. Пароли Google, Apple или ChatGPT здесь не хранятся.</p>
           </article>
 
           <article className="account-section-card">
