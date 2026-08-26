@@ -7,6 +7,7 @@ import { GameEntityIcon, hasItemIcon, ItemIcon, type EntityIconCategory } from '
 import { LineChart } from './line-chart';
 import { RewardMapEditor } from './reward-map-editor';
 import { buildRebirthPreview, buildRoomEconomy, formatExact, log10ForChart } from '@/lib/analytics';
+import { calculateSimulatorFormulas, valueAtLevel } from '@/lib/game-formulas';
 import { diffConfigs, type ConfigChange } from '@/lib/config-diff';
 import { parseKnownConfigs, type ConfigTextMap, type KnownConfigs } from '@/lib/config-model';
 import {
@@ -638,17 +639,148 @@ function SimulatorScreen({
   workspace: WorkspacePayload | null;
   apiAction: (body: Record<string, unknown>) => Promise<unknown>;
 }) {
-  const [room, setRoom] = useState(16);
+  const [room, setRoom] = useState(known.rooms[0]?.index ?? 1);
   const [pickaxe, setPickaxe] = useState(known.pickaxes[0].modelName);
+  const [currentStrength, setCurrentStrength] = useState('0');
+  const [hitStrengthLevel, setHitStrengthLevel] = useState(0);
+  const [petSlotsLevel, setPetSlotsLevel] = useState(0);
+  const [equippedPetIds, setEquippedPetIds] = useState<string[]>([]);
+  const [indexComplete, setIndexComplete] = useState(false);
+  const [freeRewardClaimed, setFreeRewardClaimed] = useState(false);
   const [rebirths, setRebirths] = useState(0);
-  const [goalLabel, setGoalLabel] = useState('Время прохождения комнаты');
+  const [friendCount, setFriendCount] = useState(0);
+  const [permanentStrengthMultiplier, setPermanentStrengthMultiplier] = useState('1');
+  const [permanentCashMultiplier, setPermanentCashMultiplier] = useState('1');
+  const [goalLabel, setGoalLabel] = useState('Время разрушения блока');
   const [goalValue, setGoalValue] = useState('60');
   const selectedPickaxe = known.pickaxes.find((item) => item.modelName === pickaxe) ?? known.pickaxes[0];
   const selectedRoom = economy.find((item) => item.index === room) ?? economy[0];
-  async function saveGoal() {
-    await apiAction({ action: 'save_goal', label: goalLabel, metric: 'room_time', targetValue: goalValue, unit: 'seconds' });
+  const hitStrength = known.upgrades.find((upgrade) => upgrade.id === 'HitStrength');
+  const petSlots = known.upgrades.find((upgrade) => upgrade.id === 'PetSlots');
+  const hitStrengthPercent = valueAtLevel(
+    hitStrength?.baseValue ?? '100',
+    hitStrength?.valuePerLevel ?? '0',
+    hitStrengthLevel,
+    hitStrength?.maxLevel ?? 0,
+  ).toFixed();
+  const petSlotCount = Math.min(
+    known.pets.length,
+    valueAtLevel(
+      petSlots?.baseValue ?? '3',
+      petSlots?.valuePerLevel ?? '0',
+      petSlotsLevel,
+      petSlots?.maxLevel ?? 0,
+    ).floor().toNumber(),
+  );
+  const equippedPets = equippedPetIds
+    .map((id) => known.pets.find((pet) => pet.id === id))
+    .filter((pet): pet is KnownConfigs['pets'][number] => Boolean(pet));
+  const simulation = calculateSimulatorFormulas({
+    roomIndex: selectedRoom.index,
+    blockMaxHP: selectedRoom.blockMaxHP,
+    currentStrength,
+    pickaxePower: selectedPickaxe.power,
+    hitStrengthPercent,
+    rebirths,
+    strengthPerRebirth: known.rebirth.strengthPerRebirth,
+    cashPerRebirth: known.rebirth.cashPerRebirth,
+    equippedPetPowers: equippedPets.map((pet) => pet.power),
+    indexComplete,
+    freeRewardClaimed,
+    friendCount,
+    permanentStrengthMultiplier,
+    permanentCashMultiplier,
+    expectedItemPrice: selectedRoom.expectedItemPrice,
+    minimumItemsPerRoom: known.sellSettings.minimumItemsPerRoom,
+    maximumItemsPerRoom: known.sellSettings.maximumItemsPerRoom,
+  });
+
+  function togglePet(petId: string) {
+    setEquippedPetIds((current) => {
+      if (current.includes(petId)) return current.filter((id) => id !== petId);
+      if (current.length >= petSlotCount) return current;
+      return [...current, petId];
+    });
   }
-  return <><PageHeading eyebrow="Модель игрока" title="Симулятор" subtitle="Подтверждённые данные отделены от неподключённых игровых формул." /><section className="simulator-grid"><article className="panel simulator-controls"><PanelHeading title="Экипировка" subtitle="Выберите состояние игрока" /><Field label="Комната"><select value={room} onChange={(event) => setRoom(Number(event.target.value))}>{known.rooms.map((item) => <option value={item.index} key={item.index}>Комната {item.index}</option>)}</select></Field><Field label="Кирка"><select value={pickaxe} onChange={(event) => setPickaxe(event.target.value)}>{known.pickaxes.map((item) => <option value={item.modelName} key={item.modelName}>{item.modelName}</option>)}</select></Field><Field label="Ребёрты"><input type="number" min="0" value={rebirths} onChange={(event) => setRebirths(Number(event.target.value))} /></Field><div className="goal-editor"><strong>Цель баланса</strong><Field label="Название"><input value={goalLabel} onChange={(event) => setGoalLabel(event.target.value)} /></Field><Field label="Цель, секунд"><input inputMode="decimal" value={goalValue} onChange={(event) => setGoalValue(event.target.value)} /></Field><button className="button secondary" onClick={() => void saveGoal()}>Сохранить цель</button></div></article><article className="panel simulator-results"><PanelHeading title="Результат" subtitle="Без неподтверждённых множителей" /><div className="result-grid"><Result label="HP блока" value={formatExact(selectedRoom.blockMaxHP).short} exact={selectedRoom.blockMaxHP} /><Result label="Сила кирки" value={formatExact(selectedPickaxe.power).short} exact={selectedPickaxe.power} /><Result label="Средняя цена предмета" value={formatExact(selectedRoom.expectedItemPrice).short} exact={selectedRoom.expectedItemPrice} /><Result label="Ожидаемый доход комнаты*" value={formatExact(selectedRoom.expectedRoomIncome).short} exact={selectedRoom.expectedRoomIncome} /></div><div className="formula-missing"><span>Формула не подключена</span><strong>Итоговая сила · число ударов · время комнаты · денежный бонус</strong><p>Нужны файлы игровых потребителей Pickaxes, HitStrength, Pets, Rebirth и Arenas. Ребёрты выбраны: {rebirths}, но в расчёт не добавлены.</p></div><small className="assumption">* Среднее 7,5 предмета — явно подписанное допущение. Распределение количества предметов не найдено в коде.</small><div className="saved-goals"><strong>Пользовательские цели</strong>{workspace?.goals.length ? workspace.goals.map((goal) => <span key={goal.id}>{goal.label}: <b>{goal.targetValue} {goal.unit}</b> · формула не подключена</span>) : <span>Целей пока нет.</span>}</div></article></section></>;
+
+  function changePetSlotsLevel(nextLevel: number) {
+    const nextCount = Math.min(
+      known.pets.length,
+      valueAtLevel(
+        petSlots?.baseValue ?? '3',
+        petSlots?.valuePerLevel ?? '0',
+        nextLevel,
+        petSlots?.maxLevel ?? 0,
+      ).floor().toNumber(),
+    );
+    setPetSlotsLevel(nextLevel);
+    setEquippedPetIds((current) => current.slice(0, nextCount));
+  }
+
+  async function saveGoal() {
+    await apiAction({ action: 'save_goal', label: goalLabel, metric: 'block_time', targetValue: goalValue, unit: 'seconds' });
+  }
+  return <>
+    <PageHeading
+      eyebrow="Модель игрока"
+      title="Симулятор"
+      subtitle="Настоящие формулы текущей версии игры: урон, Strength, питомцы, ребёрты, друзья и деньги."
+    />
+    <div className="formula-connected-banner">
+      <span>✓</span>
+      <div><strong>Формулы подключены из Roblox place · версия 89</strong><p>Расчёт использует текущие значения черновика JSON. Изменили кирку, питомца, ребёрт, ауру, комнату или цену — результат пересчитывается сразу.</p></div>
+    </div>
+    <section className="simulator-grid">
+      <article className="panel simulator-controls">
+        <PanelHeading title="Состояние игрока" subtitle="Что есть у игрока перед ударом" />
+        <div className="simulator-control-fields">
+          <Field label="Комната"><select value={room} onChange={(event) => setRoom(Number(event.target.value))}>{known.rooms.map((item) => <option value={item.index} key={item.index}>Комната {item.index}</option>)}</select></Field>
+          <Field label="Текущий Strength"><input inputMode="decimal" value={currentStrength} onChange={(event) => setCurrentStrength(event.target.value)} /></Field>
+          <Field label="Кирка"><select value={pickaxe} onChange={(event) => setPickaxe(event.target.value)}>{known.pickaxes.map((item, index) => <option value={item.modelName} key={item.modelName}>#{index + 1} · {item.modelName} · сила {formatExact(item.power).short}</option>)}</select></Field>
+          <Field label={`Уровень ауры · ${hitStrengthPercent}%`}><select value={hitStrengthLevel} onChange={(event) => setHitStrengthLevel(Number(event.target.value))}>{Array.from({ length: (hitStrength?.maxLevel ?? 0) + 1 }, (_, level) => <option value={level} key={level}>Уровень {level} · {valueAtLevel(hitStrength?.baseValue ?? '100', hitStrength?.valuePerLevel ?? '0', level, hitStrength?.maxLevel ?? 0).toFixed()}%</option>)}</select></Field>
+          <Field label="Ребёрты"><input type="number" min="0" max="120" value={rebirths} onChange={(event) => setRebirths(Math.min(120, Math.max(0, Number(event.target.value))))} /></Field>
+          <Field label={`Друзья на сервере · +${simulation.friendBoostPercent}%`}><input type="number" min="0" value={friendCount} onChange={(event) => setFriendCount(Math.max(0, Number(event.target.value)))} /></Field>
+          <Field label="Постоянный бонус Strength, ×"><input inputMode="decimal" value={permanentStrengthMultiplier} onChange={(event) => setPermanentStrengthMultiplier(event.target.value)} /></Field>
+          <Field label="Постоянный денежный бонус, ×"><input inputMode="decimal" value={permanentCashMultiplier} onChange={(event) => setPermanentCashMultiplier(event.target.value)} /></Field>
+          <Field label={`Уровень слотов питомцев · доступно ${petSlotCount}`}><select value={petSlotsLevel} onChange={(event) => changePetSlotsLevel(Number(event.target.value))}>{Array.from({ length: (petSlots?.maxLevel ?? 0) + 1 }, (_, level) => <option value={level} key={level}>Уровень {level} · {valueAtLevel(petSlots?.baseValue ?? '3', petSlots?.valuePerLevel ?? '0', level, petSlots?.maxLevel ?? 0).toFixed()} сл.</option>)}</select></Field>
+          <label className="simulator-toggle"><input type="checkbox" checked={freeRewardClaimed} onChange={(event) => setFreeRewardClaimed(event.target.checked)} /><span><b>Бесплатная награда получена</b><small>Добавляет ×2 в общий пул Strength</small></span></label>
+          <label className="simulator-toggle"><input type="checkbox" checked={indexComplete} onChange={(event) => setIndexComplete(event.target.checked)} /><span><b>Индекс предметов собран</b><small>Добавляет ×1,5 к питомцам</small></span></label>
+        </div>
+        <div className="pet-picker">
+          <header><strong>Экипированные питомцы</strong><span>{equippedPetIds.length} / {petSlotCount}</span></header>
+          <div>{known.pets.map((pet) => { const selected = equippedPetIds.includes(pet.id); const disabled = !selected && equippedPetIds.length >= petSlotCount; return <button className={selected ? 'selected' : ''} disabled={disabled} onClick={() => togglePet(pet.id)} key={pet.id}><GameEntityIcon category="pets" entityId={pet.id} size="md" /><span><b>{pet.id}</b><small>×{pet.power}</small></span><i>{selected ? '✓' : '+'}</i></button>; })}</div>
+        </div>
+        <div className="goal-editor">
+          <strong>Цель баланса для одного блока</strong>
+          <Field label="Название"><input value={goalLabel} onChange={(event) => setGoalLabel(event.target.value)} /></Field>
+          <Field label="Цель, секунд"><input inputMode="decimal" value={goalValue} onChange={(event) => setGoalValue(event.target.value)} /></Field>
+          <button className="button secondary" onClick={() => void saveGoal()}>Сохранить цель</button>
+        </div>
+      </article>
+      <article className="panel simulator-results">
+        <PanelHeading title="Результат" subtitle={`Комната ${selectedRoom.index} · ${simulation.roomItemCount} предметов по игровой формуле`} />
+        <div className="result-grid simulator-result-grid">
+          <Result label="HP блока" value={formatExact(selectedRoom.blockMaxHP).short} exact={selectedRoom.blockMaxHP} />
+          <Result label="Урон за удар" value={formatExact(simulation.damagePerHit).short} exact={simulation.damagePerHit} />
+          <Result label="Ударов по блоку" value={formatExact(simulation.hitsAtCurrentStrength).short} exact={simulation.hitsAtCurrentStrength} />
+          <Result label="Время одного блока" value={`${formatExact(simulation.blockTimeSeconds).short} с`} exact={simulation.blockTimeSeconds} />
+          <Result label="Strength за удар" value={`+${formatExact(simulation.strengthPerHit).short}`} exact={simulation.strengthPerHit} />
+          <Result label="Общий бонус Strength" value={`×${formatExact(simulation.strengthMultiplier).short}`} exact={simulation.strengthMultiplier} />
+          <Result label="Средняя цена предмета" value={formatExact(selectedRoom.expectedItemPrice).short} exact={selectedRoom.expectedItemPrice} />
+          <Result label="Ожидаемая выручка комнаты" value={formatExact(simulation.expectedRoomCash).short} exact={simulation.expectedRoomCash} />
+        </div>
+        <div className="formula-breakdown">
+          <header><span>Как игра посчитала</span><strong>Все промежуточные множители видны</strong></header>
+          <div><b>Урон</b><code>round(max(10, round(Strength × 0.2)) × аура% / 100)</code><span>{currentStrength} Strength → {simulation.damagePerHit} урона</span></div>
+          <div><b>Strength за удар</b><code>round(кирка × (ребёрт + постоянный + free reward + питомцы/индекс) × друзья)</code><span>Питомцы/индекс ×{simulation.miningRewardMultiplier}; кирка {selectedPickaxe.power} × общий ×{simulation.strengthMultiplier} = {simulation.strengthPerHit}</span></div>
+          <div><b>Деньги комнаты</b><code>round(Σ(вес × цена) × точное число предметов × денежный бонус)</code><span>{simulation.baseRoomIncome} × {simulation.cashMultiplier} = {simulation.expectedRoomCash}</span></div>
+          <div><b>Число предметов</b><code>min + ((номер комнаты + 13337) mod диапазон)</code><span>Комната {selectedRoom.index}: ровно {simulation.roomItemCount}, не среднее 7,5</span></div>
+        </div>
+        <small className="assumption simulator-note">Время блока использует текущий урон и настоящий интервал кирки 0,55 с плюс задержку контакта 0,2475 с. Во время реальной добычи Strength растёт после каждого принятого удара, поэтому следующие блоки ломаются быстрее. Полное время комнаты дополнительно зависит от маршрута, радиуса удара, движения и сети. Арены относятся к AFK-тренировке и не умножают добычу в комнатах. Временный денежный event сейчас считается как ×1.</small>
+        <div className="saved-goals"><strong>Пользовательские цели</strong>{workspace?.goals.length ? workspace.goals.map((goal) => { if (goal.metric !== 'block_time') return <span key={goal.id}>{goal.label}: <b>{goal.targetValue} {goal.unit}</b> · прежняя цель комнаты, маршрут нельзя честно вывести только из HP</span>; const achieved = new Decimal(simulation.blockTimeSeconds).lessThanOrEqualTo(goal.targetValue); return <span className={achieved ? 'goal-achieved' : 'goal-missed'} key={goal.id}>{goal.label}: <b>{goal.targetValue} {goal.unit}</b> · сейчас {formatExact(simulation.blockTimeSeconds).short} с · {achieved ? 'цель выполнена' : 'медленнее цели'}</span>; }) : <span>Целей пока нет.</span>}</div>
+      </article>
+    </section>
+  </>;
 }
 
 function SourcesScreen({ configs, workspace }: { configs: ConfigTextMap; workspace: WorkspacePayload | null }) {

@@ -6,6 +6,7 @@ import { ItemIcon, ItemIconDiagnostics } from './item-icon';
 import { LineChart } from './line-chart';
 import { formatExact, type RoomEconomy } from '@/lib/analytics';
 import type { KnownConfigs, RoomDrop } from '@/lib/config-model';
+import { itemsForRoom } from '@/lib/game-formulas';
 import {
   analyzeRewardProgression,
   applyRewardSuggestion,
@@ -87,8 +88,6 @@ export function RewardMapEditor({
     excludedRooms: [],
   });
   const [excludedRoomsText, setExcludedRoomsText] = useState('');
-  const [attemptModelConfirmed, setAttemptModelConfirmed] = useState(false);
-  const [attemptCount, setAttemptCount] = useState<7 | 8>(8);
 
   useEffect(() => {
     const timer = window.setTimeout(() => {
@@ -96,15 +95,9 @@ export function RewardMapEditor({
         const storedLocks = localStorage.getItem('dig-reward-map-locks');
         const storedMetadata = localStorage.getItem('dig-reward-map-metadata');
         const storedDismissed = localStorage.getItem('dig-reward-map-dismissed');
-        const storedMechanics = localStorage.getItem('dig-reward-map-mechanics');
         if (storedLocks) setLockedCells(new Set(JSON.parse(storedLocks) as string[]));
         if (storedMetadata) setMetadata(JSON.parse(storedMetadata) as RewardMetadata);
         if (storedDismissed) setDismissed(JSON.parse(storedDismissed) as Record<string, string>);
-        if (storedMechanics) {
-          const parsed = JSON.parse(storedMechanics) as { confirmed?: boolean; attempts?: number };
-          setAttemptModelConfirmed(parsed.confirmed === true);
-          if (parsed.attempts === 7 || parsed.attempts === 8) setAttemptCount(parsed.attempts);
-        }
       } catch {
         // Corrupt device-only metadata must never block editing the game JSON.
       }
@@ -117,15 +110,10 @@ export function RewardMapEditor({
   const selectedDrop = selectedRoomDrop?.drops.find((drop) => drop.itemId === selectedItem);
   const selectedMetric = analysis.metricByRoom.get(selectedRoom);
   const currentCellKey = cellKey(selectedRoom, selectedItem);
-  const selectedSeenChance = attemptModelConfirmed && selectedDrop
+  const attemptCount = itemsForRoom(selectedRoom, known.sellSettings) as 7 | 8;
+  const selectedSeenChance = selectedDrop
     ? probabilityAtLeastOnce(selectedDrop.weight, attemptCount)
     : null;
-
-  function persistMechanics(confirmed: boolean, attempts: 7 | 8) {
-    setAttemptModelConfirmed(confirmed);
-    setAttemptCount(attempts);
-    localStorage.setItem('dig-reward-map-mechanics', JSON.stringify({ confirmed, attempts }));
-  }
 
   function persistLocks(next: Set<string>) {
     setLockedCells(next);
@@ -291,7 +279,7 @@ export function RewardMapEditor({
       <div className="reward-map-summary"><ItemIcon itemId={selectedItem} size="lg" /><div><span>Выбрано</span><strong>{selectedItem || '—'}</strong><small>Комната {selectedRoom} · {selectedDrop?.weight ?? 0}%</small></div></div>
     </header>
 
-    <div className="mechanics-warning"><span>!</span><div><strong>Реальный алгоритм выбора предметов в Roblox-коде не найден</strong><p>Подтверждены только относительные веса и сумма 100. Карта показывает шанс одной выборки. Условный расчёт для 7–8 появлений включается только после ручного подтверждения механики владельцем.</p><div className="mechanics-controls"><label><input type="checkbox" checked={attemptModelConfirmed} onChange={(event) => persistMechanics(event.target.checked, attemptCount)} /> Подтверждаю: попытки независимы и выполняются с возвращением</label><label>Предметов в комнате<select value={attemptCount} disabled={!attemptModelConfirmed} onChange={(event) => persistMechanics(attemptModelConfirmed, Number(event.target.value) as 7 | 8)}><option value={7}>7</option><option value={8}>8</option></select></label></div></div></div>
+    <div className="mechanics-warning mechanics-confirmed"><span>✓</span><div><strong>Алгоритм выпадения подключён из Roblox place версии 89</strong><p>Каждый предмет выбирается отдельным взвешенным броском с возвращением. Число предметов детерминировано: нечётные комнаты дают 7, чётные — 8. Для комнаты {selectedRoom} автоматически используется {attemptCount} попыток.</p></div></div>
 
     <nav className="reward-view-tabs" aria-label="Режим карты наград">
       {([
@@ -318,9 +306,9 @@ export function RewardMapEditor({
 
       {selectedMetric && <section className="reward-interest-strip">
         <span><small>Активные типы</small><strong>{selectedMetric.activeCount}</strong><i>+{selectedMetric.newCount} новых · {selectedMetric.lastCount} в последней комнате</i></span>
-        <span><small>Выбранная награда за комнату</small><strong>{selectedSeenChance === null ? '—' : `${selectedSeenChance}%`}</strong><i>{attemptModelConfirmed ? `хотя бы раз из ${attemptCount}` : 'механика не подтверждена'}</i></span>
+        <span><small>Выбранная награда за комнату</small><strong>{selectedSeenChance === null ? '—' : `${selectedSeenChance}%`}</strong><i>хотя бы раз из {attemptCount}</i></span>
         <span><small>Ожидаемая цена</small><strong>{formatExact(selectedMetric.expectedItemPrice).short}</strong><i>Σ(вес × цена)</i></span>
-        <span><small>Ожидаемо за комнату*</small><strong>{formatExact(selectedMetric.expectedRoomIncome).short}</strong><i>модель среднего 7,5 предмета</i></span>
+        <span><small>Ожидаемо за комнату*</small><strong>{formatExact(selectedMetric.expectedRoomIncome).short}</strong><i>ровно {attemptCount} предметов</i></span>
         <span><small>Устаревшие награды</small><strong>{selectedMetric.staleWeight}%</strong><i>цена ниже 20% средней</i></span>
         <span><small>Новизна*</small><strong>{selectedMetric.noveltyIndex}/100</strong><i>новые типы + их стартовая доля</i></span>
         <span><small>Захламление*</small><strong>{selectedMetric.clutterIndex}/100</strong><i>типы сверх 9 + слабая доля</i></span>
@@ -390,8 +378,6 @@ export function RewardMapEditor({
       selectedItem={selectedItem}
       onRoom={(room) => selectCell(selectedItem, room)}
       onCell={selectCell}
-      attemptModelConfirmed={attemptModelConfirmed}
-      attemptCount={attemptCount}
     />}
 
     {mode === 'analytics' && <RewardAnalyticsView
@@ -400,8 +386,6 @@ export function RewardMapEditor({
       selectedRoom={selectedRoom}
       selectedItem={selectedItem}
       onRoom={setSelectedRoom}
-      attemptModelConfirmed={attemptModelConfirmed}
-      attemptCount={attemptCount}
     />}
 
     {mode === 'catalog' && <RewardCatalog known={known} analysis={analysis} commitNumber={commitNumber} onSelect={(itemId) => { setSelectedItem(itemId); setMode('map'); }} />}
@@ -528,30 +512,26 @@ function LifecyclePanel({ lifecycle, known, metadata, onMetadata }: {
   return <article className="panel lifecycle-panel"><div className="lifecycle-details"><p className="eyebrow">Жизненный цикл награды</p><div className="lifecycle-title"><ItemIcon itemId={lifecycle.itemId} size="xl" /><h2>{lifecycle.itemId}</h2></div><div className="lifecycle-stats"><span><small>Цена</small><strong>{formatExact(lifecycle.sellPrice).short}</strong></span><span><small>Авторанг по цене</small><strong>#{lifecycle.automaticRank}</strong></span><span><small>Первая комната</small><strong>{lifecycle.firstRoom ?? '—'}</strong></span><span><small>Большой шанс</small><strong>{lifecycle.peakRoom ?? '—'} · {lifecycle.maximumWeight}%</strong></span><span><small>Последняя перед 0%</small><strong>{lifecycle.lastRoom ?? '—'}</strong></span><span><small>Длина жизни</small><strong>{lifecycle.activeRoomCount} комн.</strong></span></div><label className="manual-rank"><span>Ручной ранг прогрессии</span><input type="number" min="1" max={known.sellItems.length} value={metadata?.manualRank ?? lifecycle.automaticRank} onChange={(event) => onMetadata({ manualRank: Number(event.target.value) })} /><small>{metadata?.manualRank && metadata.manualRank !== lifecycle.automaticRank ? 'Ручной ранг отличается от порядка цены — это допустимое наблюдение.' : 'Сейчас совпадает с автоматическим рангом по цене.'}</small></label><label className="manual-rank"><span>Служебная группа</span><input value={metadata?.group ?? ''} placeholder="Например: космос, событие" onChange={(event) => onMetadata({ group: event.target.value })} /></label></div><div className="lifecycle-chart"><LineChart labels={known.rooms.map((room) => String(room.index))} xAxisLabel="Номер комнаты" yAxisLabel="Вероятность, %" height={360} series={[{ label: lifecycle.itemId, color: '#6b5ce7', values }]} ariaLabel={`Процент ${lifecycle.itemId} по комнатам`} /></div></article>;
 }
 
-function NeighborsView({ known, analysis, selectedRoom, selectedItem, onRoom, onCell, attemptModelConfirmed, attemptCount }: {
+function NeighborsView({ known, analysis, selectedRoom, selectedItem, onRoom, onCell }: {
   known: KnownConfigs;
   analysis: ReturnType<typeof analyzeRewardProgression>;
   selectedRoom: number;
   selectedItem: string;
   onRoom: (room: number) => void;
   onCell: (itemId: string, roomIndex: number) => void;
-  attemptModelConfirmed: boolean;
-  attemptCount: 7 | 8;
 }) {
   const rooms = known.rooms.filter((room) => room.index >= selectedRoom - 2 && room.index <= selectedRoom + 5);
   const items = Array.from(new Set(rooms.flatMap((room) => known.roomDrops.find((dropRoom) => dropRoom.index === room.index)?.drops.map((drop) => drop.itemId) ?? [])))
     .sort((left, right) => (analysis.ranks.get(left) ?? 0) - (analysis.ranks.get(right) ?? 0));
-  return <article className="panel neighbor-panel"><header><div><p className="eyebrow">Сравнение соседних комнат</p><h2>Комната {selectedRoom} и следующие</h2><p>Две предыдущие, выбранная и пять следующих комнат. Строки наград выровнены для быстрого сравнения.</p></div><label>Центральная комната<select value={selectedRoom} onChange={(event) => onRoom(Number(event.target.value))}>{known.rooms.map((room) => <option key={room.index} value={room.index}>{room.index}</option>)}</select></label></header><div className="neighbor-scroll"><table className="neighbor-table"><thead><tr><th>Награда · цена</th>{rooms.map((room) => { const metric = analysis.metricByRoom.get(room.index); return <th className={room.index === selectedRoom ? 'current' : ''} key={room.index}><strong>Комната {room.index}</strong><small>{metric?.activeCount} типов · +{metric?.newCount} новых · {metric?.lastCount} последних</small><span>Средняя {formatExact(metric?.expectedItemPrice ?? '0').short}</span></th>; })}</tr></thead><tbody>{items.map((itemId) => { const lifecycle = analysis.lifecycleByItem.get(itemId); const price = known.sellItems.find((item) => item.id === itemId)?.sellPrice ?? '0'; return <tr className={itemId === selectedItem ? 'selected' : ''} key={itemId}><th><button onClick={() => onCell(itemId, selectedRoom)}><ItemIcon itemId={itemId} size="sm" /><span><strong>{itemId}</strong><small>#{analysis.ranks.get(itemId)} · {formatExact(price).short}</small></span></button></th>{rooms.map((room) => { const current = known.roomDrops.find((dropRoom) => dropRoom.index === room.index)?.drops.find((drop) => drop.itemId === itemId); const previous = known.roomDrops.find((dropRoom) => dropRoom.index === room.index - 1)?.drops.find((drop) => drop.itemId === itemId); const delta = new Decimal(current?.weight ?? 0).minus(previous?.weight ?? 0); const stage = rewardStage(lifecycle, room.index); return <td className={`${stage} ${room.index === selectedRoom ? 'current' : ''}`} key={room.index}><button onClick={() => onCell(itemId, room.index)}>{current ? <><strong>{current.weight}%</strong><small>{delta.isZero() ? '0' : `${delta.isPositive() ? '+' : ''}${delta.toString()} п.п.`}</small><span>{stageSymbol(stage)} {stageLabel(stage)}</span>{attemptModelConfirmed && <small className="attempt-chance">≥1 из {attemptCount}: {probabilityAtLeastOnce(current.weight, attemptCount)}%</small>}</> : <i>{stage === 'removed' ? '0% · удалена' : '—'}</i>}</button></td>; })}</tr>; })}</tbody></table></div><footer className="mechanics-footnote">{attemptModelConfirmed ? `Показан условный расчёт 1−(1−p)^${attemptCount} для независимых попыток с возвращением, подтверждённый владельцем как рабочее допущение.` : 'Шанс «хотя бы раз среди 7–8 предметов» скрыт: в репозитории нет игрового алгоритма выбора с подтверждением независимости и возвращения.'}</footer></article>;
+  return <article className="panel neighbor-panel"><header><div><p className="eyebrow">Сравнение соседних комнат</p><h2>Комната {selectedRoom} и следующие</h2><p>Две предыдущие, выбранная и пять следующих комнат. Строки наград выровнены для быстрого сравнения.</p></div><label>Центральная комната<select value={selectedRoom} onChange={(event) => onRoom(Number(event.target.value))}>{known.rooms.map((room) => <option key={room.index} value={room.index}>{room.index}</option>)}</select></label></header><div className="neighbor-scroll"><table className="neighbor-table"><thead><tr><th>Награда · цена</th>{rooms.map((room) => { const metric = analysis.metricByRoom.get(room.index); return <th className={room.index === selectedRoom ? 'current' : ''} key={room.index}><strong>Комната {room.index}</strong><small>{metric?.activeCount} типов · +{metric?.newCount} новых · {metric?.lastCount} последних</small><span>Средняя {formatExact(metric?.expectedItemPrice ?? '0').short}</span></th>; })}</tr></thead><tbody>{items.map((itemId) => { const lifecycle = analysis.lifecycleByItem.get(itemId); const price = known.sellItems.find((item) => item.id === itemId)?.sellPrice ?? '0'; return <tr className={itemId === selectedItem ? 'selected' : ''} key={itemId}><th><button onClick={() => onCell(itemId, selectedRoom)}><ItemIcon itemId={itemId} size="sm" /><span><strong>{itemId}</strong><small>#{analysis.ranks.get(itemId)} · {formatExact(price).short}</small></span></button></th>{rooms.map((room) => { const current = known.roomDrops.find((dropRoom) => dropRoom.index === room.index)?.drops.find((drop) => drop.itemId === itemId); const previous = known.roomDrops.find((dropRoom) => dropRoom.index === room.index - 1)?.drops.find((drop) => drop.itemId === itemId); const delta = new Decimal(current?.weight ?? 0).minus(previous?.weight ?? 0); const stage = rewardStage(lifecycle, room.index); const roomAttemptCount = itemsForRoom(room.index, known.sellSettings); return <td className={`${stage} ${room.index === selectedRoom ? 'current' : ''}`} key={room.index}><button onClick={() => onCell(itemId, room.index)}>{current ? <><strong>{current.weight}%</strong><small>{delta.isZero() ? '0' : `${delta.isPositive() ? '+' : ''}${delta.toString()} п.п.`}</small><span>{stageSymbol(stage)} {stageLabel(stage)}</span><small className="attempt-chance">≥1 из {roomAttemptCount}: {probabilityAtLeastOnce(current.weight, roomAttemptCount)}%</small></> : <i>{stage === 'removed' ? '0% · удалена' : '—'}</i>}</button></td>; })}</tr>; })}</tbody></table></div><footer className="mechanics-footnote">Игровой расчёт 1−(1−p)ⁿ: n=7 в нечётных комнатах и n=8 в чётных. Каждый столбец использует собственное точное n.</footer></article>;
 }
 
-function RewardAnalyticsView({ known, analysis, selectedRoom, selectedItem, onRoom, attemptModelConfirmed, attemptCount }: {
+function RewardAnalyticsView({ known, analysis, selectedRoom, selectedItem, onRoom }: {
   known: KnownConfigs;
   analysis: ReturnType<typeof analyzeRewardProgression>;
   selectedRoom: number;
   selectedItem: string;
   onRoom: (room: number) => void;
-  attemptModelConfirmed: boolean;
-  attemptCount: 7 | 8;
 }) {
   const [comparedItems, setComparedItems] = useState<string[]>([]);
   const comparisonItems = Array.from(new Set([selectedItem, ...comparedItems])).filter(Boolean).slice(0, 4);
@@ -568,7 +548,7 @@ function RewardAnalyticsView({ known, analysis, selectedRoom, selectedItem, onRo
     const combinedWeight = room.drops.reduce((sum, drop) => (
       analysis.lifecycleByItem.get(drop.itemId)?.firstRoom === room.index ? sum.plus(drop.weight) : sum
     ), new Decimal(0));
-    return attemptModelConfirmed ? probabilityAtLeastOnce(combinedWeight.toString(), attemptCount) : combinedWeight.toNumber();
+    return probabilityAtLeastOnce(combinedWeight.toString(), itemsForRoom(room.index, known.sellSettings));
   });
   const comparisonSeries = comparisonItems.map((itemId, index) => ({
     label: itemId,
@@ -590,7 +570,7 @@ function RewardAnalyticsView({ known, analysis, selectedRoom, selectedItem, onRo
       <AnalyticsChart title="Группы ценности" note="Награды разбиты на четыре равные группы по цене продажи."><LineChart labels={labels} xAxisLabel="Номер комнаты" yAxisLabel="Доля группы, %" height={330} series={groupSeries} ariaLabel="Состав выпадения по группам ценности" /></AnalyticsChart>
       <AnalyticsChart title="Ожидаемая цена предмета" note="Σ(вес × цена); подтверждённый расчёт по RoomDrops и SellItems."><LineChart labels={labels} xAxisLabel="Номер комнаты" yAxisLabel="Ожидаемая цена" height={330} series={[{ label: 'Ожидаемая цена', color: '#12a47c', values: analysis.metrics.map((metric) => Number(metric.expectedItemPrice) || 0) }]} ariaLabel="Ожидаемая цена награды по комнатам" /></AnalyticsChart>
       <AnalyticsChart title="HP и ожидаемая награда" note="Обе величины показаны в log₁₀, чтобы сравнить темп роста."><LineChart labels={labels} xAxisLabel="Номер комнаты" yAxisLabel="Значение · log₁₀" height={330} series={[{ label: 'HP блока', color: '#6658e8', values: known.rooms.map((room) => safeLog10(room.blockMaxHP)) }, { label: 'Ожидаемая награда', color: '#12a47c', values: analysis.metrics.map((metric) => safeLog10(metric.expectedItemPrice)) }]} ariaLabel="Связанные графики HP и ожидаемой награды" /></AnalyticsChart>
-      <AnalyticsChart title="Шанс увидеть новую награду" note={attemptModelConfirmed ? `Хотя бы один раз среди ${attemptCount} независимых попыток с возвращением.` : 'Сейчас показана суммарная доля новых наград одной выборки; механика 7–8 предметов не подтверждена.'}><LineChart labels={labels} xAxisLabel="Номер комнаты" yAxisLabel="Шанс, %" height={330} series={[{ label: attemptModelConfirmed ? `≥1 из ${attemptCount}` : 'Одна выборка', color: '#e58b2b', values: newRewardChance }]} ariaLabel="Шанс увидеть новую награду" /></AnalyticsChart>
+      <AnalyticsChart title="Шанс увидеть новую награду" note="Хотя бы один раз: 7 бросков в нечётных комнатах и 8 в чётных."><LineChart labels={labels} xAxisLabel="Номер комнаты" yAxisLabel="Шанс, %" height={330} series={[{ label: '≥1 из 7/8', color: '#e58b2b', values: newRewardChance }]} ariaLabel="Шанс увидеть новую награду" /></AnalyticsChart>
       <AnalyticsChart title="Активные, новые и последние" note="Последние — предметы в комнате непосредственно перед исчезновением."><LineChart labels={labels} xAxisLabel="Номер комнаты" yAxisLabel="Количество" height={330} series={[{ label: 'Активные', color: '#6658e8', values: analysis.metrics.map((metric) => metric.activeCount) }, { label: 'Новые', color: '#12a47c', values: analysis.metrics.map((metric) => metric.newCount) }, { label: 'Последние', color: '#d05475', values: analysis.metrics.map((metric) => metric.lastCount) }]} ariaLabel="Количество активных новых и последних наград" /></AnalyticsChart>
       <AnalyticsChart title="Доля устаревших предметов" note="Цена ниже 20% ожидаемой цены предмета выбранной комнаты."><LineChart labels={labels} xAxisLabel="Номер комнаты" yAxisLabel="Устаревшая доля, %" height={330} series={[{ label: 'Устаревшие', color: '#d05475', values: analysis.metrics.map((metric) => Number(metric.staleWeight)) }]} ariaLabel="Доля устаревших наград" /></AnalyticsChart>
     </div>

@@ -1,6 +1,7 @@
 import Decimal from 'decimal.js';
 import type { ConfigTextMap, KnownConfigs } from './config-model';
 import { parseKnownConfigs } from './config-model';
+import { itemsForRoom } from './game-formulas';
 
 Decimal.set({ precision: 80, rounding: Decimal.ROUND_HALF_UP });
 
@@ -14,6 +15,7 @@ export type RoomEconomy = {
   difficultyToReward: string | null;
   totalWeight: string;
   itemCount: number;
+  spawnedItemCount: number;
   assumption: string;
 };
 
@@ -21,10 +23,6 @@ export function buildRoomEconomy(configs: ConfigTextMap | KnownConfigs): RoomEco
   const known = isKnownConfigs(configs) ? configs : parseKnownConfigs(configs);
   const prices = new Map(known.sellItems.map((item) => [item.id, new Decimal(item.sellPrice)]));
   const drops = new Map(known.roomDrops.map((room) => [room.index, room]));
-  const averageItems = new Decimal(known.sellSettings.minimumItemsPerRoom)
-    .plus(known.sellSettings.maximumItemsPerRoom)
-    .div(2);
-
   let previousHp: Decimal | null = null;
   let previousReward: Decimal | null = null;
 
@@ -41,6 +39,7 @@ export function buildRoomEconomy(configs: ConfigTextMap | KnownConfigs): RoomEco
         : sum.plus(new Decimal(drop.weight).div(totalWeight).mul(price));
     }, new Decimal(0));
     const hp = new Decimal(room.blockMaxHP);
+    const spawnedItemCount = itemsForRoom(room.index, known.sellSettings);
     const hpGrowth = previousHp?.isZero() ? null : hp.div(previousHp ?? 1);
     const rewardGrowth = previousReward?.isZero()
       ? null
@@ -52,14 +51,15 @@ export function buildRoomEconomy(configs: ConfigTextMap | KnownConfigs): RoomEco
       index: room.index,
       blockMaxHP: room.blockMaxHP,
       expectedItemPrice: expectedItemPrice.toFixed(),
-      expectedRoomIncome: expectedItemPrice.mul(averageItems).toFixed(),
+      expectedRoomIncome: expectedItemPrice.mul(spawnedItemCount).toFixed(),
       hpGrowth: hpGrowth?.toFixed(8) ?? null,
       rewardGrowth: rewardGrowth?.toFixed(8) ?? null,
       difficultyToReward: difficultyToReward?.toFixed(8) ?? null,
       totalWeight: totalWeight.toFixed(),
       itemCount: roomDrop?.drops.length ?? 0,
+      spawnedItemCount,
       assumption:
-        'Доход комнаты использует среднее между минимумом и максимумом предметов. Равномерность выбора количества предметов не подтверждена игровым кодом.',
+        `Игровая формула создаёт ${spawnedItemCount} предметов: min + ((номер комнаты + 13337) mod диапазон).`,
     };
     previousHp = hp;
     previousReward = expectedItemPrice;

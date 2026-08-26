@@ -16,15 +16,16 @@ test('navigates to rooms and stages/reverts an exact large-number edit', async (
   await expect(hp).toHaveValue(original);
 });
 
-test('shows source drift and keeps simulator formulas explicitly disconnected', async ({ page }) => {
+test('shows source drift and calculates the connected game formulas', async ({ page }) => {
   await page.goto('/');
   await page.getByRole('button', { name: 'Сравнение источников' }).click();
   await expect(page.getByRole('heading', { name: 'Сравнение версий' })).toBeVisible();
   await expect(page.getByText('5 полей')).toBeVisible();
 
   await page.getByRole('button', { name: 'Симулятор' }).click();
-  await expect(page.getByText('Формула не подключена')).toBeVisible();
-  await expect(page.getByText(/Итоговая сила/)).toBeVisible();
+  await expect(page.getByText('Формулы подключены из Roblox place · версия 89')).toBeVisible();
+  await expect(page.getByText('Как игра посчитала')).toBeVisible();
+  await expect(page.getByText('Урон за удар')).toBeVisible();
 });
 
 test('shows the complete numbered rewards catalog with editable prices', async ({ page }) => {
