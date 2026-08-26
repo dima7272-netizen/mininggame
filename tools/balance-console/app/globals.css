@@ -205,7 +205,7 @@ button:disabled { cursor: not-allowed; opacity: .55; }
 .data-table tbody tr:hover td, .data-table .selected-row td { background: #f8f7ff; }
 .data-table .warning-row td { background: #fffaf1; }
 .data-table code { color: #3f4755; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 9px; white-space: nowrap; }
-.primary-reward-list td:nth-child(2) { min-width: 245px; }
+.primary-reward-list td:first-child { min-width: 245px; }
 .room-reward-item { display: inline-flex; align-items: center; gap: 12px; }
 .room-reward-item code { color: var(--ink); font-size: 11px; font-weight: 750; }
 .rooms-table td:first-child { cursor: pointer; }
