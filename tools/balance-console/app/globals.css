@@ -322,7 +322,7 @@ button:disabled { border-color: color-mix(in srgb, var(--muted) 20%, var(--line)
 .error-text, .raw-error { color: var(--red); }
 .drop-editor input[type='checkbox'] { accent-color: var(--violet); }
 .primary-reward-list { border-color: color-mix(in srgb, var(--mint) 34%, var(--line)); }
-.rewards-toolbar { display: grid; grid-template-columns: minmax(280px, 1fr) minmax(210px, 300px); gap: 14px; padding: 0 29px 24px; }.reward-search, .reward-sort { display: grid; gap: 7px; color: var(--muted); font-size: 12px; font-weight: 750; }.reward-search input, .reward-sort select { min-height: 46px; border: 1px solid var(--line); border-radius: 9px; background: var(--surface); color: var(--ink); padding: 0 13px; font: inherit; font-weight: 500; }.reward-search input:focus, .reward-sort select:focus { border-color: var(--violet); outline: 3px solid var(--violet-soft); }.rewards-scroll { max-height: 760px; border-top: 1px solid var(--line); }.rewards-table { min-width: 1120px; }.rewards-table th:nth-child(1) { width: 72px; }.rewards-table th:nth-child(2) { width: 250px; }.rewards-table th:nth-child(3) { width: 230px; }.reward-number { display: grid; width: 38px; height: 38px; place-items: center; border-radius: 10px; background: var(--violet-soft); color: var(--violet); font-size: 14px; }.reward-name { display: block; color: var(--ink); font-size: 14px; }.rewards-table td small { display: block; margin-top: 4px; color: var(--muted); font-size: 11px; }.room-chips { display: flex; flex-wrap: wrap; gap: 5px; }.room-chips b { display: grid; min-width: 29px; height: 29px; place-items: center; border: 1px solid var(--line); border-radius: 7px; background: var(--canvas); color: var(--ink); font-size: 11px; }.unused-reward { color: var(--muted); font-size: 12px; }
+.rewards-toolbar { display: grid; grid-template-columns: minmax(280px, 1fr) minmax(210px, 300px); gap: 14px; padding: 0 29px 24px; }.reward-search, .reward-sort { display: grid; gap: 7px; color: var(--muted); font-size: 12px; font-weight: 750; }.reward-search input, .reward-sort select { min-height: 46px; border: 1px solid var(--line); border-radius: 9px; background: var(--surface); color: var(--ink); padding: 0 13px; font: inherit; font-weight: 500; }.reward-search input:focus, .reward-sort select:focus { border-color: var(--violet); outline: 3px solid var(--violet-soft); }.rewards-scroll { max-height: 760px; border-top: 1px solid var(--line); }.rewards-table { min-width: 1120px; }.rewards-table th:nth-child(1) { width: 250px; }.rewards-table th:nth-child(2) { width: 230px; }.reward-name { display: block; color: var(--ink); font-size: 14px; }.rewards-table td small { display: block; margin-top: 4px; color: var(--muted); font-size: 11px; }.room-chips { display: flex; flex-wrap: wrap; gap: 5px; }.room-chips b { display: grid; min-width: 29px; height: 29px; place-items: center; border: 1px solid var(--line); border-radius: 7px; background: var(--canvas); color: var(--ink); font-size: 11px; }.unused-reward { color: var(--muted); font-size: 12px; }
 .modal-backdrop { position: fixed; inset: 0; z-index: 20; display: grid; place-items: center; background: #11182799; padding: 20px; }
 .modal { width: min(540px, 100%); max-height: 85vh; overflow: auto; border-radius: 14px; background: var(--surface); padding: 22px; box-shadow: 0 30px 80px #11182766; }
 .modal h2 { margin: 0; font-size: 17px; }.modal > p { color: var(--muted); font-size: 10px; }
@@ -788,9 +788,9 @@ button:disabled { border-color: color-mix(in srgb, var(--muted) 20%, var(--line)
 
 .rewards-toolbar { grid-template-columns: minmax(280px, 1fr) minmax(220px, 300px) minmax(210px, 280px); }
 .rewards-table { min-width: 1390px; }
-.rewards-table th:nth-child(2) { width: 265px; }
-.rewards-table th:nth-child(3) { width: 195px; }
-.rewards-table th:nth-child(4) { width: 230px; }
+.rewards-table th:nth-child(1) { width: 265px; }
+.rewards-table th:nth-child(2) { width: 195px; }
+.rewards-table th:nth-child(3) { width: 230px; }
 
 .reward-groups-view { display: grid; gap: 14px; }
 .reward-groups-summary { display: flex; align-items: center; justify-content: space-between; gap: 28px; padding: 25px; }
