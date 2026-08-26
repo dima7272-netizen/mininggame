@@ -1,6 +1,7 @@
 import Decimal from 'decimal.js';
 import { buildRoomEconomy, log10ForChart } from './analytics';
 import { parseKnownConfigs, type ConfigTextMap, type RoomDrop, type SellItem } from './config-model';
+import { exactNumber, stringifyExactJson } from './exact-json';
 import { buildStretchedPrices } from './reward-expansion';
 import { retiredRewardItemIds, rewardHierarchyItemIds } from './reward-groups';
 import { serializeReadableSellItems } from './reward-pricing';
@@ -12,6 +13,9 @@ const BASE_WEIGHTS = [30, 22, 16, 12, 8, 6, 4, 2];
 const LOWEST_VALUE_WEIGHTS = [93, 1, 1, 1, 1, 1, 1, 1];
 const HIGHEST_VALUE_WEIGHTS = [13, 13, 13, 13, 12, 12, 12, 12];
 const READABLE_MANTISSAS = new Set(['1', '1.2', '1.5', '2', '2.5', '3', '4', '5', '7']);
+const RISING_LIFECYCLE_ROOM_COUNT = 56;
+const RISING_LIFECYCLE_ITEMS_PER_ROOM = 10;
+const RISING_LIFECYCLE_ROOM_WEIGHTS = [50, 13, 9, 7, 6, 5, 4, 3, 2, 1];
 
 export type RewardSmoothingReport = {
   roomCount: number;
@@ -148,6 +152,119 @@ export function buildCleanRewardLifecycles(configs: ConfigTextMap): {
       maximumTypesPerRoom: Math.max(...roomDrops.map((room) => room.drops.length)),
     },
   };
+}
+
+/**
+ * Gives each reward one predictable lifecycle. A newly introduced reward
+ * starts at 1%, gains probability in every following room and reaches 50%
+ * immediately before it leaves the visible ten-item window. Sliding the
+ * window once per room lets all 65 active rewards fit into 56 rooms without
+ * fractional percentages or a low-value tail after an item's peak.
+ */
+export function buildRisingRewardLifecycles(configs: ConfigTextMap): {
+  configs: ConfigTextMap;
+  report: RewardLifecycleReport;
+} {
+  const known = parseKnownConfigs(configs);
+  const hasExpectedItems = known.sellItems.length === rewardHierarchyItemIds.length
+    && known.sellItems.every((item, index) => item.id === rewardHierarchyItemIds[index]);
+  const canExtend = known.rooms.length >= 2 && known.roomDrops.length >= 2;
+  if (!hasExpectedItems || !canExtend) {
+    return { configs, report: { ...emptyReport(known.rooms.length, known.sellItems.length), maximumTypesPerRoom: 0 } };
+  }
+
+  if (hasRisingLifecycle(known.roomDrops, known.sellItems)) {
+    const economy = buildRoomEconomy(known);
+    const steps = rewardSteps(economy);
+    const mean = average(steps);
+    return {
+      configs,
+      report: {
+        roomCount: known.rooms.length,
+        itemCount: known.sellItems.length,
+        averageGrowth: 10 ** mean,
+        maximumLogStepDeviation: maximumDeviation(steps, mean),
+        maximumTypesPerRoom: RISING_LIFECYCLE_ITEMS_PER_ROOM,
+      },
+    };
+  }
+
+  const roomDrops = buildRisingLifecycleDrops(known.sellItems);
+  const rooms = extendRooms(configs, RISING_LIFECYCLE_ROOM_COUNT);
+  const nextConfigs = {
+    ...configs,
+    Rooms: rooms,
+    RoomDrops: serializeRoomDrops(roomDrops),
+  };
+  const nextEconomy = buildRoomEconomy(nextConfigs);
+  const steps = rewardSteps(nextEconomy);
+  const mean = average(steps);
+  return {
+    configs: nextConfigs,
+    report: {
+      roomCount: RISING_LIFECYCLE_ROOM_COUNT,
+      itemCount: known.sellItems.length,
+      averageGrowth: 10 ** mean,
+      maximumLogStepDeviation: maximumDeviation(steps, mean),
+      maximumTypesPerRoom: RISING_LIFECYCLE_ITEMS_PER_ROOM,
+    },
+  };
+}
+
+function buildRisingLifecycleDrops(items: SellItem[]): RoomDrop[] {
+  return Array.from({ length: RISING_LIFECYCLE_ROOM_COUNT }, (_, roomOffset) => ({
+    index: roomOffset + 1,
+    drops: items.slice(roomOffset, roomOffset + RISING_LIFECYCLE_ITEMS_PER_ROOM).map((item, index) => ({
+      itemId: item.id,
+      weight: String(RISING_LIFECYCLE_ROOM_WEIGHTS[index]),
+    })),
+  }));
+}
+
+function hasRisingLifecycle(rooms: RoomDrop[], items: SellItem[]) {
+  if (rooms.length !== RISING_LIFECYCLE_ROOM_COUNT) return false;
+  return rooms.every((room, roomOffset) => {
+    const expectedItems = items.slice(roomOffset, roomOffset + RISING_LIFECYCLE_ITEMS_PER_ROOM);
+    return room.index === roomOffset + 1
+      && room.drops.length === RISING_LIFECYCLE_ITEMS_PER_ROOM
+      && room.drops.every((drop, index) => (
+        drop.itemId === expectedItems[index]?.id
+        && Number(drop.weight) === RISING_LIFECYCLE_ROOM_WEIGHTS[index]
+      ));
+  });
+}
+
+function extendRooms(configs: ConfigTextMap, count: number) {
+  const known = parseKnownConfigs(configs);
+  const rooms = known.rooms.slice(0, count).map((room) => ({ ...room }));
+  const last = rooms.at(-1)!;
+  const previous = rooms.at(-2)!;
+  const hpRatio = new Decimal(last.blockMaxHP).div(previous.blockMaxHP);
+  while (rooms.length < count) {
+    const prior = rooms.at(-1)!;
+    rooms.push({
+      index: rooms.length + 1,
+      blockMaxHP: new Decimal(prior.blockMaxHP).mul(hpRatio).toDecimalPlaces(0, Decimal.ROUND_HALF_UP).toFixed(0),
+      roomLengthCells: prior.roomLengthCells,
+      barrierLayers: prior.barrierLayers,
+    });
+  }
+  const finalRoom = rooms.at(-1)!;
+  return stringifyExactJson({
+    rooms: rooms.map((room) => ({
+      index: exactNumber(String(room.index)),
+      blockMaxHP: exactNumber(room.blockMaxHP),
+      roomLengthCells: exactNumber(room.roomLengthCells),
+      barrierLayers: exactNumber(room.barrierLayers),
+    })),
+    beyondLastRoom: {
+      ...Object.fromEntries(Object.entries(known.beyondLastRoom).map(([key, value]) => [key, exactNumber(value)])),
+      blockMaxHP: exactNumber(finalRoom.blockMaxHP),
+      roomLengthCells: exactNumber(finalRoom.roomLengthCells),
+      barrierLayers: exactNumber(finalRoom.barrierLayers),
+      maxBlockHP: exactNumber(finalRoom.blockMaxHP),
+    },
+  });
 }
 
 function buildMonotoneRoomDrops(items: SellItem[], prices: Map<string, number>, targets: Decimal[]): RoomDrop[] {

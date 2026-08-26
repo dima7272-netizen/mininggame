@@ -25,7 +25,7 @@ import { diffConfigs, type ConfigChange } from '@/lib/config-diff';
 import { roundRoomHpToIntegers } from '@/lib/room-hp';
 import { arrangeRewardsByGameHierarchy } from '@/lib/reward-hierarchy';
 import { buildRewardExpansion } from '@/lib/reward-expansion';
-import { buildCleanRewardLifecycles, buildSmoothRewardPrices } from '@/lib/reward-smoothing';
+import { buildCleanRewardLifecycles, buildRisingRewardLifecycles, buildSmoothRewardPrices } from '@/lib/reward-smoothing';
 import { rewardHierarchyItemIds } from '@/lib/reward-groups';
 
 export const GAME_ID = 'dig-get-stronger';
@@ -196,6 +196,7 @@ export async function getWorkspace(user: AppUser) {
     await ensureRewardExpansionDraft(user.userId);
     await ensureSmoothRewardPricesDraft(user.userId);
     await ensureCleanRewardLifecyclesDraft(user.userId);
+    await ensureRisingRewardLifecyclesDraft(user.userId);
   }
 
   const versionRows = await db.select().from(versions)
@@ -384,6 +385,29 @@ async function ensureCleanRewardLifecyclesDraft(userId: string) {
     name: 'Награды без мусорных хвостов',
     notes: `Дешёвый предмет больше не остаётся в следующей комнате с маленьким шансом, когда более дорогие предметы уже выпадают чаще. Пока награда активна, её процент не ниже процентов всех следующих, более дорогих наград; после пика она сразу заменяется новым набором. В комнате ровно ${report.maximumTypesPerRoom} видов, проценты целые и дают 100%. Плавная линия круглых цен сохранена, средний рост — ×${report.averageGrowth.toFixed(4)} на комнату. Черновик не опубликован в DEV.`,
     source: 'clean_reward_lifecycles_50',
+  });
+}
+
+async function ensureRisingRewardLifecyclesDraft(userId: string) {
+  const db = getDb();
+  const [latest] = await db.select().from(versions)
+    .where(eq(versions.gameId, GAME_ID))
+    .orderBy(desc(versions.createdAt))
+    .limit(1);
+  if (!latest || latest.source === 'rising_reward_lifecycles_56') return;
+
+  const configs = JSON.parse(latest.configsJson) as ConfigTextMap;
+  const { configs: rebuilt, report } = buildRisingRewardLifecycles(configs);
+  if (rebuilt === configs) return;
+
+  await createVersion({
+    userId,
+    configs: rebuilt,
+    baseVersionId: latest.id,
+    baseSha: latest.baseSha,
+    name: 'Жизненный цикл наград 1→50% · 56 комнат',
+    notes: `Все ${report.itemCount} активных наград растянуты на ${report.roomCount} комнат. Новый предмет входит с шансом 1%, затем его шанс только растёт по целой шкале 1/2/3/4/5/6/7/9/13/50% и после 50% сразу заменяется — падений вроде 69→29 больше нет. В каждой комнате ровно ${report.maximumTypesPerRoom} видов и сумма шансов равна 100%. Круглые цены и исключение богоподобных сохранены. Средний рост награды — ×${report.averageGrowth.toFixed(4)} на комнату. Черновик не опубликован в DEV.`,
+    source: 'rising_reward_lifecycles_56',
   });
 }
 

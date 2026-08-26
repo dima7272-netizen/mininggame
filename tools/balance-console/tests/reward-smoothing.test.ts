@@ -4,7 +4,12 @@ import { buildRoomEconomy, log10ForChart } from '../lib/analytics';
 import { parseKnownConfigs } from '../lib/config-model';
 import { seedConfigText } from '../lib/generated/seed-configs';
 import { removeGodlyRewardsAndExtendTo50 } from '../lib/reward-expansion';
-import { buildCleanRewardLifecycles, buildSmoothRewardPrices, smoothRewardPrices } from '../lib/reward-smoothing';
+import {
+  buildCleanRewardLifecycles,
+  buildRisingRewardLifecycles,
+  buildSmoothRewardPrices,
+  smoothRewardPrices,
+} from '../lib/reward-smoothing';
 import { retiredRewardItemIds } from '../lib/reward-groups';
 import { serializeRoomDrops } from '../lib/reward-progression';
 import { validateConfigs } from '../lib/validation';
@@ -59,6 +64,48 @@ describe('smooth round reward prices', () => {
     expect(known.sellItems.some((item) => retiredRewardItemIds.includes(item.id))).toBe(false);
     expect(validateConfigs(result.configs).errorCount).toBe(0);
     expect(smoothRewardPrices(result.configs)).toBe(result.configs);
+  });
+
+  it('gives every visible reward a rising whole-number lifecycle ending at 50%', () => {
+    const clean = buildCleanRewardLifecycles(result.configs);
+    const rebuilt = buildRisingRewardLifecycles(clean.configs);
+    const rebuiltKnown = parseKnownConfigs(rebuilt.configs);
+    const expectedRoomWeights = [50, 13, 9, 7, 6, 5, 4, 3, 2, 1];
+    const expectedLifecycle = [1, 2, 3, 4, 5, 6, 7, 9, 13, 50];
+
+    expect(rebuiltKnown.rooms).toHaveLength(56);
+    expect(rebuiltKnown.roomDrops).toHaveLength(56);
+    expect(rebuiltKnown.sellItems).toHaveLength(65);
+    rebuiltKnown.roomDrops.forEach((room, roomOffset) => {
+      expect(room.index).toBe(roomOffset + 1);
+      expect(room.drops).toHaveLength(10);
+      expect(room.drops.map((drop) => Number(drop.weight))).toEqual(expectedRoomWeights);
+      expect(room.drops.reduce((sum, drop) => sum + Number(drop.weight), 0)).toBe(100);
+      expect(room.drops.map((drop) => drop.itemId)).toEqual(
+        rebuiltKnown.sellItems.slice(roomOffset, roomOffset + 10).map((item) => item.id),
+      );
+    });
+
+    const weightsByItem = new Map<string, number[]>();
+    rebuiltKnown.roomDrops.forEach((room) => room.drops.forEach((drop) => {
+      weightsByItem.set(drop.itemId, [...(weightsByItem.get(drop.itemId) ?? []), Number(drop.weight)]);
+    }));
+    rebuiltKnown.sellItems.slice(9, -9).forEach((item) => {
+      expect(weightsByItem.get(item.id)).toEqual(expectedLifecycle);
+    });
+    weightsByItem.forEach((weights) => {
+      expect(weights.every((weight, index) => index === 0 || weights[index - 1] < weight)).toBe(true);
+    });
+
+    const economy = buildRoomEconomy(rebuilt.configs);
+    const steps = economy.slice(1).map((room, index) => (
+      log10ForChart(room.expectedItemPrice) - log10ForChart(economy[index].expectedItemPrice)
+    ));
+    expect(steps.every((step) => step > 0)).toBe(true);
+    expect(Math.max(...steps) - Math.min(...steps)).toBeLessThan(0.2);
+    expect(rebuilt.report.maximumTypesPerRoom).toBe(10);
+    expect(validateConfigs(rebuilt.configs).errorCount).toBe(0);
+    expect(buildRisingRewardLifecycles(rebuilt.configs).configs).toBe(rebuilt.configs);
   });
 });
 
