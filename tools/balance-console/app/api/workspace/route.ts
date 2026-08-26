@@ -7,10 +7,12 @@ import {
   getVersion,
   getWorkspace,
   recordPublish,
+  removeGameMember,
   revokeInvitation,
   saveBalanceGoal,
   setVersionStatus,
   updateGameSettings,
+  updateGameMember,
 } from '@/db/repository';
 import { assertPermission, permissions, type Permission, type Role } from '@/lib/rbac';
 import {
@@ -26,7 +28,7 @@ import { validateConfigs } from '@/lib/validation';
 export const dynamic = 'force-dynamic';
 
 const configMapSchema = z.record(z.string().min(1), z.string().max(4_000_000));
-const roleSchema = z.enum(['owner', 'admin', 'balancer', 'tester', 'prod_publisher', 'observer']);
+const memberRoleSchema = z.enum(['admin', 'balancer', 'tester', 'prod_publisher', 'observer']);
 const permissionSchema = z.enum(permissions);
 
 const actionSchema = z.discriminatedUnion('action', [
@@ -50,6 +52,13 @@ const actionSchema = z.discriminatedUnion('action', [
   z.object({ action: z.literal('rollback'), versionId: z.string().min(1), reason: z.string().trim().min(3).max(2_000) }),
   z.object({ action: z.literal('revoke_invitation'), invitationId: z.string().uuid() }),
   z.object({
+    action: z.literal('update_member'),
+    userId: z.string().min(1).max(200),
+    role: memberRoleSchema,
+    extraPermissions: z.array(permissionSchema).max(permissions.length),
+  }),
+  z.object({ action: z.literal('remove_member'), userId: z.string().min(1).max(200) }),
+  z.object({
     action: z.literal('save_goal'),
     label: z.string().trim().min(3).max(120),
     metric: z.string().trim().min(2).max(80),
@@ -64,8 +73,8 @@ const actionSchema = z.discriminatedUnion('action', [
   }),
   z.object({
     action: z.literal('invite'),
-    role: roleSchema,
-    extraPermissions: z.array(permissionSchema),
+    role: memberRoleSchema,
+    extraPermissions: z.array(permissionSchema).max(permissions.length),
     expiresInHours: z.number().int().min(1).max(24 * 30),
     maxUses: z.number().int().min(1).max(100),
   }),
@@ -220,6 +229,21 @@ export async function POST(request: Request) {
     if (input.action === 'revoke_invitation') {
       assertPermission(role, 'users:manage', extra);
       await revokeInvitation(user.userId, input.invitationId);
+    }
+
+    if (input.action === 'update_member') {
+      assertPermission(role, 'users:manage', extra);
+      await updateGameMember({
+        actorUserId: user.userId,
+        targetUserId: input.userId,
+        role: input.role,
+        extraPermissions: input.extraPermissions,
+      });
+    }
+
+    if (input.action === 'remove_member') {
+      assertPermission(role, 'users:manage', extra);
+      await removeGameMember({ actorUserId: user.userId, targetUserId: input.userId });
     }
 
     if (input.action === 'save_goal') {

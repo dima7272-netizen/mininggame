@@ -17,7 +17,7 @@ import {
   updateAtPointer,
   type ExactJson,
 } from '@/lib/exact-json';
-import { hasPermission, permissions, roleLabels, rolePermissions, type Permission, type Role } from '@/lib/rbac';
+import { hasPermission, permissionLabels, permissions, roleDescriptions, roleLabels, rolePermissions, type Permission, type Role } from '@/lib/rbac';
 import { serializeRoomDrops } from '@/lib/reward-progression';
 import { createSmoothProgressionDraft } from '@/lib/progression-draft';
 import { spreadsheetPreviewSnapshot } from '@/lib/source-snapshots';
@@ -76,7 +76,8 @@ type WorkspacePayload = {
   };
   settings: { ownerTimezone: string; backupHour: string; backupTimezone: string; updatedAt: number } | null;
   goals: Array<{ id: string; label: string; metric: string; targetValue: string; unit: string; createdAt: number }>;
-  invitations: Array<{ id: string; role: string; expiresAt: number; maxUses: number; uses: number; revokedAt: number | null; createdAt: number }>;
+  members: Array<{ userId: string; email: string; displayName: string; role: Role; extraPermissions: Permission[]; joinedAt: number }>;
+  invitations: Array<{ id: string; role: string; extraPermissions: Permission[]; expiresAt: number; maxUses: number; uses: number; revokedAt: number | null; createdBy: string; createdAt: number }>;
   user: { userId: string; email: string; displayName: string };
   access: { role: Role; extraPermissions: Permission[] };
   versions: WorkspaceVersion[];
@@ -926,22 +927,123 @@ function ChangeValue({ value }: { value: string }) {
   return <span className="change-value-with-icon">{hasItemIcon(possibleItemId) && <ItemIcon itemId={possibleItemId} size="xs" />}<span>{cleaned}</span></span>;
 }
 
-function TeamScreen({ workspace, busy, apiAction }: { workspace: WorkspacePayload | null; busy: boolean; apiAction: (body: Record<string, unknown>) => Promise<{ invitation?: { path: string; note: string } } | unknown> }) {
-  const [role, setRole] = useState<Role>('balancer');
+const memberRoles = ['balancer', 'tester', 'prod_publisher', 'observer', 'admin'] as const;
+const roleIcons: Record<Role, string> = { owner: '★', admin: '◆', balancer: '◫', tester: '✓', prod_publisher: '↗', observer: '◉' };
+const permissionGroups: Array<{ title: string; permissions: Permission[] }> = [
+  { title: 'Настройки игры', permissions: ['configs:view', 'configs:edit', 'configs:import'] },
+  { title: 'Карта наград', permissions: ['reward-map:view', 'reward-map:edit', 'reward-map:generate', 'reward-map:suggestions', 'reward-map:templates'] },
+  { title: 'Проверка и выпуск', permissions: ['warnings:acknowledge', 'publish:dev', 'testing:approve', 'publish:prod', 'versions:rollback'] },
+  { title: 'Управление сервисом', permissions: ['connections:manage', 'users:manage'] },
+];
+
+type TeamApiAction = (body: Record<string, unknown>) => Promise<{ invitation?: { path: string; note: string } } | unknown>;
+
+function TeamScreen({ workspace, busy, apiAction }: { workspace: WorkspacePayload | null; busy: boolean; apiAction: TeamApiAction }) {
+  const [role, setRole] = useState<(typeof memberRoles)[number]>('balancer');
   const [expires, setExpires] = useState(72);
   const [uses, setUses] = useState(1);
   const [extraPermissions, setExtraPermissions] = useState<Permission[]>([]);
   const [link, setLink] = useState<string | null>(null);
+  const [copied, setCopied] = useState(false);
+  const [renderedAt] = useState(() => Date.now());
+  const canManage = !workspace || hasPermission(workspace.access.role, 'users:manage', workspace.access.extraPermissions);
+  const activeInvitations = workspace?.invitations.filter((item) => !item.revokedAt && item.expiresAt > renderedAt && item.uses < item.maxUses) ?? [];
+  const managers = workspace?.members.filter((member) => hasPermission(member.role, 'users:manage', member.extraPermissions)).length ?? 0;
+
   async function invite() {
     const result = await apiAction({ action: 'invite', role, extraPermissions, expiresInHours: expires, maxUses: uses }) as { invitation?: { path: string } };
-    if (result.invitation) setLink(`${location.origin}${result.invitation.path}`);
+    if (result.invitation) {
+      setLink(`${location.origin}${result.invitation.path}`);
+      setCopied(false);
+    }
   }
   function togglePermission(permission: Permission) {
     setExtraPermissions((current) => current.includes(permission)
       ? current.filter((item) => item !== permission)
       : [...current, permission]);
   }
-  return <><PageHeading eyebrow="Доступ по игре" title="Команда и права" subtitle="Регистрация закрыта; доступ выдаётся приглашениями с ограничением срока и использований." /><section className="split-panels team-panels"><article className="panel editor-panel"><PanelHeading title="Создать приглашение" subtitle="Токен хранится только как SHA-256" /><div className="simple-list"><Field label="Роль"><select value={role} onChange={(event) => { setRole(event.target.value as Role); setExtraPermissions([]); }}>{Object.entries(roleLabels).map(([id, label]) => <option value={id} key={id}>{label}</option>)}</select></Field><Field label="Срок, часов"><input type="number" min="1" max="720" value={expires} onChange={(event) => setExpires(Number(event.target.value))} /></Field><Field label="Использований"><input type="number" min="1" max="100" value={uses} onChange={(event) => setUses(Number(event.target.value))} /></Field><div className="permission-checks"><strong>Дополнительные права</strong>{permissions.filter((permission) => !rolePermissions[role].includes(permission)).map((permission) => <label key={permission}><input type="checkbox" checked={extraPermissions.includes(permission)} onChange={() => togglePermission(permission)} /> {permission}</label>)}</div><button disabled={busy} className="button primary" onClick={() => void invite()}>Создать ссылку</button>{link && <div className="invite-link"><strong>Показывается один раз</strong><code>{link}</code></div>}</div></article><article className="panel editor-panel"><PanelHeading title="Права роли" subtitle={roleLabels[role]} /><div className="permission-list">{rolePermissions[role].map((permission) => <span key={permission}>✓ {permission}</span>)}{extraPermissions.map((permission) => <span key={permission}>+ {permission}</span>)}</div><div className="current-user"><strong>Текущий пользователь</strong><span>{workspace?.user.displayName ?? 'Локальный владелец'}</span><small>{workspace?.user.email}</small></div></article></section><section className="split-panels team-panels"><article className="panel editor-panel"><PanelHeading title="Активные приглашения" subtitle="Ссылка отзывается без раскрытия токена" /><div className="version-list">{workspace?.invitations.length ? workspace.invitations.map((item) => <div className="version-row invite-row" key={item.id}><span className={`status-dot ${item.revokedAt ? 'rolled_back' : 'tested'}`} /><div><strong>{roleLabels[item.role as Role] ?? item.role}</strong><code>{item.id} · {item.uses}/{item.maxUses} использований</code></div><time>{item.revokedAt ? 'Отозвано' : `до ${new Date(item.expiresAt).toLocaleString('ru-RU')}`}</time>{!item.revokedAt && <button className="text-button" onClick={() => void apiAction({ action: 'revoke_invitation', invitationId: item.id })}>Отозвать</button>}</div>) : <p className="empty-state">Приглашений пока нет.</p>}</div></article><GameSettingsEditor key={workspace?.settings?.updatedAt ?? 'defaults'} settings={workspace?.settings ?? null} busy={busy} onSave={(settings) => apiAction({ action: 'update_settings', ...settings })} /></section></>;
+  async function copyInvitation() {
+    if (!link) return;
+    await navigator.clipboard.writeText(link);
+    setCopied(true);
+  }
+
+  return <>
+    <PageHeading eyebrow="Доступ к сервису" title="Команда" subtitle="Приглашайте людей по защищённой ссылке, назначайте понятные роли и управляйте правами в одном месте." />
+    <section className="team-summary">
+      <article className="panel"><span className="team-summary-icon violet">●</span><div><small>Подключено</small><strong>{workspace?.members.length ?? 1}</strong><p>участников команды</p></div></article>
+      <article className="panel"><span className="team-summary-icon mint">✓</span><div><small>Управляют командой</small><strong>{managers || 1}</strong><p>владелец и администраторы</p></div></article>
+      <article className="panel"><span className="team-summary-icon amber">↗</span><div><small>Ожидают входа</small><strong>{activeInvitations.length}</strong><p>активных приглашений</p></div></article>
+      <article className="panel"><span className="team-summary-icon neutral">◎</span><div><small>Ваша роль</small><strong className="team-role-summary">{roleLabels[workspace?.access.role ?? 'owner']}</strong><p>{workspace?.user.email ?? 'owner@dig.local'}</p></div></article>
+    </section>
+
+    <section className="team-workspace">
+      <article className="panel team-members-panel">
+        <PanelHeading title="Подключённые пользователи" subtitle="Люди, которые уже приняли приглашение и имеют доступ к сервису" aside={<span className="team-count">{workspace?.members.length ?? 1}</span>} />
+        <div className="team-member-list">
+          {workspace?.members.map((member) => <TeamMemberCard key={`${member.userId}:${member.role}:${member.extraPermissions.join(',')}`} member={member} currentUserId={workspace.user.userId} canManage={canManage} busy={busy} apiAction={apiAction} />)
+            ?? <div className="team-member-skeleton">Загрузка команды…</div>}
+        </div>
+      </article>
+
+      <article className="panel team-invite-panel">
+        <header className="team-invite-heading"><span>＋</span><div><h2>Добавить человека</h2><p>Создайте ссылку и отправьте её участнику команды</p></div></header>
+        {canManage ? <div className="team-invite-content">
+          <div className="team-step"><span>1</span><div><strong>Выберите роль</strong><small>Её всегда можно изменить позже</small></div></div>
+          <div className="role-picker">{memberRoles.map((item) => <button type="button" aria-pressed={role === item} className={role === item ? 'selected' : ''} key={item} onClick={() => { setRole(item); setExtraPermissions([]); setLink(null); }}><i>{roleIcons[item]}</i><span><strong>{roleLabels[item]}</strong><small>{roleDescriptions[item]}</small></span><b>{rolePermissions[item].length} прав</b></button>)}</div>
+          <div className="team-step"><span>2</span><div><strong>Настройте срок ссылки</strong><small>Для одного человека достаточно одного использования</small></div></div>
+          <div className="invite-options"><label><span>Срок действия</span><select value={expires} onChange={(event) => setExpires(Number(event.target.value))}><option value={24}>24 часа</option><option value={72}>3 дня</option><option value={168}>7 дней</option><option value={720}>30 дней</option></select></label><label><span>Сколько человек</span><input type="number" min="1" max="100" value={uses} onChange={(event) => setUses(Number(event.target.value))} /></label></div>
+          <details className="extra-permissions"><summary>Дополнительные права <span>{extraPermissions.length || 'не выбраны'}</span></summary><div>{permissions.filter((permission) => !rolePermissions[role].includes(permission)).map((permission) => <label key={permission}><input type="checkbox" checked={extraPermissions.includes(permission)} onChange={() => togglePermission(permission)} /><span>{permissionLabels[permission]}</span></label>)}</div></details>
+          <button disabled={busy} className="button primary invite-create-button" onClick={() => void invite()}>Создать ссылку-приглашение</button>
+          {link && <div className="invite-result"><span>✓</span><div><strong>Ссылка готова</strong><p>Она показывается только сейчас. Отправьте её нужному человеку.</p><code>{link}</code><button type="button" onClick={() => void copyInvitation()}>{copied ? 'Скопировано ✓' : 'Скопировать ссылку'}</button></div></div>}
+          <p className="invite-security-note">🔒 В базе хранится только защищённый отпечаток ссылки. Пользователь войдёт под своей учётной записью и появится в списке слева.</p>
+        </div> : <div className="team-readonly"><span>◉</span><strong>Просмотр команды</strong><p>Ваша роль позволяет видеть участников и их права. Приглашать и настраивать пользователей может владелец или администратор.</p></div>}
+      </article>
+    </section>
+
+    <article className="panel team-invitations-panel">
+      <PanelHeading title="Приглашения" subtitle="Активные, использованные и отозванные ссылки" aside={<span className="team-count active">{activeInvitations.length} активных</span>} />
+      <div className="team-invitation-list">{workspace?.invitations.length ? workspace.invitations.map((item) => { const expired = item.expiresAt <= renderedAt; const exhausted = item.uses >= item.maxUses; const active = !item.revokedAt && !expired && !exhausted; return <div className={`team-invitation ${active ? 'active' : ''}`} key={item.id}><span className="invitation-icon">{roleIcons[item.role as Role] ?? '•'}</span><div className="invitation-main"><strong>{roleLabels[item.role as Role] ?? item.role}</strong><small>{item.extraPermissions.length ? `+ ${item.extraPermissions.length} дополнительных прав` : 'Стандартные права роли'}</small></div><div className="invitation-usage"><strong>{item.uses} / {item.maxUses}</strong><small>приняли</small></div><time>{item.revokedAt ? 'Отозвано' : expired ? 'Срок истёк' : exhausted ? 'Использовано' : `до ${new Date(item.expiresAt).toLocaleString('ru-RU')}`}</time><span className={`invitation-status ${active ? 'active' : ''}`}>{active ? 'Активно' : 'Закрыто'}</span>{canManage && active && <button disabled={busy} className="text-button danger-text" onClick={() => void apiAction({ action: 'revoke_invitation', invitationId: item.id })}>Отозвать</button>}</div>; }) : <div className="team-empty"><span>↗</span><strong>Приглашений пока нет</strong><p>Создайте первую ссылку в блоке выше.</p></div>}</div>
+    </article>
+
+    <details className="panel team-settings"><summary><span>⚙</span><div><strong>Системные настройки</strong><small>Часовые пояса и расписание резервных копий</small></div><b>Открыть</b></summary><GameSettingsEditor key={workspace?.settings?.updatedAt ?? 'defaults'} settings={workspace?.settings ?? null} busy={busy} onSave={(settings) => apiAction({ action: 'update_settings', ...settings })} /></details>
+  </>;
+}
+
+function TeamMemberCard({ member, currentUserId, canManage, busy, apiAction }: { member: WorkspacePayload['members'][number]; currentUserId: string; canManage: boolean; busy: boolean; apiAction: TeamApiAction }) {
+  const [editing, setEditing] = useState(false);
+  const [confirmRemove, setConfirmRemove] = useState(false);
+  const [draftRole, setDraftRole] = useState<(typeof memberRoles)[number]>(member.role === 'owner' ? 'admin' : member.role);
+  const [draftExtra, setDraftExtra] = useState<Permission[]>(member.extraPermissions);
+  const effectivePermissions = [...new Set([...rolePermissions[member.role], ...member.extraPermissions])];
+  const isCurrent = member.userId === currentUserId;
+  const editable = canManage && member.role !== 'owner' && !isCurrent;
+  const initials = member.displayName.split(/\s+/).map((part) => part[0]).join('').slice(0, 2).toUpperCase();
+
+  function toggleDraftPermission(permission: Permission) {
+    setDraftExtra((current) => current.includes(permission) ? current.filter((item) => item !== permission) : [...current, permission]);
+  }
+  async function save() {
+    await apiAction({ action: 'update_member', userId: member.userId, role: draftRole, extraPermissions: draftExtra.filter((permission) => !rolePermissions[draftRole].includes(permission)) });
+    setEditing(false);
+  }
+  async function remove() {
+    await apiAction({ action: 'remove_member', userId: member.userId });
+    setEditing(false);
+  }
+
+  return <section className={`team-member-card ${editing ? 'editing' : ''}`}>
+    <div className={`member-avatar role-${member.role}`}>{initials || 'У'}<i /></div>
+    <div className="member-identity"><strong>{member.displayName}{isCurrent && <span>Вы</span>}</strong><small>{member.email}</small><time>В команде с {new Date(member.joinedAt).toLocaleDateString('ru-RU')}</time></div>
+    <div className="member-role"><span>{roleIcons[member.role]}</span><div><strong>{roleLabels[member.role]}</strong><small>{effectivePermissions.length} прав</small></div></div>
+    <div className="member-permission-preview">{effectivePermissions.slice(0, 3).map((permission) => <span key={permission}>{permissionLabels[permission]}</span>)}{effectivePermissions.length > 3 && <span>+{effectivePermissions.length - 3}</span>}</div>
+    {editable ? <button type="button" className="member-settings-button" aria-expanded={editing} onClick={() => { setEditing((value) => !value); setConfirmRemove(false); }}>⚙ <span>{editing ? 'Закрыть' : 'Настроить'}</span></button> : <span className="member-protected">{member.role === 'owner' ? 'Защищён' : 'Ваш аккаунт'}</span>}
+    {editing && <div className="member-editor">
+      <div className="member-editor-heading"><div><small>Настройка доступа</small><strong>{member.displayName}</strong></div><label><span>Роль</span><select value={draftRole} onChange={(event) => { const next = event.target.value as (typeof memberRoles)[number]; setDraftRole(next); setDraftExtra((current) => current.filter((permission) => !rolePermissions[next].includes(permission))); }}>{memberRoles.map((item) => <option value={item} key={item}>{roleLabels[item]}</option>)}</select></label></div>
+      <div className="permission-groups">{permissionGroups.map((group) => <fieldset key={group.title}><legend>{group.title}</legend>{group.permissions.map((permission) => { const included = rolePermissions[draftRole].includes(permission); return <label className={included ? 'included' : ''} key={permission}><input type="checkbox" checked={included || draftExtra.includes(permission)} disabled={included} onChange={() => toggleDraftPermission(permission)} /><span>{permissionLabels[permission]}{included && <small>Входит в роль</small>}</span></label>; })}</fieldset>)}</div>
+      <footer><div>{confirmRemove ? <><span className="remove-warning">Исключить пользователя из сервиса?</span><button disabled={busy} className="button danger" onClick={() => void remove()}>Да, исключить</button><button className="button secondary" onClick={() => setConfirmRemove(false)}>Отмена</button></> : <button className="text-button danger-text" onClick={() => setConfirmRemove(true)}>Исключить из команды</button>}</div><button disabled={busy} className="button primary" onClick={() => void save()}>Сохранить права</button></footer>
+    </div>}
+  </section>;
 }
 
 function GameSettingsEditor({ settings, busy, onSave }: { settings: WorkspacePayload['settings']; busy: boolean; onSave: (settings: { ownerTimezone: string; backupHour: string; backupTimezone: string }) => Promise<unknown> }) {

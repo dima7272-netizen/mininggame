@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { buildConfigFiles, buildConfigZip } from '../lib/config-export';
 import { seedConfigText } from '../lib/generated/seed-configs';
 import { assertProdEligibility, mergeRemoteConfigBundle, MockPublisher, nextStatus } from '../lib/publishing';
-import { hasPermission, permissions, rolePermissions } from '../lib/rbac';
+import { hasPermission, permissionLabels, permissions, roleDescriptions, roleLabels, rolePermissions } from '../lib/rbac';
 import { redactSecrets } from '../lib/security';
 
 describe('RBAC', () => {
@@ -20,6 +20,12 @@ describe('RBAC', () => {
 
   it('supports per-user permission additions', () => {
     expect(hasPermission('observer', 'publish:dev', ['publish:dev'])).toBe(true);
+  });
+
+  it('has clear interface copy for every role and permission', () => {
+    expect(Object.keys(permissionLabels).sort()).toEqual([...permissions].sort());
+    expect(Object.keys(roleDescriptions).sort()).toEqual(Object.keys(roleLabels).sort());
+    expect(Object.values(permissionLabels).every((label) => label.length >= 5)).toBe(true);
   });
 });
 

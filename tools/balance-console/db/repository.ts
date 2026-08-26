@@ -203,14 +203,26 @@ export async function getWorkspace(user: AppUser) {
   const goals = await db.select().from(balanceGoals)
     .where(eq(balanceGoals.gameId, GAME_ID)).orderBy(desc(balanceGoals.createdAt));
   const extraPermissions = JSON.parse(member.permissionsJson) as Permission[];
+  const memberRows = await db.select({
+    userId: gameMembers.userId,
+    role: gameMembers.role,
+    permissionsJson: gameMembers.permissionsJson,
+    joinedAt: gameMembers.createdAt,
+    email: users.email,
+    displayName: users.displayName,
+  }).from(gameMembers).innerJoin(users, eq(gameMembers.userId, users.id))
+    .where(eq(gameMembers.gameId, GAME_ID))
+    .orderBy(gameMembers.createdAt);
   const invitationRows = hasPermission(member.role as Role, 'users:manage', extraPermissions)
     ? await db.select({
       id: invitations.id,
       role: invitations.role,
+      permissionsJson: invitations.permissionsJson,
       expiresAt: invitations.expiresAt,
       maxUses: invitations.maxUses,
       uses: invitations.uses,
       revokedAt: invitations.revokedAt,
+      createdBy: invitations.createdBy,
       createdAt: invitations.createdAt,
     }).from(invitations).where(eq(invitations.gameId, GAME_ID)).orderBy(desc(invitations.createdAt))
     : [];
@@ -220,7 +232,18 @@ export async function getWorkspace(user: AppUser) {
     publishing: getPublishingInfo(),
     settings,
     goals,
-    invitations: invitationRows,
+    members: memberRows.map((row) => ({
+      userId: row.userId,
+      email: row.email,
+      displayName: row.displayName,
+      role: row.role as Role,
+      extraPermissions: JSON.parse(row.permissionsJson) as Permission[],
+      joinedAt: row.joinedAt,
+    })),
+    invitations: invitationRows.map((row) => ({
+      ...row,
+      extraPermissions: JSON.parse(row.permissionsJson) as Permission[],
+    })),
     user,
     access: {
       role: member.role as Role,
@@ -385,6 +408,54 @@ export async function revokeInvitation(userId: string, invitationId: string) {
     eq(invitations.id, invitationId),
   ));
   await logAction(userId, 'invitation.revoke', invitationId, {});
+}
+
+export async function updateGameMember(input: {
+  actorUserId: string;
+  targetUserId: string;
+  role: Exclude<Role, 'owner'>;
+  extraPermissions: Permission[];
+}) {
+  await initializeDb();
+  const db = getDb();
+  const [target] = await db.select().from(gameMembers).where(and(
+    eq(gameMembers.gameId, GAME_ID),
+    eq(gameMembers.userId, input.targetUserId),
+  )).limit(1);
+  if (!target) throw new Error('Участник команды не найден.');
+  if (target.userId === input.actorUserId) throw new Error('Нельзя изменить собственную роль.');
+  if (target.role === 'owner') throw new Error('Роль владельца защищена и не редактируется.');
+
+  const extraPermissions = [...new Set(input.extraPermissions)];
+  await db.update(gameMembers).set({
+    role: input.role,
+    permissionsJson: JSON.stringify(extraPermissions),
+  }).where(and(
+    eq(gameMembers.gameId, GAME_ID),
+    eq(gameMembers.userId, input.targetUserId),
+  ));
+  await logAction(input.actorUserId, 'member.update', input.targetUserId, {
+    role: input.role,
+    extraPermissions,
+  });
+}
+
+export async function removeGameMember(input: { actorUserId: string; targetUserId: string }) {
+  await initializeDb();
+  const db = getDb();
+  const [target] = await db.select().from(gameMembers).where(and(
+    eq(gameMembers.gameId, GAME_ID),
+    eq(gameMembers.userId, input.targetUserId),
+  )).limit(1);
+  if (!target) throw new Error('Участник команды не найден.');
+  if (target.userId === input.actorUserId) throw new Error('Нельзя исключить самого себя.');
+  if (target.role === 'owner') throw new Error('Владельца нельзя исключить из команды.');
+
+  await db.delete(gameMembers).where(and(
+    eq(gameMembers.gameId, GAME_ID),
+    eq(gameMembers.userId, input.targetUserId),
+  ));
+  await logAction(input.actorUserId, 'member.remove', input.targetUserId, { previousRole: target.role });
 }
 
 export async function saveBalanceGoal(input: {
