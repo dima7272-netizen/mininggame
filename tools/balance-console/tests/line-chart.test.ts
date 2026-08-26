@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { getNiceScale } from '../components/line-chart';
+import { getMonotoneBezierSegments, getNiceScale } from '../components/line-chart';
 
 describe('chart scale', () => {
   it('creates readable round ticks around the room progression data', () => {
@@ -19,5 +19,28 @@ describe('chart scale', () => {
 
   it('provides a fallback scale without data', () => {
     expect(getNiceScale([]).ticks).toEqual([0, 0.2, 0.4, 0.6, 0.8, 1]);
+  });
+
+  it('smooths a sharp bend without overshooting any real data interval', () => {
+    const points = [
+      { x: 0, y: 0 },
+      { x: 1, y: 10 },
+      { x: 2, y: 11 },
+      { x: 3, y: 12 },
+    ];
+    const segments = getMonotoneBezierSegments(points);
+
+    expect(segments).toHaveLength(points.length - 1);
+    segments.forEach((segment, index) => {
+      const start = points[index];
+      const end = points[index + 1];
+      const minimum = Math.min(start.y, end.y);
+      const maximum = Math.max(start.y, end.y);
+      expect(segment.control1.y).toBeGreaterThanOrEqual(minimum);
+      expect(segment.control1.y).toBeLessThanOrEqual(maximum);
+      expect(segment.control2.y).toBeGreaterThanOrEqual(minimum);
+      expect(segment.control2.y).toBeLessThanOrEqual(maximum);
+      expect(segment.end).toEqual(end);
+    });
   });
 });

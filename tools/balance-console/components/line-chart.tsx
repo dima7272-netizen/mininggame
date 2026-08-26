@@ -6,6 +6,7 @@ export type ChartSeries = {
   label: string;
   color: string;
   values: number[];
+  smooth?: boolean;
   dash?: number[];
   opacity?: number;
   lineWidth?: number;
@@ -23,6 +24,14 @@ type Scale = {
   maximum: number;
   step: number;
   ticks: number[];
+};
+
+export type ChartPoint = { x: number; y: number };
+
+export type MonotoneBezierSegment = {
+  control1: ChartPoint;
+  control2: ChartPoint;
+  end: ChartPoint;
 };
 
 export function LineChart({
@@ -170,11 +179,23 @@ export function LineChart({
         context.setLineDash(item.dash ?? []);
         context.lineCap = 'round';
         context.lineJoin = 'round';
-        item.values.forEach((value, index) => {
-          const x = xForIndex(index);
-          const y = yForValue(value);
-          if (index === 0) context.moveTo(x, y); else context.lineTo(x, y);
-        });
+        const points = item.values.map((value, index) => ({ x: xForIndex(index), y: yForValue(value) }));
+        const firstPoint = points[0];
+        if (firstPoint) context.moveTo(firstPoint.x, firstPoint.y);
+        if (item.smooth) {
+          getMonotoneBezierSegments(points).forEach((segment) => {
+            context.bezierCurveTo(
+              segment.control1.x,
+              segment.control1.y,
+              segment.control2.x,
+              segment.control2.y,
+              segment.end.x,
+              segment.end.y,
+            );
+          });
+        } else {
+          points.slice(1).forEach((point) => context.lineTo(point.x, point.y));
+        }
         context.stroke();
 
         const pointRadius = item.pointRadius ?? 2.8;
@@ -219,6 +240,48 @@ export function LineChart({
       </div>
     </div>
   );
+}
+
+export function getMonotoneBezierSegments(points: ChartPoint[]): MonotoneBezierSegment[] {
+  if (points.length < 2) return [];
+
+  const slopes = points.slice(0, -1).map((point, index) => {
+    const next = points[index + 1];
+    const width = next.x - point.x;
+    return width === 0 ? 0 : (next.y - point.y) / width;
+  });
+  const tangents = points.map((_, index) => {
+    if (index === 0) return slopes[0];
+    if (index === points.length - 1) return slopes.at(-1) ?? 0;
+    const before = slopes[index - 1];
+    const after = slopes[index];
+    return before * after <= 0 ? 0 : (before + after) / 2;
+  });
+
+  slopes.forEach((slope, index) => {
+    if (slope === 0) {
+      tangents[index] = 0;
+      tangents[index + 1] = 0;
+      return;
+    }
+    const startRatio = tangents[index] / slope;
+    const endRatio = tangents[index + 1] / slope;
+    const length = Math.hypot(startRatio, endRatio);
+    if (length <= 3) return;
+    const scale = 3 / length;
+    tangents[index] = scale * startRatio * slope;
+    tangents[index + 1] = scale * endRatio * slope;
+  });
+
+  return points.slice(0, -1).map((point, index) => {
+    const next = points[index + 1];
+    const third = (next.x - point.x) / 3;
+    return {
+      control1: { x: point.x + third, y: point.y + tangents[index] * third },
+      control2: { x: next.x - third, y: next.y - tangents[index + 1] * third },
+      end: next,
+    };
+  });
 }
 
 export function getNiceScale(values: number[], targetIntervals = 6): Scale {
