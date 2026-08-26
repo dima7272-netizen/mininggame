@@ -16,6 +16,7 @@ if (!token) {
 const repository = process.env.GITHUB_REPOSITORY || 'dima7272-netizen/mininggame';
 let account = 'текущий аккаунт';
 let canPush = false;
+let hasRobloxSecret = false;
 try {
   account = execFileSync('gh', ['api', 'user', '--jq', '.login'], {
     encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'],
@@ -23,22 +24,31 @@ try {
   canPush = execFileSync('gh', ['api', `repos/${repository}`, '--jq', '.permissions.push'], {
     encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'],
   }).trim() === 'true';
+  if (canPush) {
+    hasRobloxSecret = execFileSync('gh', [
+      'secret', 'list', '--repo', repository, '--json', 'name',
+      '--jq', 'any(.[]; .name == "ROBLOX_API_KEY")',
+    ], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }).trim() === 'true';
+  }
 } catch {
   canPush = false;
 }
 
-const disabledReason = canPush
-  ? ''
-  : `GitHub-аккаунт ${account} может читать ${repository}, но не может записывать. Владелец репозитория должен выдать этому аккаунту роль Write, затем сервис нужно перезапустить.`;
+const canPublish = canPush && hasRobloxSecret;
+const disabledReason = !canPush
+  ? `GitHub-аккаунт ${account} может читать ${repository}, но не может записывать. Нужна роль Write, затем сервис нужно перезапустить.`
+  : !hasRobloxSecret
+    ? `Ваш репозиторий ${repository} подключён, но в Actions ещё нет секрета ROBLOX_API_KEY. Без него GitHub не может изменить DEV.`
+    : '';
 
 const child = spawn('pnpm', ['dev'], {
   stdio: 'inherit',
   env: {
     ...process.env,
-    GITHUB_TOKEN: canPush ? token : '',
+    GITHUB_TOKEN: canPublish ? token : '',
     GITHUB_REPOSITORY: repository,
     GITHUB_BRANCH: process.env.GITHUB_BRANCH || 'main',
-    PUBLISH_ADAPTER: canPush ? 'github' : 'disabled',
+    PUBLISH_ADAPTER: canPublish ? 'github' : 'disabled',
     PUBLISH_DISABLED_REASON: disabledReason,
     ALLOW_REAL_PROD: process.env.ALLOW_REAL_PROD || 'false',
   },
