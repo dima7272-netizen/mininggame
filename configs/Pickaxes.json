@@ -251,27 +251,27 @@
   },
   {
     "modelName": "NeonCrystal",
-    "currencyPrice": 10000000000000000,
+    "currencyPrice": 100000000000000000,
     "power": 50000000000
   },
   {
     "modelName": "FrostbiteSplitter",
-    "currencyPrice": 20000000000000000,
+    "currencyPrice": 200000000000000000,
     "power": 100000000000
   },
   {
     "modelName": "HellFireScythe",
-    "currencyPrice": 50000000000000000,
+    "currencyPrice": 500000000000000000,
     "power": 200000000000
   },
   {
     "modelName": "FrostbiteReaper",
-    "currencyPrice": 100000000000000000,
+    "currencyPrice": 1000000000000000000,
     "power": 500000000000
   },
   {
     "modelName": "DarkSurge",
-    "currencyPrice": 1000000000000000000,
+    "currencyPrice": 2000000000000000000,
     "power": 1000000000000
   }
 ]

@@ -41,6 +41,20 @@ describe('repository import', () => {
     }
   });
 
+  it('keeps a rounded, strictly growing price ladder after pickaxe 50', () => {
+    const known = parseKnownConfigs(base);
+    expect(known.pickaxes.slice(50).map((pickaxe) => pickaxe.currencyPrice)).toEqual([
+      '100000000000000000',
+      '200000000000000000',
+      '500000000000000000',
+      '1000000000000000000',
+      '2000000000000000000',
+    ]);
+    expect(known.pickaxes.slice(49).every((pickaxe, index, tail) => (
+      index === 0 || new Decimal(pickaxe.currencyPrice).greaterThan(tail[index - 1].currencyPrice)
+    ))).toBe(true);
+  });
+
   it('computes room 16 from the current configs and the exact even-room item count', () => {
     const room16 = buildRoomEconomy(parseKnownConfigs(base)).find((room) => room.index === 16);
     expect(new Decimal(room16?.hpGrowth ?? 0).greaterThan(1)).toBe(true);
