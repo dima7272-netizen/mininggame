@@ -284,6 +284,32 @@ export function getMonotoneBezierSegments(points: ChartPoint[]): MonotoneBezierS
   });
 }
 
+export function getMonotoneTrend(values: number[], anchorIndexes: number[]): number[] {
+  const anchors = [...new Set(anchorIndexes)]
+    .filter((index) => Number.isInteger(index) && index >= 0 && index < values.length && Number.isFinite(values[index]))
+    .sort((left, right) => left - right)
+    .map((index) => ({ x: index, y: values[index] }));
+  if (anchors.length < 2) return [...values];
+
+  const segments = getMonotoneBezierSegments(anchors);
+  let segmentIndex = 0;
+  return values.map((value, index) => {
+    if (index <= anchors[0].x) return anchors[0].y;
+    if (index >= anchors.at(-1)!.x) return anchors.at(-1)!.y;
+    while (segments[segmentIndex].end.x < index) segmentIndex += 1;
+    const start = anchors[segmentIndex];
+    const segment = segments[segmentIndex];
+    const width = segment.end.x - start.x;
+    if (width <= 0) return value;
+    const progress = (index - start.x) / width;
+    const inverse = 1 - progress;
+    return inverse ** 3 * start.y
+      + 3 * inverse ** 2 * progress * segment.control1.y
+      + 3 * inverse * progress ** 2 * segment.control2.y
+      + progress ** 3 * segment.end.y;
+  });
+}
+
 export function getNiceScale(values: number[], targetIntervals = 6): Scale {
   if (values.length === 0) {
     return { minimum: 0, maximum: 1, step: 0.2, ticks: [0, 0.2, 0.4, 0.6, 0.8, 1] };

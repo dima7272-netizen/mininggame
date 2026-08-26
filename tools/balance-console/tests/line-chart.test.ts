@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { getMonotoneBezierSegments, getNiceScale } from '../components/line-chart';
+import { getMonotoneBezierSegments, getMonotoneTrend, getNiceScale } from '../components/line-chart';
 
 describe('chart scale', () => {
   it('creates readable round ticks around the room progression data', () => {
@@ -42,5 +42,16 @@ describe('chart scale', () => {
       expect(segment.control2.y).toBeLessThanOrEqual(maximum);
       expect(segment.end).toEqual(end);
     });
+  });
+
+  it('builds a visible monotone trend through sparse progression anchors', () => {
+    const raw = [0, 5, 10, 11, 12];
+    const trend = getMonotoneTrend(raw, [0, 2, 4]);
+
+    expect(trend[0]).toBe(0);
+    expect(trend[2]).toBe(10);
+    expect(trend[4]).toBe(12);
+    expect(trend[1]).not.toBe(raw[1]);
+    expect(trend.every((value, index) => index === 0 || value >= trend[index - 1])).toBe(true);
   });
 });
