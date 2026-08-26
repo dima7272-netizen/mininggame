@@ -24,6 +24,8 @@ import { redactSecrets } from '@/lib/security';
 import { diffConfigs, type ConfigChange } from '@/lib/config-diff';
 import { roundRoomHpToIntegers } from '@/lib/room-hp';
 import { arrangeRewardsByGameHierarchy } from '@/lib/reward-hierarchy';
+import { buildRewardExpansion } from '@/lib/reward-expansion';
+import { rewardHierarchyItemIds } from '@/lib/reward-groups';
 
 export const GAME_ID = 'dig-get-stronger';
 
@@ -188,7 +190,10 @@ export async function getWorkspace(user: AppUser) {
   if (!member) throw new Error('Нет доступа к игре. Используйте действующее приглашение.');
 
   await ensureIntegerRoomHpDraft(user.userId);
-  if (member.role === 'owner') await ensureRewardHierarchyDraft(user.userId);
+  if (member.role === 'owner') {
+    await ensureRewardHierarchyDraft(user.userId);
+    await ensureRewardExpansionDraft(user.userId);
+  }
 
   const versionRows = await db.select().from(versions)
     .where(eq(versions.gameId, GAME_ID))
@@ -307,6 +312,29 @@ async function ensureRewardHierarchyDraft(userId: string) {
     name: 'Награды по иерархии редкостей',
     notes: 'Все 75 наград выстроены блоками по иерархии Roblox: Обычные → Необычные → Редкие → Эпические → Легендарные → Мифические → Секретные → Богоподобные → Божественные → Небесные. Существующая лестница круглых цен сохранена и переназначена по этому порядку. Изменение сохранено черновиком и не опубликовано в DEV.',
     source: 'reward_hierarchy_fix',
+  });
+}
+
+async function ensureRewardExpansionDraft(userId: string) {
+  const db = getDb();
+  const [latest] = await db.select().from(versions)
+    .where(eq(versions.gameId, GAME_ID))
+    .orderBy(desc(versions.createdAt))
+    .limit(1);
+  if (!latest) return;
+
+  const configs = JSON.parse(latest.configsJson) as ConfigTextMap;
+  const { configs: expanded, report } = buildRewardExpansion(configs);
+  if (expanded === configs) return;
+
+  await createVersion({
+    userId,
+    configs: expanded,
+    baseVersionId: latest.id,
+    baseSha: latest.baseSha,
+    name: 'Награды без богоподобных · 50 комнат',
+    notes: `Все ${report.retiredItemIds.length} богоподобных предметов исключены из SellItems и комнат — их модели сохранены для будущих золотых питомцев. ${rewardHierarchyItemIds.length} остальных наград перераспределены до комнаты 50, цены выстроены возрастающими круглыми числами, а проценты выпадения оставлены целыми. Для комнат 1–${report.existingRoomCount} средняя награда сохранена с максимальным отклонением ${report.maximumExistingRewardDeviationPercent.toFixed(2)}%. Комнаты 47–50 продолжают текущий рост награды и HP. Черновик не опубликован в DEV.`,
+    source: 'remove_godly_extend_50',
   });
 }
 

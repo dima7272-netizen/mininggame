@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { parseKnownConfigs } from '../lib/config-model';
 import { seedConfigText } from '../lib/generated/seed-configs';
 import { arrangeRewardsByGameHierarchy } from '../lib/reward-hierarchy';
-import { rewardHierarchyItemIds } from '../lib/reward-groups';
+import { originalRewardHierarchyItemIds } from '../lib/reward-groups';
 import { serializeReadableSellItems } from '../lib/reward-pricing';
 
 describe('reward hierarchy arrangement', () => {
@@ -17,7 +17,7 @@ describe('reward hierarchy arrangement', () => {
     const arranged = arrangeRewardsByGameHierarchy(source);
     const after = parseKnownConfigs(arranged).sellItems;
 
-    expect(after.map((item) => item.id)).toEqual(rewardHierarchyItemIds);
+    expect(after.map((item) => item.id)).toEqual(originalRewardHierarchyItemIds);
     expect(after.map((item) => item.sellPrice).sort()).toEqual(beforePrices);
   });
 

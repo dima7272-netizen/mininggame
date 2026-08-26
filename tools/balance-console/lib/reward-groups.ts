@@ -2,7 +2,17 @@ import rewardGroupManifest from '../data/reward-groups.json';
 
 export type RewardGroup = (typeof rewardGroupManifest.groups)[number];
 
-export const rewardGroups = rewardGroupManifest.groups as readonly RewardGroup[];
+const allRewardGroups = rewardGroupManifest.groups as readonly RewardGroup[];
+export const originalRewardHierarchyItemIds = allRewardGroups.flatMap((group) => group.itemIds);
+
+/**
+ * Godly sell items are intentionally retired from room rewards. Their Roblox
+ * models and icons stay in the source manifest because they are being reused as
+ * golden pets, but they must not appear in the sell-item editor or hierarchy.
+ */
+export const retiredRewardGroups = allRewardGroups.filter((group) => group.id === 'Godly');
+export const retiredRewardItemIds = retiredRewardGroups.flatMap((group) => group.itemIds);
+export const rewardGroups = allRewardGroups.filter((group) => group.id !== 'Godly');
 
 export const rewardHierarchyItemIds = rewardGroups.flatMap((group) => group.itemIds);
 

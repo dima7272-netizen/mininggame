@@ -10,7 +10,7 @@ import {
   stringifyExactJson,
   type ExactJson,
 } from './exact-json';
-import { rewardHierarchyItemIds } from './reward-groups';
+import { originalRewardHierarchyItemIds, rewardHierarchyItemIds } from './reward-groups';
 
 export function arrangeRewardsByGameHierarchy(configs: ConfigTextMap): ConfigTextMap {
   const source = configs.SellItems;
@@ -29,15 +29,17 @@ export function arrangeRewardsByGameHierarchy(configs: ConfigTextMap): ConfigTex
     prices.push(asNumberText(item.sellPrice, `SellItems.${id}.sellPrice`));
   }
 
-  if (
-    itemById.size !== rewardHierarchyItemIds.length ||
-    rewardHierarchyItemIds.some((itemId) => !itemById.has(itemId))
-  ) {
+  const hierarchy = itemById.size === rewardHierarchyItemIds.length
+    ? rewardHierarchyItemIds
+    : itemById.size === originalRewardHierarchyItemIds.length
+      ? originalRewardHierarchyItemIds
+      : null;
+  if (!hierarchy || hierarchy.some((itemId) => !itemById.has(itemId))) {
     return configs;
   }
 
   prices.sort((left, right) => new Decimal(left).comparedTo(right));
-  const arrangedItems = rewardHierarchyItemIds.map((itemId, index) => ({
+  const arrangedItems = hierarchy.map((itemId, index) => ({
     ...itemById.get(itemId)!,
     sellPrice: exactNumber(prices[index]),
   }));
