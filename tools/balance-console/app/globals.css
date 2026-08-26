@@ -485,6 +485,13 @@ button:disabled { cursor: not-allowed; opacity: .55; }
 .item-icon-xl { width: 80px; height: 80px; border-radius: 15px; }
 .item-icon.missing { border-style: dashed; background: var(--canvas); }
 .item-icon.missing > span { color: var(--muted); font-size: .8em; text-transform: none; }
+.arenas-editor .data-table td { padding-top: 16px; padding-bottom: 16px; }
+.arenas-editor .data-table td:first-child { min-width: 310px; }
+.arena-model-cell { display: flex; align-items: center; gap: 18px; }
+.arena-model-cell > span { display: grid; gap: 6px; }
+.arena-model-cell strong { color: var(--ink); font-size: 18px; }
+.arena-model-cell code { color: var(--muted); font-size: 12px; }
+.arena-image { width: 108px; height: 108px; border-radius: 18px; background: radial-gradient(circle at 50% 48%, color-mix(in srgb, var(--surface) 72%, white), var(--canvas)); }
 
 .reward-map-summary { display: flex; min-width: 350px; align-items: center; gap: 13px; }
 .reward-map-summary > div { min-width: 0; }

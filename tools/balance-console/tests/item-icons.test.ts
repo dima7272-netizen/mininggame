@@ -29,23 +29,27 @@ describe('real item icon manifest', () => {
     }
   });
 
-  it('covers every pickaxe, pet and upgrade with an author-configured icon', () => {
+  it('covers every pickaxe, pet, upgrade and arena with an author-configured icon', () => {
     const expected = {
       pickaxes: known.pickaxes.map((item) => item.modelName),
       pets: known.pets.map((item) => item.id),
       upgrades: known.upgrades.map((item) => item.id),
+      arenas: known.arenas.map((item) => String(item.id)),
     };
 
     for (const category of Object.keys(expected) as Array<keyof typeof expected>) {
       const group = entityManifest.categories[category];
       expect(Object.keys(group.items).sort()).toEqual(expected[category].sort());
       expect(group.count).toBe(expected[category].length);
-      expect(group.sourcePath).toMatch(/^ReplicatedStorage\.Game\./);
+      expect(group.sourcePath).toMatch(/^(ReplicatedStorage\.Game\.|Workspace\.Gameplay\.POI\.AFK$)/);
 
       for (const [entityId, entry] of Object.entries(group.items)) {
         const file = readFileSync(new URL(`../public${entry.src}`, import.meta.url));
         expect(file.subarray(0, 8), `${category}/${entityId} must point to a PNG`).toEqual(Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]));
       }
     }
+
+    expect(entityManifest.categories.arenas.sourcePath).toBe('Workspace.Gameplay.POI.AFK');
+    expect(Object.values(entityManifest.categories.arenas.items).every((entry) => entry.displayName.startsWith('Rock_'))).toBe(true);
   });
 });

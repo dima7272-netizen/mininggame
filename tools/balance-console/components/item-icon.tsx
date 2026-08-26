@@ -8,7 +8,7 @@ import iconManifest from '@/data/item-icons.json';
 export type ItemIconSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 export type EntityIconCategory = keyof typeof entityManifest.categories;
 
-type IconEntry = { assetId: string; src: string };
+export type IconEntry = { assetId: string; src: string; displayName?: string };
 
 export function getItemIcon(itemId: string) {
   return iconManifest.items[itemId as keyof typeof iconManifest.items];

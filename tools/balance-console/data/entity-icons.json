@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "game": { "name": "Dig Get Stronger", "placeId": "104830450645212", "universeId": "10590998713" },
-  "extractedAt": "2026-08-25T22:44:00.000Z",
+  "extractedAt": "2026-08-26T04:20:00.000Z",
   "readOnly": true,
   "categories": {
     "pickaxes": {
@@ -89,6 +89,25 @@
         "HitStrength": { "assetId": "115684660505133", "src": "/entity-icons/upgrades/115684660505133.png" },
         "CarryCapacity": { "assetId": "86600205907969", "src": "/entity-icons/upgrades/86600205907969.png" },
         "PetSlots": { "assetId": "18514765700", "src": "/entity-icons/upgrades/18514765700.png" }
+      }
+    },
+    "arenas": {
+      "sourcePath": "Workspace.Gameplay.POI.AFK",
+      "count": 13,
+      "items": {
+        "1": { "assetId": "131392459454192", "src": "/entity-icons/arenas/131392459454192.png", "displayName": "Rock_Grey" },
+        "2": { "assetId": "103690786910788", "src": "/entity-icons/arenas/103690786910788.png", "displayName": "Rock_turquoise_Crystall" },
+        "3": { "assetId": "110794702607849", "src": "/entity-icons/arenas/110794702607849.png", "displayName": "Rock_Green" },
+        "4": { "assetId": "115479359933235", "src": "/entity-icons/arenas/115479359933235.png", "displayName": "Rock_Gold" },
+        "5": { "assetId": "119714911043401", "src": "/entity-icons/arenas/119714911043401.png", "displayName": "Rock_VeryBlue" },
+        "6": { "assetId": "73170334762528", "src": "/entity-icons/arenas/73170334762528.png", "displayName": "Rock_Yellow" },
+        "7": { "assetId": "107175988230584", "src": "/entity-icons/arenas/107175988230584.png", "displayName": "Rock_Red" },
+        "8": { "assetId": "79113754240545", "src": "/entity-icons/arenas/79113754240545.png", "displayName": "Rock_White" },
+        "9": { "assetId": "127125314502628", "src": "/entity-icons/arenas/127125314502628.png", "displayName": "Rock_Blue_Crystall" },
+        "10": { "assetId": "94305923222050", "src": "/entity-icons/arenas/94305923222050.png", "displayName": "Rock_orange" },
+        "11": { "assetId": "106793381047026", "src": "/entity-icons/arenas/106793381047026.png", "displayName": "Rock_Violet_Crystall" },
+        "12": { "assetId": "109358838993424", "src": "/entity-icons/arenas/109358838993424.png", "displayName": "Rock_Black" },
+        "13": { "assetId": "111443005965872", "src": "/entity-icons/arenas/111443005965872.png", "displayName": "Rock_Brown" }
       }
     }
   }
