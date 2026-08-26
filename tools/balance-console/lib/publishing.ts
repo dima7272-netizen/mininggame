@@ -299,7 +299,7 @@ export class GitHubPublisher {
         method: 'POST',
         body: JSON.stringify({ ref: this.branch }),
       });
-      if (response.status !== 204) throw await githubError(response);
+      if (![200, 204].includes(response.status)) throw await githubError(response);
     }
 
     return workflows.length;
