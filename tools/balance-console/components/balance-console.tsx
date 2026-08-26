@@ -175,6 +175,11 @@ export function BalanceConsole({ initialConfigs, initialSha }: { initialConfigs:
   );
   const publishedEconomy = useMemo(() => buildRoomEconomy(publishedConfigs), [publishedConfigs]);
   const changes = useMemo(() => diffConfigs(baseConfigs, configs), [baseConfigs, configs]);
+  const smoothProgressionDraft = useMemo(() => createSmoothProgressionDraft(configs), [configs]);
+  const canRecalculateSmoothly = useMemo(
+    () => diffConfigs(configs, smoothProgressionDraft).length > 0,
+    [configs, smoothProgressionDraft],
+  );
   const latestVersion = workspace?.versions[0] ?? null;
 
   const refreshWorkspace = useCallback(async (syncConfigs = false) => {
@@ -335,7 +340,8 @@ export function BalanceConsole({ initialConfigs, initialSha }: { initialConfigs:
         publishedEconomy={publishedEconomy}
         validation={validation}
         workspace={workspace}
-        onRecalculate={() => setConfigs((current) => createSmoothProgressionDraft(current))}
+        canRecalculate={canRecalculateSmoothly}
+        onRecalculate={() => setConfigs(smoothProgressionDraft)}
       />;
     }
   })();
@@ -418,6 +424,7 @@ function OverviewScreen({
   publishedEconomy,
   validation,
   workspace,
+  canRecalculate,
   onRecalculate,
 }: {
   known: KnownConfigs;
@@ -425,6 +432,7 @@ function OverviewScreen({
   publishedEconomy: ReturnType<typeof buildRoomEconomy>;
   validation: ValidationResult;
   workspace: WorkspacePayload | null;
+  canRecalculate: boolean;
   onRecalculate: () => void;
 }) {
   const hpValues = economy.map((room) => log10ForChart(room.blockMaxHP));
@@ -463,7 +471,7 @@ function OverviewScreen({
             <div><small>Новый рост HP</small><strong>×{hpGrowth} / комнату</strong></div>
             <div><small>Новый рост награды</small><strong>×{rewardGrowth} / комнату</strong></div>
             <div className="comparison-help"><small>Как читать</small><strong>Пунктир — было · сплошная и полоса — новое</strong></div>
-            <button className="button secondary" onClick={onRecalculate}>Пересчитать плавно</button>
+            <button className="button secondary" disabled={!canRecalculate} onClick={onRecalculate}>Пересчитать плавно</button>
           </div>
           <LineChart
             labels={economy.map((room) => String(room.index))}
@@ -517,6 +525,15 @@ function RoomsScreen({
   const roomDrop = known.roomDrops[roomDropIndex];
   const economyRow = economy.find((room) => room.index === selectedRoom);
   const sellIndex = new Map(known.sellItems.map((item, index) => [item.id, index]));
+  const canNormalize = Boolean(roomDrop && (() => {
+    const unlocked = roomDrop.drops.filter((_, index) => !locked.has(index));
+    const lockedTotal = roomDrop.drops.reduce(
+      (sum, drop, index) => locked.has(index) ? sum.plus(drop.weight) : sum,
+      new Decimal(0),
+    );
+    const total = roomDrop.drops.reduce((sum, drop) => sum.plus(drop.weight), new Decimal(0));
+    return unlocked.length > 0 && lockedTotal.lessThanOrEqualTo(100) && !total.equals(100);
+  })());
 
   function prepareNormalization() {
     if (!roomDrop) return;
@@ -553,7 +570,7 @@ function RoomsScreen({
         <Metric icon="⚖" label="Сумма весов" value={economyRow?.totalWeight ?? '0'} detail={economyRow?.totalWeight === '100' ? 'Корректно' : 'Нужна нормализация'} tone="neutral" />
       </section>
       <article className="panel editor-panel drop-editor primary-reward-list">
-        <PanelHeading title={`Награды и цены · комната ${selectedRoom}`} subtitle="Все предметы выбранной комнаты, вероятность выпадения и стоимость продажи" aside={<button className="button secondary" onClick={prepareNormalization}>Нормализовать до 100</button>} />
+        <PanelHeading title={`Награды и цены · комната ${selectedRoom}`} subtitle="Все предметы выбранной комнаты, вероятность выпадения и стоимость продажи" aside={<button className="button secondary" disabled={!canNormalize} onClick={prepareNormalization}>Нормализовать до 100</button>} />
         <div className="table-scroll"><table className="data-table"><thead><tr><th>Награда</th><th>Вес выпадения</th><th>Цена продажи</th><th>Вклад в среднее</th><th>Блокировка</th></tr></thead><tbody>
           {roomDrop?.drops.map((drop, index) => {
             const item = known.sellItems.find((candidate) => candidate.id === drop.itemId);
@@ -580,7 +597,7 @@ function RoomsScreen({
           })}
         </tbody></table></div>
       </article>
-      {preview && <div className="modal-backdrop"><div className="modal"><h2>Предварительный результат</h2><p>Изменения ещё не применены. Заблокированные строки останутся прежними.</p><div className="preview-list">{preview.map((row) => <div key={row.index}><code>{roomDrop?.drops[row.index].itemId}</code><span>{row.before} → <strong>{row.after}</strong></span></div>)}</div><footer><button className="button secondary" onClick={() => setPreview(null)}>Отмена</button><button className="button primary" onClick={() => { if (roomDrop) commitMany('RoomDrops', preview.map((row) => ({ pointer: `$/${roomDropIndex}/drops/${row.index}/weight`, value: exactNumber(row.after) }))); setPreview(null); }}>Применить</button></footer></div></div>}
+      {preview && <div className="modal-backdrop"><div className="modal"><h2>Предварительный результат</h2><p>Изменения ещё не применены. Заблокированные строки останутся прежними.</p><div className="preview-list">{preview.map((row) => <div key={row.index}><code>{roomDrop?.drops[row.index].itemId}</code><span>{row.before} → <strong>{row.after}</strong></span></div>)}</div><footer><button className="button secondary" onClick={() => setPreview(null)}>Отмена</button><button className="button primary" disabled={!preview.some((row) => row.before !== row.after)} onClick={() => { if (roomDrop) commitMany('RoomDrops', preview.map((row) => ({ pointer: `$/${roomDropIndex}/drops/${row.index}/weight`, value: exactNumber(row.after) }))); setPreview(null); }}>Применить</button></footer></div></div>}
     </>
   );
 }
@@ -635,7 +652,8 @@ function ConfigsScreen({ configs, setConfigs, validation }: { configs: ConfigTex
   const [newName, setNewName] = useState('');
   const [listError, setListError] = useState<string | null>(null);
   function addConfig() { if (!/^[A-Za-z][A-Za-z0-9_-]*$/.test(newName) || configs[newName]) { setListError('Имя должно быть новым техническим ключом без пробелов.'); return; } setConfigs((current) => ({ ...current, [newName]: '{}\n' })); setSelected(newName); setNewName(''); setListError(null); }
-  return <><PageHeading eyebrow="Универсальный редактор" title="Все конфиги" subtitle="Известные и новые JSON-конфиги без изменения кода сервиса." /><section className="configs-layout"><aside className="panel config-list"><div className="panel-heading"><div><h2>Конфиги</h2><p>{Object.keys(configs).length} активных</p></div></div>{Object.keys(configs).sort().map((name) => <button className={selected === name ? 'active' : ''} onClick={() => { setSelected(name); setListError(null); }} key={name}><code>{name}.json</code><span>{name in spreadsheetPreviewSnapshot ? 'Игровой' : 'Новый'}</span></button>)}<div className="add-config"><input placeholder="NewConfig" value={newName} onChange={(event) => setNewName(event.target.value)} /><button onClick={addConfig}>+</button></div>{listError && <p className="raw-error">{listError}</p>}</aside><RawConfigEditor key={selected} selected={selected} source={configs[selected]} onApply={(canonical) => setConfigs((current) => ({ ...current, [selected]: canonical }))} /></section><article className="panel validation-panel"><PanelHeading title="Проверки" subtitle={`${validation.errorCount} ошибок · ${validation.warningCount} предупреждений · ${validation.observationCount} наблюдений`} /><IssueList issues={validation.issues} /></article></>;
+  const canAddConfig = /^[A-Za-z][A-Za-z0-9_-]*$/.test(newName) && !configs[newName];
+  return <><PageHeading eyebrow="Универсальный редактор" title="Все конфиги" subtitle="Известные и новые JSON-конфиги без изменения кода сервиса." /><section className="configs-layout"><aside className="panel config-list"><div className="panel-heading"><div><h2>Конфиги</h2><p>{Object.keys(configs).length} активных</p></div></div>{Object.keys(configs).sort().map((name) => <button className={selected === name ? 'active' : ''} onClick={() => { setSelected(name); setListError(null); }} key={name}><code>{name}.json</code><span>{name in spreadsheetPreviewSnapshot ? 'Игровой' : 'Новый'}</span></button>)}<div className="add-config"><input placeholder="NewConfig" value={newName} onChange={(event) => setNewName(event.target.value)} /><button disabled={!canAddConfig} onClick={addConfig}>+</button></div>{listError && <p className="raw-error">{listError}</p>}</aside><RawConfigEditor key={selected} selected={selected} source={configs[selected]} onApply={(canonical) => setConfigs((current) => ({ ...current, [selected]: canonical }))} /></section><article className="panel validation-panel"><PanelHeading title="Проверки" subtitle={`${validation.errorCount} ошибок · ${validation.warningCount} предупреждений · ${validation.observationCount} наблюдений`} /><IssueList issues={validation.issues} /></article></>;
 }
 
 function RawConfigEditor({ selected, source, onApply }: { selected: string; source: string; onApply: (canonical: string) => void }) {
@@ -651,6 +669,11 @@ function RawConfigEditor({ selected, source, onApply }: { selected: string; sour
     setRawError(null);
     setRawStatus(null);
   }, [source]);
+
+  const hasChanges = useMemo(() => {
+    try { return stringifyExactJson(parseExactJson(draft)) !== source; }
+    catch { return draft !== source; }
+  }, [draft, source]);
 
   function applyRaw() {
     try {
@@ -668,7 +691,7 @@ function RawConfigEditor({ selected, source, onApply }: { selected: string; sour
       setRawError(error instanceof Error ? error.message : String(error));
     }
   }
-  return <article className="panel raw-editor"><PanelHeading title={`${selected}.json`} subtitle="Числа сохраняются без преобразования в JavaScript number" aside={<button type="button" className="button primary" onClick={applyRaw}>Применить JSON</button>} />{(rawError || rawStatus) && <p className={rawError ? 'raw-feedback error' : 'raw-feedback success'} role="status" aria-live="polite">{rawError ? `JSON не применён: ${rawError}` : rawStatus}</p>}<textarea spellCheck={false} value={draft} onChange={(event) => { setDraft(event.target.value); setRawError(null); setRawStatus(null); }} onKeyDown={(event) => { if ((event.metaKey || event.ctrlKey) && event.key === 'Enter') { event.preventDefault(); applyRaw(); } }} />{!rawError && !rawStatus && <p className="raw-hint">Нажмите «Применить JSON» или ⌘ Enter. После этого сохраните новую версию в панели снизу.</p>}</article>;
+  return <article className="panel raw-editor"><PanelHeading title={`${selected}.json`} subtitle="Числа сохраняются без преобразования в JavaScript number" aside={<button type="button" className="button primary" disabled={!hasChanges} onClick={applyRaw}>Применить JSON</button>} />{(rawError || rawStatus) && <p className={rawError ? 'raw-feedback error' : 'raw-feedback success'} role="status" aria-live="polite">{rawError ? `JSON не применён: ${rawError}` : rawStatus}</p>}<textarea spellCheck={false} value={draft} onChange={(event) => { setDraft(event.target.value); setRawError(null); setRawStatus(null); }} onKeyDown={(event) => { if (hasChanges && (event.metaKey || event.ctrlKey) && event.key === 'Enter') { event.preventDefault(); applyRaw(); } }} />{!rawError && !rawStatus && <p className="raw-hint">{hasChanges ? 'Нажмите «Применить JSON» или ⌘ Enter. После этого сохраните новую версию в панели снизу.' : 'Измените JSON — кнопка применения станет активной.'}</p>}</article>;
 }
 
 function SimulatorScreen({
@@ -1058,6 +1081,10 @@ function TeamMemberCard({ member, currentUserId, canManage, busy, apiAction }: {
   const isCurrent = member.userId === currentUserId;
   const editable = canManage && member.role !== 'owner' && !isCurrent;
   const initials = member.displayName.split(/\s+/).map((part) => part[0]).join('').slice(0, 2).toUpperCase();
+  const filteredDraftExtra = draftExtra.filter((permission) => !rolePermissions[draftRole].includes(permission)).sort();
+  const filteredSavedExtra = [...member.extraPermissions].sort();
+  const accessChanged = draftRole !== member.role
+    || filteredDraftExtra.join(',') !== filteredSavedExtra.join(',');
 
   function toggleDraftPermission(permission: Permission) {
     setDraftExtra((current) => current.includes(permission) ? current.filter((item) => item !== permission) : [...current, permission]);
@@ -1080,7 +1107,7 @@ function TeamMemberCard({ member, currentUserId, canManage, busy, apiAction }: {
     {editing && <div className="member-editor">
       <div className="member-editor-heading"><div><small>Настройка доступа</small><strong>{member.displayName}</strong></div><label><span>Роль</span><select value={draftRole} onChange={(event) => { const next = event.target.value as (typeof memberRoles)[number]; setDraftRole(next); setDraftExtra((current) => current.filter((permission) => !rolePermissions[next].includes(permission))); }}>{memberRoles.map((item) => <option value={item} key={item}>{roleLabels[item]}</option>)}</select></label></div>
       <div className="permission-groups">{permissionGroups.map((group) => <fieldset key={group.title}><legend>{group.title}</legend>{group.permissions.map((permission) => { const included = rolePermissions[draftRole].includes(permission); return <label className={included ? 'included' : ''} key={permission}><input type="checkbox" checked={included || draftExtra.includes(permission)} disabled={included} onChange={() => toggleDraftPermission(permission)} /><span>{permissionLabels[permission]}{included && <small>Входит в роль</small>}</span></label>; })}</fieldset>)}</div>
-      <footer><div>{confirmRemove ? <><span className="remove-warning">Исключить пользователя из сервиса?</span><button disabled={busy} className="button danger" onClick={() => void remove()}>Да, исключить</button><button className="button secondary" onClick={() => setConfirmRemove(false)}>Отмена</button></> : <button className="text-button danger-text" onClick={() => setConfirmRemove(true)}>Исключить из команды</button>}</div><button disabled={busy} className="button primary" onClick={() => void save()}>Сохранить права</button></footer>
+      <footer><div>{confirmRemove ? <><span className="remove-warning">Исключить пользователя из сервиса?</span><button disabled={busy} className="button danger" onClick={() => void remove()}>Да, исключить</button><button className="button secondary" onClick={() => setConfirmRemove(false)}>Отмена</button></> : <button className="text-button danger-text" onClick={() => setConfirmRemove(true)}>Исключить из команды</button>}</div><button disabled={busy || !accessChanged} className="button primary" onClick={() => void save()}>Сохранить права</button></footer>
     </div>}
   </section>;
 }
@@ -1089,7 +1116,10 @@ function GameSettingsEditor({ settings, busy, onSave }: { settings: WorkspacePay
   const [ownerTimezone, setOwnerTimezone] = useState(settings?.ownerTimezone ?? 'Europe/Lisbon');
   const [backupHour, setBackupHour] = useState(settings?.backupHour ?? '02:00');
   const [backupTimezone, setBackupTimezone] = useState(settings?.backupTimezone ?? 'Europe/Moscow');
-  return <article className="panel editor-panel"><PanelHeading title="Время и резервные копии" subtitle="Импортированное расписание сохранено без изменений" /><div className="simple-list"><Field label="Часовой пояс владельца"><input value={ownerTimezone} onChange={(event) => setOwnerTimezone(event.target.value)} /></Field><Field label="Ежедневная копия"><input type="time" value={backupHour} onChange={(event) => setBackupHour(event.target.value)} /></Field><Field label="Часовой пояс копии"><input value={backupTimezone} onChange={(event) => setBackupTimezone(event.target.value)} /></Field><button disabled={busy} className="button secondary" onClick={() => void onSave({ ownerTimezone, backupHour, backupTimezone })}>Сохранить настройки</button></div></article>;
+  const changed = ownerTimezone !== (settings?.ownerTimezone ?? 'Europe/Lisbon')
+    || backupHour !== (settings?.backupHour ?? '02:00')
+    || backupTimezone !== (settings?.backupTimezone ?? 'Europe/Moscow');
+  return <article className="panel editor-panel"><PanelHeading title="Время и резервные копии" subtitle="Импортированное расписание сохранено без изменений" /><div className="simple-list"><Field label="Часовой пояс владельца"><input value={ownerTimezone} onChange={(event) => setOwnerTimezone(event.target.value)} /></Field><Field label="Ежедневная копия"><input type="time" value={backupHour} onChange={(event) => setBackupHour(event.target.value)} /></Field><Field label="Часовой пояс копии"><input value={backupTimezone} onChange={(event) => setBackupTimezone(event.target.value)} /></Field><button disabled={busy || !changed} className="button secondary" onClick={() => void onSave({ ownerTimezone, backupHour, backupTimezone })}>Сохранить настройки</button></div></article>;
 }
 
 function PageHeading({ eyebrow, title, subtitle, children }: { eyebrow: string; title: string; subtitle: string; children?: React.ReactNode }) {

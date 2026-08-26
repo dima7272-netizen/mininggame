@@ -117,6 +117,15 @@ export function AccountSettings({
     location.assign(body.redirectTo ?? '/login');
   }
 
+  const profileEmailChanged = email.trim().toLowerCase() !== account.user.email.toLowerCase();
+  const profileChanged = displayName.trim() !== account.user.displayName || profileEmailChanged;
+  const profileReady = profileChanged
+    && displayName.trim().length >= 2
+    && email.trim().length > 0
+    && (!account.hasPassword || !profileEmailChanged || profilePassword.length > 0);
+  const passwordReady = newPassword.length >= 12
+    && newPassword === passwordConfirm
+    && (!account.hasPassword || currentPassword.length > 0);
   const initials = account.user.displayName.split(/\s+/).map((part) => part[0]).join('').slice(0, 2).toUpperCase();
   return (
     <main className="account-page">
@@ -151,7 +160,7 @@ export function AccountSettings({
               <label><span>Имя</span><input value={displayName} onChange={(event) => setDisplayName(event.target.value)} minLength={2} maxLength={80} required /></label>
               <label><span>Email для входа</span><input value={email} onChange={(event) => setEmail(event.target.value)} type="email" inputMode="email" maxLength={254} required /></label>
               {account.hasPassword && email.trim().toLowerCase() !== account.user.email.toLowerCase() && <label className="account-form-wide"><span>Текущий пароль для смены email</span><input value={profilePassword} onChange={(event) => setProfilePassword(event.target.value)} type="password" autoComplete="current-password" required /></label>}
-              <div className="account-form-actions"><small>Этот email используется для входа по паролю и уведомлений команды.</small><button className="button primary" disabled={busy === 'profile'} type="submit">{busy === 'profile' ? 'Сохраняю…' : 'Сохранить профиль'}</button></div>
+              <div className="account-form-actions"><small>Этот email используется для входа по паролю и уведомлений команды.</small><button className="button primary" disabled={busy !== null || !profileReady} type="submit">{busy === 'profile' ? 'Сохраняю…' : 'Сохранить профиль'}</button></div>
             </form>
           </article>
 
@@ -179,7 +188,7 @@ export function AccountSettings({
               {account.hasPassword && <label className="account-form-wide"><span>Текущий пароль</span><input value={currentPassword} onChange={(event) => setCurrentPassword(event.target.value)} type="password" autoComplete="current-password" required /></label>}
               <label><span>Новый пароль</span><input value={newPassword} onChange={(event) => setNewPassword(event.target.value)} type="password" autoComplete="new-password" minLength={12} maxLength={128} placeholder="Не меньше 12 символов" required /></label>
               <label><span>Повторите новый пароль</span><input value={passwordConfirm} onChange={(event) => setPasswordConfirm(event.target.value)} type="password" autoComplete="new-password" minLength={12} maxLength={128} required /></label>
-              <div className="account-form-actions"><small>Используйте уникальную длинную фразу, которой нет в других сервисах.</small><button className="button primary" disabled={busy === 'password'} type="submit">{busy === 'password' ? 'Сохраняю…' : account.hasPassword ? 'Изменить пароль' : 'Создать пароль'}</button></div>
+              <div className="account-form-actions"><small>Используйте уникальную длинную фразу, которой нет в других сервисах.</small><button className="button primary" disabled={busy !== null || !passwordReady} type="submit">{busy === 'password' ? 'Сохраняю…' : account.hasPassword ? 'Изменить пароль' : 'Создать пароль'}</button></div>
             </form>
           </article>
         </section>
