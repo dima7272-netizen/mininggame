@@ -55,6 +55,43 @@ describe('repository import', () => {
     ))).toBe(true);
   });
 
+  it('extends the rounded pickaxe power curve after pickaxe 27 without changing its log slope', () => {
+    const powers = parseKnownConfigs(base).pickaxes.map((pickaxe) => pickaxe.power);
+    expect(powers.slice(27)).toEqual([
+      '1000000',
+      '2000000',
+      '3000000',
+      '5000000',
+      '10000000',
+      '15000000',
+      '20000000',
+      '30000000',
+      '50000000',
+      '100000000',
+      '200000000',
+      '300000000',
+      '500000000',
+      '1000000000',
+      '1500000000',
+      '2000000000',
+      '3000000000',
+      '5000000000',
+      '10000000000',
+      '20000000000',
+      '30000000000',
+      '50000000000',
+      '100000000000',
+      '150000000000',
+      '200000000000',
+      '300000000000',
+      '500000000000',
+      '1000000000000',
+    ]);
+    for (const start of [17, 26, 35, 44]) {
+      expect(new Decimal(powers[start + 9]).dividedBy(powers[start]).toString()).toBe('100');
+    }
+  });
+
   it('computes room 16 from the current configs and the exact even-room item count', () => {
     const room16 = buildRoomEconomy(parseKnownConfigs(base)).find((room) => room.index === 16);
     expect(new Decimal(room16?.hpGrowth ?? 0).greaterThan(1)).toBe(true);

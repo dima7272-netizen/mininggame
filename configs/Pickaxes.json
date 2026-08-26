@@ -137,132 +137,132 @@
   {
     "modelName": "GlacierCore",
     "currencyPrice": 10000000000,
-    "power": 600000
+    "power": 1000000
   },
   {
     "modelName": "IcewingPick",
     "currencyPrice": 15000000000,
-    "power": 700000
+    "power": 2000000
   },
   {
     "modelName": "CryoArcPick",
     "currencyPrice": 20000000000,
-    "power": 800000
+    "power": 3000000
   },
   {
     "modelName": "FrostfangShard",
     "currencyPrice": 30000000000,
-    "power": 900000
+    "power": 5000000
   },
   {
     "modelName": "ToxicReaper",
     "currencyPrice": 50000000000,
-    "power": 1000000
+    "power": 10000000
   },
   {
     "modelName": "AmethystWing",
     "currencyPrice": 100000000000,
-    "power": 2000000
+    "power": 15000000
   },
   {
     "modelName": "NeonPulsePickaxe",
     "currencyPrice": 200000000000,
-    "power": 3000000
+    "power": 20000000
   },
   {
     "modelName": "Voidpiercer",
     "currencyPrice": 500000000000,
-    "power": 5000000
+    "power": 30000000
   },
   {
     "modelName": "GemstoneCrusher",
     "currencyPrice": 1000000000000,
-    "power": 10000000
+    "power": 50000000
   },
   {
     "modelName": "RadiantReaper",
     "currencyPrice": 2000000000000,
-    "power": 20000000
+    "power": 100000000
   },
   {
     "modelName": "VoidCrescentPickaxe",
     "currencyPrice": 5000000000000,
-    "power": 30000000
+    "power": 200000000
   },
   {
     "modelName": "Skyforge",
     "currencyPrice": 10000000000000,
-    "power": 50000000
+    "power": 300000000
   },
   {
     "modelName": "SuperToxicReaper",
     "currencyPrice": 20000000000000,
-    "power": 100000000
+    "power": 500000000
   },
   {
     "modelName": "Thunderstrike",
     "currencyPrice": 50000000000000,
-    "power": 200000000
+    "power": 1000000000
   },
   {
     "modelName": "SolarTwinblade",
     "currencyPrice": 100000000000000,
-    "power": 300000000
+    "power": 1500000000
   },
   {
     "modelName": "AbyssalTwinEdge",
     "currencyPrice": 200000000000000,
-    "power": 500000000
+    "power": 2000000000
   },
   {
     "modelName": "EmberhornCleaver",
     "currencyPrice": 500000000000000,
-    "power": 1000000000
+    "power": 3000000000
   },
   {
     "modelName": "StormfuryPickaxe",
     "currencyPrice": 1000000000000000,
-    "power": 2000000000
+    "power": 5000000000
   },
   {
     "modelName": "VoidSuperPiercer",
     "currencyPrice": 2000000000000000,
-    "power": 3000000000
+    "power": 10000000000
   },
   {
     "modelName": "CrescentHammer",
     "currencyPrice": 5000000000000000,
-    "power": 5000000000
+    "power": 20000000000
   },
   {
     "modelName": "TwinFireScythe",
     "currencyPrice": 10000000000000000,
-    "power": 10000000000
+    "power": 30000000000
   },
   {
     "modelName": "MobileDrill",
     "currencyPrice": 20000000000000000,
-    "power": 20000000000
+    "power": 50000000000
   },
   {
     "modelName": "CrimsonHook",
     "currencyPrice": 50000000000000000,
-    "power": 30000000000
+    "power": 100000000000
   },
   {
     "modelName": "NeonCrystal",
     "currencyPrice": 100000000000000000,
-    "power": 50000000000
+    "power": 150000000000
   },
   {
     "modelName": "FrostbiteSplitter",
     "currencyPrice": 200000000000000000,
-    "power": 100000000000
+    "power": 200000000000
   },
   {
     "modelName": "HellFireScythe",
     "currencyPrice": 500000000000000000,
-    "power": 200000000000
+    "power": 300000000000
   },
   {
     "modelName": "FrostbiteReaper",
