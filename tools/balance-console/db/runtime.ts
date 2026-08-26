@@ -7,6 +7,7 @@ const statements = [
   `CREATE TABLE IF NOT EXISTS users (id TEXT PRIMARY KEY, email TEXT NOT NULL UNIQUE, display_name TEXT NOT NULL, created_at INTEGER NOT NULL)`,
   `CREATE TABLE IF NOT EXISTS auth_credentials (user_id TEXT PRIMARY KEY REFERENCES users(id), password_salt TEXT NOT NULL, password_hash TEXT NOT NULL, password_iterations INTEGER NOT NULL, created_at INTEGER NOT NULL, updated_at INTEGER NOT NULL)`,
   `CREATE TABLE IF NOT EXISTS auth_sessions (token_hash TEXT PRIMARY KEY, user_id TEXT NOT NULL REFERENCES users(id), created_at INTEGER NOT NULL, expires_at INTEGER NOT NULL)`,
+  `CREATE TABLE IF NOT EXISTS auth_identities (provider TEXT NOT NULL, provider_user_id TEXT NOT NULL, user_id TEXT NOT NULL REFERENCES users(id), provider_email TEXT NOT NULL, created_at INTEGER NOT NULL, last_used_at INTEGER NOT NULL, PRIMARY KEY (provider, provider_user_id), UNIQUE (provider, user_id))`,
   `CREATE TABLE IF NOT EXISTS game_settings (game_id TEXT PRIMARY KEY REFERENCES games(id), owner_timezone TEXT NOT NULL, backup_hour TEXT NOT NULL, backup_timezone TEXT NOT NULL, updated_at INTEGER NOT NULL)`,
   `CREATE TABLE IF NOT EXISTS game_members (game_id TEXT NOT NULL REFERENCES games(id), user_id TEXT NOT NULL REFERENCES users(id), role TEXT NOT NULL, permissions_json TEXT NOT NULL, created_at INTEGER NOT NULL, PRIMARY KEY (game_id, user_id))`,
   `CREATE TABLE IF NOT EXISTS versions (id TEXT PRIMARY KEY, game_id TEXT NOT NULL REFERENCES games(id), base_version_id TEXT, base_sha TEXT NOT NULL, content_hash TEXT NOT NULL, created_by TEXT NOT NULL REFERENCES users(id), created_at INTEGER NOT NULL, version_name TEXT NOT NULL DEFAULT 'Обновление', notes TEXT NOT NULL DEFAULT '', comment TEXT NOT NULL, change_summary_json TEXT NOT NULL DEFAULT '[]', rollback_target_version_id TEXT, configs_json TEXT NOT NULL, validation_json TEXT NOT NULL, status TEXT NOT NULL, source TEXT NOT NULL)`,
@@ -23,6 +24,7 @@ const statements = [
   'CREATE INDEX IF NOT EXISTS idx_audit_game_created ON audit_logs(game_id, created_at)',
   'CREATE INDEX IF NOT EXISTS idx_auth_sessions_user ON auth_sessions(user_id)',
   'CREATE INDEX IF NOT EXISTS idx_auth_sessions_expires ON auth_sessions(expires_at)',
+  'CREATE INDEX IF NOT EXISTS idx_auth_identities_user ON auth_identities(user_id)',
 ];
 
 export function initializeDb(): Promise<void> {

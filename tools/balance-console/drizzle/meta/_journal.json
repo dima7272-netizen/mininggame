@@ -29,6 +29,13 @@
       "when": 1787727291663,
       "tag": "0003_striped_energizer",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1787729387649,
+      "tag": "0004_tired_lord_hawal",
+      "breakpoints": true
     }
   ]
 }

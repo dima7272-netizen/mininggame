@@ -43,6 +43,19 @@ export const authSessions = sqliteTable('auth_sessions', {
   index('idx_auth_sessions_expires').on(table.expiresAt),
 ]);
 
+export const authIdentities = sqliteTable('auth_identities', {
+  provider: text('provider').notNull(),
+  providerUserId: text('provider_user_id').notNull(),
+  userId: text('user_id').notNull().references(() => users.id),
+  providerEmail: text('provider_email').notNull(),
+  createdAt: integer('created_at').notNull(),
+  lastUsedAt: integer('last_used_at').notNull(),
+}, (table) => [
+  primaryKey({ columns: [table.provider, table.providerUserId] }),
+  uniqueIndex('idx_auth_identities_provider_user').on(table.provider, table.userId),
+  index('idx_auth_identities_user').on(table.userId),
+]);
+
 export const gameMembers = sqliteTable('game_members', {
   gameId: text('game_id').notNull().references(() => games.id),
   userId: text('user_id').notNull().references(() => users.id),

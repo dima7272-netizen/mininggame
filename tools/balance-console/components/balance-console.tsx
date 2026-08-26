@@ -361,8 +361,10 @@ export function BalanceConsole({ initialConfigs, initialSha }: { initialConfigs:
           ))}
         </nav>
         <div className="sidebar-footer">
-          <div className="owner-avatar">{workspace?.user.displayName.slice(0, 2).toUpperCase() ?? 'ДТ'}</div>
-          <span className="owner-info"><strong>{workspace?.user.displayName ?? 'Локальный владелец'}</strong><small>{roleLabels[workspace?.access.role ?? 'owner']}</small></span>
+          <button className="account-entry" onClick={() => location.assign('/account')} title="Открыть настройки аккаунта">
+            <span className="owner-avatar">{workspace?.user.displayName.slice(0, 2).toUpperCase() ?? 'ДТ'}</span>
+            <span className="owner-info"><strong>{workspace?.user.displayName ?? 'Локальный владелец'}</strong><small>{roleLabels[workspace?.access.role ?? 'owner']} · Мой аккаунт</small></span>
+          </button>
           <button className="logout-button" disabled={busy} onClick={() => void logout()} title="Выйти из аккаунта">Выйти</button>
           <div className="theme-switcher" role="group" aria-label="Режим оформления">
             {themeModes.map((mode) => (
