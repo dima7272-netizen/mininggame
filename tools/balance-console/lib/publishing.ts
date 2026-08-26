@@ -181,7 +181,8 @@ export class GitHubPublisher {
     const treeSha = await this.createTree(headSha, environment, versionId, checksum, configs);
     const commitSha = await this.createCommit(headSha, treeSha, environment, versionId);
     await this.updateBranch(headSha, commitSha);
-    const runs = await this.waitForActions(commitSha, environment);
+    const expectedRuns = await this.ensureActionsStarted(commitSha, environment);
+    const runs = await this.waitForActions(commitSha, environment, expectedRuns);
     const failed = runs.filter((run) => run.conclusion !== 'success');
     if (failed.length > 0) {
       throw new Error(
@@ -280,17 +281,63 @@ export class GitHubPublisher {
     }
   }
 
-  private async waitForActions(commitSha: string, environment: PublishEnvironment): Promise<ActionRun[]> {
-    const deadline = Date.now() + 55_000;
+  private async ensureActionsStarted(commitSha: string, environment: PublishEnvironment): Promise<number> {
+    const workflows = await this.environmentWorkflows(environment);
+    if (workflows.length === 0) {
+      throw new Error(`В ${this.repository} не найден активный workflow публикации ${environment}.`);
+    }
+
+    const pushDeadline = Date.now() + 8_000;
+    while (Date.now() < pushDeadline) {
+      const runs = await this.actionRuns(commitSha, environment, 'push');
+      if (runs.length > 0) return workflows.length;
+      await delay(1_000);
+    }
+
+    for (const workflow of workflows) {
+      const response = await this.request(`/actions/workflows/${workflow.id}/dispatches`, {
+        method: 'POST',
+        body: JSON.stringify({ ref: this.branch }),
+      });
+      if (response.status !== 204) throw await githubError(response);
+    }
+
+    return workflows.length;
+  }
+
+  private async environmentWorkflows(environment: PublishEnvironment): Promise<GitHubWorkflow[]> {
+    const data = await this.github<{ workflows: GitHubWorkflow[] }>('/actions/workflows?per_page=100');
+    const needle = `deploy-${environment.toLowerCase()}`;
+    return data.workflows.filter((workflow) =>
+      workflow.state === 'active'
+      && (workflow.name.toUpperCase().includes(environment) || workflow.path.toLowerCase().includes(needle)),
+    );
+  }
+
+  private async actionRuns(
+    commitSha: string,
+    environment: PublishEnvironment,
+    event?: 'push' | 'workflow_dispatch',
+  ): Promise<ActionRun[]> {
+    const eventFilter = event ? `&event=${event}` : '';
+    const data = await this.github<{ workflow_runs: ActionRun[] }>(
+      `/actions/runs?head_sha=${encodeURIComponent(commitSha)}${eventFilter}&per_page=100`,
+    );
+    return data.workflow_runs.filter((run) =>
+      run.name.toUpperCase().includes(environment) || run.path.toLowerCase().includes(`deploy-${environment.toLowerCase()}`),
+    );
+  }
+
+  private async waitForActions(
+    commitSha: string,
+    environment: PublishEnvironment,
+    expectedRuns: number,
+  ): Promise<ActionRun[]> {
+    const deadline = Date.now() + 150_000;
     let matching: ActionRun[] = [];
     while (Date.now() < deadline) {
-      const data = await this.github<{ workflow_runs: ActionRun[] }>(
-        `/actions/runs?head_sha=${encodeURIComponent(commitSha)}&event=push&per_page=100`,
-      );
-      matching = data.workflow_runs.filter((run) =>
-        run.name.toUpperCase().includes(environment) || run.path.toLowerCase().includes(`deploy-${environment.toLowerCase()}`),
-      );
-      if (matching.length > 0 && matching.every((run) => run.status === 'completed')) return matching;
+      matching = await this.actionRuns(commitSha, environment);
+      if (matching.length >= expectedRuns && matching.every((run) => run.status === 'completed')) return matching;
       await delay(1_500);
     }
     throw new Error(
@@ -328,6 +375,13 @@ type ActionRun = {
   status: string;
   conclusion: string | null;
   html_url: string;
+};
+
+type GitHubWorkflow = {
+  id: number;
+  name: string;
+  path: string;
+  state: string;
 };
 
 export async function hashConfigBundle(configs: ConfigTextMap): Promise<string> {

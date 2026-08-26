@@ -2,6 +2,7 @@
 import json
 import os
 import sys
+import time
 import urllib.error
 import urllib.request
 from pathlib import Path
@@ -217,6 +218,49 @@ def parse_json(raw, context):
         )
 
 
+def verify_published(base, api_key, configs, timeout_seconds=45):
+    deadline = time.monotonic() + timeout_seconds
+    mismatches = list(configs.keys())
+
+    while time.monotonic() < deadline:
+        _, verify_raw = request(
+            "GET",
+            base,
+            api_key,
+            allow_status=(200,),
+        )
+
+        verify = parse_json(
+            verify_raw,
+            "GET verify",
+        )
+
+        verify_entries = (
+            verify.get("entries", {}) or {}
+        )
+
+        mismatches = [
+            name
+            for name in configs.keys()
+            if verify_entries.get(name)
+            != configs[name]
+        ]
+
+        if not mismatches:
+            for name in configs.keys():
+                print(f"{name}: OK")
+
+            return
+
+        time.sleep(3)
+
+    fail(
+        "Published verification mismatch after waiting "
+        "for Roblox read consistency: "
+        + ", ".join(mismatches)
+    )
+
+
 def main():
     api_key = os.environ.get(
         "ROBLOX_API_KEY",
@@ -317,6 +361,10 @@ def main():
             "No config value changes. "
             "Roblox already matches GitHub."
         )
+        verify_published(base, api_key, configs)
+        print(
+            f"{environment} DEPLOY COMPLETE"
+        )
         return
 
     _, patch_raw = request(
@@ -357,12 +405,12 @@ def main():
         "deploymentStrategy": "Immediate",
     }
 
-    _, publish_raw = request(
+    publish_status, publish_raw = request(
         "POST",
         f"{base}/publish",
         api_key,
         body=publish_payload,
-        allow_status=(200,),
+        allow_status=(200, 400),
     )
 
     publish_result = parse_json(
@@ -370,43 +418,33 @@ def main():
         "POST publish",
     )
 
-    print(
-        "Published Roblox Configs. "
-        f"configVersion="
-        f"{publish_result.get('configVersion', 'unknown')}"
-    )
+    if publish_status == 200:
+        print(
+            "Published Roblox Configs. "
+            f"configVersion="
+            f"{publish_result.get('configVersion', 'unknown')}"
+        )
+    else:
+        error_codes = {
+            error.get("code")
+            for error in publish_result.get(
+                "validationErrors",
+                [],
+            )
+        }
 
-    _, verify_raw = request(
-        "GET",
-        base,
-        api_key,
-        allow_status=(200,),
-    )
+        if "EmptyDraft" not in error_codes:
+            fail(
+                "POST publish returned HTTP 400: "
+                + publish_raw[:500]
+            )
 
-    verify = parse_json(
-        verify_raw,
-        "GET verify",
-    )
-
-    verify_entries = (
-        verify.get("entries", {}) or {}
-    )
-
-    mismatches = [
-        name
-        for name in configs.keys()
-        if verify_entries.get(name)
-        != configs[name]
-    ]
-
-    if mismatches:
-        fail(
-            "Published verification mismatch for: "
-            + ", ".join(mismatches)
+        print(
+            "Roblox reports an empty draft; "
+            "the same values are already published."
         )
 
-    for name in configs.keys():
-        print(f"{name}: OK")
+    verify_published(base, api_key, configs)
 
     print(
         f"{environment} DEPLOY COMPLETE"
