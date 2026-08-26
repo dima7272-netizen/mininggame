@@ -161,6 +161,39 @@ describe('automatic reward scheme', () => {
     });
   });
 
+  it('starts room one with a pre-warmed ladder instead of inflating two rewards', () => {
+    const generated = generateRewardScheme(known, settings);
+    const firstRoom = generated.find((room) => room.index === 1);
+    expect(firstRoom?.drops).toHaveLength(18);
+    expect(Math.max(...(firstRoom?.drops.map((drop) => Number(drop.weight)) ?? []))).toBeLessThan(20);
+    expect(firstRoom?.drops.reduce((sum, drop) => sum.plus(drop.weight), new Decimal(0)).equals(100)).toBe(true);
+  });
+
+  it('settles into the exact 1–2–3–5–8–12–17–23–29 ladder', () => {
+    const generated = generateRewardScheme(known, settings);
+    const room = generated.find((candidate) => candidate.index === 22);
+    expect(room?.drops.map((drop) => Number(drop.weight)).sort((left, right) => left - right)).toEqual([1, 2, 3, 5, 8, 12, 17, 23, 29]);
+  });
+
+  it('never lowers a visible reward before its hard removal', () => {
+    const generated = generateRewardScheme(known, settings);
+    const analysis = analyzeRewardProgression({ ...known, roomDrops: generated });
+    const complete = analysis.lifecycles.filter((lifecycle) => (
+      lifecycle.firstRoom !== null
+      && lifecycle.firstRoom > 1
+      && lifecycle.lastRoom !== null
+      && lifecycle.lastRoom < 46
+      && lifecycle.activeRoomCount === lifecycleTemplates.standard.curve.length
+    ));
+    expect(complete.length).toBeGreaterThan(40);
+    complete.forEach((lifecycle) => {
+      lifecycle.placements.forEach((placement, index) => {
+        if (index === 0) return;
+        expect(new Decimal(placement.weight).greaterThanOrEqualTo(lifecycle.placements[index - 1].weight)).toBe(true);
+      });
+    });
+  });
+
   it('fully removes an early reward after its lifecycle and preserves locked cells', () => {
     const locks = new Set([cellKey(1, 'Cardboard_C')]);
     const generated = generateRewardScheme(known, settings, locks);

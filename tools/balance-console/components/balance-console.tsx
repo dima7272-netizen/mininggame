@@ -146,7 +146,7 @@ const themeModes: Array<{ id: ThemeMode; icon: string; label: string; title: str
 export function BalanceConsole({ initialConfigs, initialSha }: { initialConfigs: ConfigTextMap; initialSha: string }) {
   const [section, setSection] = useState<Section>('overview');
   const [environment, setEnvironment] = useState<'DEV' | 'PROD'>('DEV');
-  const [configs, setConfigs] = useState<ConfigTextMap>(() => createSmoothProgressionDraft(initialConfigs));
+  const [configs, setConfigs] = useState<ConfigTextMap>(initialConfigs);
   const [baseConfigs, setBaseConfigs] = useState<ConfigTextMap>(initialConfigs);
   const [workspace, setWorkspace] = useState<WorkspacePayload | null>(null);
   const [busy, setBusy] = useState(false);
@@ -183,7 +183,7 @@ export function BalanceConsole({ initialConfigs, initialSha }: { initialConfigs:
       setWorkspace(data);
       if (data.versions[0] && syncConfigs) {
         setBaseConfigs(data.versions[0].configs);
-        setConfigs(createSmoothProgressionDraft(data.versions[0].configs));
+        setConfigs(data.versions[0].configs);
       }
     } catch (error) {
       setMessage(error instanceof Error ? error.message : String(error));
@@ -203,7 +203,7 @@ export function BalanceConsole({ initialConfigs, initialSha }: { initialConfigs:
         setWorkspace(data);
         if (data.versions[0]) {
           setBaseConfigs(data.versions[0].configs);
-          setConfigs(createSmoothProgressionDraft(data.versions[0].configs));
+          setConfigs(data.versions[0].configs);
         }
       })
       .catch((error: unknown) => {

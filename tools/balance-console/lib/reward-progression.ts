@@ -484,14 +484,33 @@ export function generateRewardScheme(
     const rightRank = settings.rankOverrides?.[right.id] ?? automaticRanks.get(right.id) ?? 0;
     return leftRank - rightRank || (automaticRanks.get(left.id) ?? 0) - (automaticRanks.get(right.id) ?? 0);
   });
-  const slots = Math.max(1, Math.ceil(ranked.length / Math.max(1, settings.newRewardsPerRoom)));
+  const rewardsPerIntroduction = Math.max(1, Math.floor(settings.newRewardsPerRoom));
+  const introductionStart = roomStart - curve.length + 1;
+  const introductionEnd = availableRooms.at(-1) ?? roomEnd;
+  const introductionInterval = Math.max(1, Math.floor(settings.newRewardEvery));
+  let introductionRooms = Array.from(
+    { length: Math.floor((introductionEnd - introductionStart) / introductionInterval) + 1 },
+    (_, index) => introductionStart + index * introductionInterval,
+  ).filter((roomIndex) => roomIndex < roomStart || !excluded.has(roomIndex));
+  if (introductionRooms.length > ranked.length) {
+    introductionRooms = introductionRooms.slice(introductionRooms.length - ranked.length);
+  }
+  if (introductionRooms.length * rewardsPerIntroduction < ranked.length) {
+    throw new Error(`В диапазоне доступно ${introductionRooms.length} первых появлений по ${rewardsPerIntroduction} наград, а расставить нужно ${ranked.length}. Увеличьте число новых наград за появление или уменьшите интервал.`);
+  }
+  const baseRewardsPerRoom = Math.floor(ranked.length / introductionRooms.length);
+  const roomsWithExtraReward = ranked.length % introductionRooms.length;
+  if (baseRewardsPerRoom > rewardsPerIntroduction || (roomsWithExtraReward > 0 && baseRewardsPerRoom + 1 > rewardsPerIntroduction)) {
+    throw new Error('Заданный лимит новых наград не вмещает полный каталог в выбранный диапазон.');
+  }
+  const firstRoomByItem = new Map<string, number>();
+  let rewardCursor = 0;
+  introductionRooms.forEach((introductionRoom, index) => {
+    const groupSize = baseRewardsPerRoom + (index < roomsWithExtraReward ? 1 : 0);
+    ranked.slice(rewardCursor, rewardCursor + groupSize).forEach((item) => firstRoomByItem.set(item.id, introductionRoom));
+    rewardCursor += groupSize;
+  });
   const availableSpan = Math.max(0, availableRooms.length - 1);
-  const naturalSpacing = slots > 1 ? availableSpan / (slots - 1) : 0;
-  const spacing = Math.max(settings.newRewardEvery, naturalSpacing);
-  const firstRoomByItem = new Map(ranked.map((item, index) => [
-    item.id,
-    availableRooms[Math.min(availableRooms.length - 1, Math.round(Math.floor(index / Math.max(1, settings.newRewardsPerRoom)) * spacing))],
-  ]));
   const originalByRoom = new Map(known.roomDrops.map((room) => [room.index, room]));
   const minimumNewPercent = Math.max(1, template.minimumPercent, settings.minimumJackpotPercent);
 
@@ -535,6 +554,25 @@ export function generateRewardScheme(
     }, lockedCells, settings.precision, minimums);
   });
 
+  for (let roomIndex = roomStart + 1; roomIndex <= roomEnd; roomIndex += 1) {
+    if (excluded.has(roomIndex) || excluded.has(roomIndex - 1)) continue;
+    const previous = generated.find((room) => room.index === roomIndex - 1);
+    const current = generated.find((room) => room.index === roomIndex);
+    if (!previous || !current) continue;
+    const previousWeights = new Map(previous.drops.map((drop) => [drop.itemId, drop.weight]));
+    const minimums = new Map<string, string>();
+    current.drops.forEach((drop) => {
+      const firstRoom = firstRoomByItem.get(drop.itemId);
+      if (firstRoom === roomIndex) minimums.set(drop.itemId, String(minimumNewPercent));
+      const previousWeight = previousWeights.get(drop.itemId);
+      if (previousWeight !== undefined) {
+        minimums.set(drop.itemId, Decimal.max(previousWeight, minimums.get(drop.itemId) ?? 0).toString());
+      }
+    });
+    const normalized = normalizeRoomDrop(current, lockedCells, settings.precision, minimums);
+    current.drops = normalized.drops;
+  }
+
   const replacementMinimum = settings.minimumReplacementPercent ?? template.minimumReplacementPercent;
   for (let roomIndex = roomStart + 1; roomIndex <= roomEnd; roomIndex += 1) {
     if (excluded.has(roomIndex)) continue;
@@ -548,10 +586,11 @@ export function generateRewardScheme(
     });
     for (const drop of ended) {
       const generatedKnown = { ...known, roomDrops: generated };
-      const evaluation = evaluateHardRemoval(generatedKnown, drop.itemId, roomIndex - 1, replacementMinimum, settings.minimumReplacementCount ?? 1);
+      const requiredReplacement = Decimal.min(replacementMinimum, drop.weight).toNumber();
+      const evaluation = evaluateHardRemoval(generatedKnown, drop.itemId, roomIndex - 1, requiredReplacement, settings.minimumReplacementCount ?? 1);
       if (evaluation.safe) continue;
       if (current.drops.length >= settings.maximumActive) {
-        throw new Error(`Комната ${roomIndex}: ${drop.itemId} нельзя безопасно удалить, а лимит ${settings.maximumActive} уже заполнен. Увеличьте лимит или раньше подготовьте более сильную замену.`);
+        throw new Error(`Комната ${roomIndex}: ${drop.itemId} нельзя безопасно удалить, а лимит ${settings.maximumActive} уже заполнен. ${evaluation.reasons.join(' ')}`);
       }
       current.drops.push({ itemId: drop.itemId, weight: drop.weight });
       const normalized = normalizeRoomDrop(current, lockedCells, settings.precision);
