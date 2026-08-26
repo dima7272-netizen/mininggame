@@ -6,7 +6,7 @@
   },
   {
     "modelName": "Crowbar",
-    "currencyPrice": 10,
+    "currencyPrice": 1000,
     "power": 5
   },
   {
@@ -241,12 +241,12 @@
   },
   {
     "modelName": "MobileDrill",
-    "currencyPrice": 2000000000000000,
+    "currencyPrice": 20000000000000000,
     "power": 20000000000
   },
   {
     "modelName": "CrimsonHook",
-    "currencyPrice": 5000000000000000,
+    "currencyPrice": 50000000000000000,
     "power": 30000000000
   },
   {

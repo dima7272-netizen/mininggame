@@ -1,0 +1,467 @@
+{
+  "schemaVersion": 1,
+  "game": {
+    "name": "Dig Get Stronger",
+    "placeId": "104830450645212",
+    "universeId": "10590998713"
+  },
+  "source": {
+    "kind": "roblox-module-icon-map",
+    "path": "ReplicatedStorage.Game.Selling.SellItemConfig",
+    "extractedAt": "2026-08-25T22:21:00.000Z",
+    "readOnly": true
+  },
+  "itemCount": 75,
+  "items": {
+    "Cardboard_C": {
+      "assetId": "86453849200025",
+      "sourceUri": "rbxassetid://86453849200025",
+      "src": "/item-icons/86453849200025.png",
+      "sourcePath": "ReplicatedStorage.Game.Selling.SellItemConfig"
+    },
+    "DinosaurEgg_C": {
+      "assetId": "122197065078922",
+      "sourceUri": "rbxassetid://122197065078922",
+      "src": "/item-icons/122197065078922.png",
+      "sourcePath": "ReplicatedStorage.Game.Selling.SellItemConfig"
+    },
+    "Handle_C": {
+      "assetId": "102723753434665",
+      "sourceUri": "rbxassetid://102723753434665",
+      "src": "/item-icons/102723753434665.png",
+      "sourcePath": "ReplicatedStorage.Game.Selling.SellItemConfig"
+    },
+    "barrel_C": {
+      "assetId": "118520225211091",
+      "sourceUri": "rbxassetid://118520225211091",
+      "src": "/item-icons/118520225211091.png",
+      "sourcePath": "ReplicatedStorage.Game.Selling.SellItemConfig"
+    },
+    "Burger_C": {
+      "assetId": "118599778956109",
+      "sourceUri": "rbxassetid://118599778956109",
+      "src": "/item-icons/118599778956109.png",
+      "sourcePath": "ReplicatedStorage.Game.Selling.SellItemConfig"
+    },
+    "crate-bottles_u": {
+      "assetId": "94625415040376",
+      "sourceUri": "rbxassetid://94625415040376",
+      "src": "/item-icons/94625415040376.png",
+      "sourcePath": "ReplicatedStorage.Game.Selling.SellItemConfig"
+    },
+    "pot-stew_u": {
+      "assetId": "100579976356726",
+      "sourceUri": "rbxassetid://100579976356726",
+      "src": "/item-icons/100579976356726.png",
+      "sourcePath": "ReplicatedStorage.Game.Selling.SellItemConfig"
+    },
+    "cannon-mobile_u": {
+      "assetId": "104418528516410",
+      "sourceUri": "rbxassetid://104418528516410",
+      "src": "/item-icons/104418528516410.png",
+      "sourcePath": "ReplicatedStorage.Game.Selling.SellItemConfig"
+    },
+    "PirateHat_u": {
+      "assetId": "103980135456396",
+      "sourceUri": "rbxassetid://103980135456396",
+      "src": "/item-icons/103980135456396.png",
+      "sourcePath": "ReplicatedStorage.Game.Selling.SellItemConfig"
+    },
+    "Guitar_u": {
+      "assetId": "140510363990104",
+      "sourceUri": "rbxassetid://140510363990104",
+      "src": "/item-icons/140510363990104.png",
+      "sourcePath": "ReplicatedStorage.Game.Selling.SellItemConfig"
+    },
+    "Handle_u": {
+      "assetId": "114294394643693",
+      "sourceUri": "rbxassetid://114294394643693",
+      "src": "/item-icons/114294394643693.png",
+      "sourcePath": "ReplicatedStorage.Game.Selling.SellItemConfig"
+    },
+    "ship-wreck_r": {
+      "assetId": "109758346402346",
+      "sourceUri": "rbxassetid://109758346402346",
+      "src": "/item-icons/109758346402346.png",
+      "sourcePath": "ReplicatedStorage.Game.Selling.SellItemConfig"
+    },
+    "ship-small_r": {
+      "assetId": "80106020977655",
+      "sourceUri": "rbxassetid://80106020977655",
+      "src": "/item-icons/80106020977655.png",
+      "sourcePath": "ReplicatedStorage.Game.Selling.SellItemConfig"
+    },
+    "ship-pirate-small_r": {
+      "assetId": "131959907301640",
+      "sourceUri": "rbxassetid://131959907301640",
+      "src": "/item-icons/131959907301640.png",
+      "sourcePath": "ReplicatedStorage.Game.Selling.SellItemConfig"
+    },
+    "Low Poly_r": {
+      "assetId": "97836058949523",
+      "sourceUri": "rbxassetid://97836058949523",
+      "src": "/item-icons/97836058949523.png",
+      "sourcePath": "ReplicatedStorage.Game.Selling.SellItemConfig"
+    },
+    "Low Poly1_r": {
+      "assetId": "90388364531510",
+      "sourceUri": "rbxassetid://90388364531510",
+      "src": "/item-icons/90388364531510.png",
+      "sourcePath": "ReplicatedStorage.Game.Selling.SellItemConfig"
+    },
+    "crystal_r": {
+      "assetId": "95260244256884",
+      "sourceUri": "rbxassetid://95260244256884",
+      "src": "/item-icons/95260244256884.png",
+      "sourcePath": "ReplicatedStorage.Game.Selling.SellItemConfig"
+    },
+    "Dimond_r": {
+      "assetId": "71246849913301",
+      "sourceUri": "rbxassetid://71246849913301",
+      "src": "/item-icons/71246849913301.png",
+      "sourcePath": "ReplicatedStorage.Game.Selling.SellItemConfig"
+    },
+    "Egg_Ice_r": {
+      "assetId": "130773997584900",
+      "sourceUri": "rbxassetid://130773997584900",
+      "src": "/item-icons/130773997584900.png",
+      "sourcePath": "ReplicatedStorage.Game.Selling.SellItemConfig"
+    },
+    "WoodCrate_e": {
+      "assetId": "119029852095270",
+      "sourceUri": "rbxassetid://119029852095270",
+      "src": "/item-icons/119029852095270.png",
+      "sourcePath": "ReplicatedStorage.Game.Selling.SellItemConfig"
+    },
+    "oldtv_e": {
+      "assetId": "92862151955590",
+      "sourceUri": "rbxassetid://92862151955590",
+      "src": "/item-icons/92862151955590.png",
+      "sourcePath": "ReplicatedStorage.Game.Selling.SellItemConfig"
+    },
+    "Gift_box1_e": {
+      "assetId": "108294249522799",
+      "sourceUri": "rbxassetid://108294249522799",
+      "src": "/item-icons/108294249522799.png",
+      "sourcePath": "ReplicatedStorage.Game.Selling.SellItemConfig"
+    },
+    "Gift_box2_e": {
+      "assetId": "132745313986980",
+      "sourceUri": "rbxassetid://132745313986980",
+      "src": "/item-icons/132745313986980.png",
+      "sourcePath": "ReplicatedStorage.Game.Selling.SellItemConfig"
+    },
+    "Gift_box3_e": {
+      "assetId": "121284276598269",
+      "sourceUri": "rbxassetid://121284276598269",
+      "src": "/item-icons/121284276598269.png",
+      "sourcePath": "ReplicatedStorage.Game.Selling.SellItemConfig"
+    },
+    "Raket_e": {
+      "assetId": "132255076473839",
+      "sourceUri": "rbxassetid://132255076473839",
+      "src": "/item-icons/132255076473839.png",
+      "sourcePath": "ReplicatedStorage.Game.Selling.SellItemConfig"
+    },
+    "Tort_e": {
+      "assetId": "94739138324274",
+      "sourceUri": "rbxassetid://94739138324274",
+      "src": "/item-icons/94739138324274.png",
+      "sourcePath": "ReplicatedStorage.Game.Selling.SellItemConfig"
+    },
+    "crystal_e": {
+      "assetId": "78075493388301",
+      "sourceUri": "rbxassetid://78075493388301",
+      "src": "/item-icons/78075493388301.png",
+      "sourcePath": "ReplicatedStorage.Game.Selling.SellItemConfig"
+    },
+    "Chest_L": {
+      "assetId": "130046140647972",
+      "sourceUri": "rbxassetid://130046140647972",
+      "src": "/item-icons/130046140647972.png",
+      "sourcePath": "ReplicatedStorage.Game.Selling.SellItemConfig"
+    },
+    "Trophy_L": {
+      "assetId": "100866198087360",
+      "sourceUri": "rbxassetid://100866198087360",
+      "src": "/item-icons/100866198087360.png",
+      "sourcePath": "ReplicatedStorage.Game.Selling.SellItemConfig"
+    },
+    "Crown_L": {
+      "assetId": "103284964524622",
+      "sourceUri": "rbxassetid://103284964524622",
+      "src": "/item-icons/103284964524622.png",
+      "sourcePath": "ReplicatedStorage.Game.Selling.SellItemConfig"
+    },
+    "turkey_L": {
+      "assetId": "139687080721861",
+      "sourceUri": "rbxassetid://139687080721861",
+      "src": "/item-icons/139687080721861.png",
+      "sourcePath": "ReplicatedStorage.Game.Selling.SellItemConfig"
+    },
+    "Money_L": {
+      "assetId": "98904283814622",
+      "sourceUri": "rbxassetid://98904283814622",
+      "src": "/item-icons/98904283814622.png",
+      "sourcePath": "ReplicatedStorage.Game.Selling.SellItemConfig"
+    },
+    "LuckyBlock1_L": {
+      "assetId": "113839877194928",
+      "sourceUri": "rbxassetid://113839877194928",
+      "src": "/item-icons/113839877194928.png",
+      "sourcePath": "ReplicatedStorage.Game.Selling.SellItemConfig"
+    },
+    "LuckyBlock2_L": {
+      "assetId": "116559268784520",
+      "sourceUri": "rbxassetid://116559268784520",
+      "src": "/item-icons/116559268784520.png",
+      "sourcePath": "ReplicatedStorage.Game.Selling.SellItemConfig"
+    },
+    "crystal_M": {
+      "assetId": "84111777029777",
+      "sourceUri": "rbxassetid://84111777029777",
+      "src": "/item-icons/84111777029777.png",
+      "sourcePath": "ReplicatedStorage.Game.Selling.SellItemConfig"
+    },
+    "Egg_Malicious_M": {
+      "assetId": "98508659892128",
+      "sourceUri": "rbxassetid://98508659892128",
+      "src": "/item-icons/98508659892128.png",
+      "sourcePath": "ReplicatedStorage.Game.Selling.SellItemConfig"
+    },
+    "bensrock_M": {
+      "assetId": "86522291844997",
+      "sourceUri": "rbxassetid://86522291844997",
+      "src": "/item-icons/86522291844997.png",
+      "sourcePath": "ReplicatedStorage.Game.Selling.SellItemConfig"
+    },
+    "Ocian_M": {
+      "assetId": "98208482444488",
+      "sourceUri": "rbxassetid://98208482444488",
+      "src": "/item-icons/98208482444488.png",
+      "sourcePath": "ReplicatedStorage.Game.Selling.SellItemConfig"
+    },
+    "Plan_M": {
+      "assetId": "102177190316740",
+      "sourceUri": "rbxassetid://102177190316740",
+      "src": "/item-icons/102177190316740.png",
+      "sourcePath": "ReplicatedStorage.Game.Selling.SellItemConfig"
+    },
+    "Lava_M": {
+      "assetId": "70790688565206",
+      "sourceUri": "rbxassetid://70790688565206",
+      "src": "/item-icons/70790688565206.png",
+      "sourcePath": "ReplicatedStorage.Game.Selling.SellItemConfig"
+    },
+    "Egg_Galaxy_M": {
+      "assetId": "123146062487396",
+      "sourceUri": "rbxassetid://123146062487396",
+      "src": "/item-icons/123146062487396.png",
+      "sourcePath": "ReplicatedStorage.Game.Selling.SellItemConfig"
+    },
+    "Purke_M": {
+      "assetId": "84408705449810",
+      "sourceUri": "rbxassetid://84408705449810",
+      "src": "/item-icons/84408705449810.png",
+      "sourcePath": "ReplicatedStorage.Game.Selling.SellItemConfig"
+    },
+    "Egg_RockCandy_M": {
+      "assetId": "128147446644918",
+      "sourceUri": "rbxassetid://128147446644918",
+      "src": "/item-icons/128147446644918.png",
+      "sourcePath": "ReplicatedStorage.Game.Selling.SellItemConfig"
+    },
+    "Moon_S": {
+      "assetId": "74745261172376",
+      "sourceUri": "rbxassetid://74745261172376",
+      "src": "/item-icons/74745261172376.png",
+      "sourcePath": "ReplicatedStorage.Game.Selling.SellItemConfig"
+    },
+    "crystal_S": {
+      "assetId": "86502578597585",
+      "sourceUri": "rbxassetid://86502578597585",
+      "src": "/item-icons/86502578597585.png",
+      "sourcePath": "ReplicatedStorage.Game.Selling.SellItemConfig"
+    },
+    "Egg_Aym_S": {
+      "assetId": "139325471313441",
+      "sourceUri": "rbxassetid://139325471313441",
+      "src": "/item-icons/139325471313441.png",
+      "sourcePath": "ReplicatedStorage.Game.Selling.SellItemConfig"
+    },
+    "Poop_S": {
+      "assetId": "133788855071116",
+      "sourceUri": "rbxassetid://133788855071116",
+      "src": "/item-icons/133788855071116.png",
+      "sourcePath": "ReplicatedStorage.Game.Selling.SellItemConfig"
+    },
+    "Egg_Dragon_S": {
+      "assetId": "138640155733352",
+      "sourceUri": "rbxassetid://138640155733352",
+      "src": "/item-icons/138640155733352.png",
+      "sourcePath": "ReplicatedStorage.Game.Selling.SellItemConfig"
+    },
+    "Duck_S": {
+      "assetId": "101555243802939",
+      "sourceUri": "rbxassetid://101555243802939",
+      "src": "/item-icons/101555243802939.png",
+      "sourcePath": "ReplicatedStorage.Game.Selling.SellItemConfig"
+    },
+    "Toilet_G": {
+      "assetId": "107435297532342",
+      "sourceUri": "rbxassetid://107435297532342",
+      "src": "/item-icons/107435297532342.png",
+      "sourcePath": "ReplicatedStorage.Game.Selling.SellItemConfig"
+    },
+    "Shrimp_G": {
+      "assetId": "92078976459873",
+      "sourceUri": "rbxassetid://92078976459873",
+      "src": "/item-icons/92078976459873.png",
+      "sourcePath": "ReplicatedStorage.Game.Selling.SellItemConfig"
+    },
+    "Shark_G": {
+      "assetId": "84313871520386",
+      "sourceUri": "rbxassetid://84313871520386",
+      "src": "/item-icons/84313871520386.png",
+      "sourcePath": "ReplicatedStorage.Game.Selling.SellItemConfig"
+    },
+    "Simpol_G": {
+      "assetId": "82285266077838",
+      "sourceUri": "rbxassetid://82285266077838",
+      "src": "/item-icons/82285266077838.png",
+      "sourcePath": "ReplicatedStorage.Game.Selling.SellItemConfig"
+    },
+    "Crocodile_G": {
+      "assetId": "89203782935192",
+      "sourceUri": "rbxassetid://89203782935192",
+      "src": "/item-icons/89203782935192.png",
+      "sourcePath": "ReplicatedStorage.Game.Selling.SellItemConfig"
+    },
+    "Pork_G": {
+      "assetId": "117450705693239",
+      "sourceUri": "rbxassetid://117450705693239",
+      "src": "/item-icons/117450705693239.png",
+      "sourcePath": "ReplicatedStorage.Game.Selling.SellItemConfig"
+    },
+    "Reporter_G": {
+      "assetId": "137669138095235",
+      "sourceUri": "rbxassetid://137669138095235",
+      "src": "/item-icons/137669138095235.png",
+      "sourcePath": "ReplicatedStorage.Game.Selling.SellItemConfig"
+    },
+    "SeagullCar_G": {
+      "assetId": "140499165072533",
+      "sourceUri": "rbxassetid://140499165072533",
+      "src": "/item-icons/140499165072533.png",
+      "sourcePath": "ReplicatedStorage.Game.Selling.SellItemConfig"
+    },
+    "Sushi_G": {
+      "assetId": "84933501201454",
+      "sourceUri": "rbxassetid://84933501201454",
+      "src": "/item-icons/84933501201454.png",
+      "sourcePath": "ReplicatedStorage.Game.Selling.SellItemConfig"
+    },
+    "Elephant_G": {
+      "assetId": "82705920880086",
+      "sourceUri": "rbxassetid://82705920880086",
+      "src": "/item-icons/82705920880086.png",
+      "sourcePath": "ReplicatedStorage.Game.Selling.SellItemConfig"
+    },
+    "Flame_D": {
+      "assetId": "130156285231021",
+      "sourceUri": "rbxassetid://130156285231021",
+      "src": "/item-icons/130156285231021.png",
+      "sourcePath": "ReplicatedStorage.Game.Selling.SellItemConfig"
+    },
+    "Frost_D": {
+      "assetId": "107168136555189",
+      "sourceUri": "rbxassetid://107168136555189",
+      "src": "/item-icons/107168136555189.png",
+      "sourcePath": "ReplicatedStorage.Game.Selling.SellItemConfig"
+    },
+    "Bomb_D": {
+      "assetId": "122656135182917",
+      "sourceUri": "rbxassetid://122656135182917",
+      "src": "/item-icons/122656135182917.png",
+      "sourcePath": "ReplicatedStorage.Game.Selling.SellItemConfig"
+    },
+    "Shadow_D": {
+      "assetId": "95805669101886",
+      "sourceUri": "rbxassetid://95805669101886",
+      "src": "/item-icons/95805669101886.png",
+      "sourcePath": "ReplicatedStorage.Game.Selling.SellItemConfig"
+    },
+    "Growth_D": {
+      "assetId": "137896592725787",
+      "sourceUri": "rbxassetid://137896592725787",
+      "src": "/item-icons/137896592725787.png",
+      "sourcePath": "ReplicatedStorage.Game.Selling.SellItemConfig"
+    },
+    "Rainbow_D": {
+      "assetId": "96928969506228",
+      "sourceUri": "rbxassetid://96928969506228",
+      "src": "/item-icons/96928969506228.png",
+      "sourcePath": "ReplicatedStorage.Game.Selling.SellItemConfig"
+    },
+    "Egg_Lava_D": {
+      "assetId": "112038328571841",
+      "sourceUri": "rbxassetid://112038328571841",
+      "src": "/item-icons/112038328571841.png",
+      "sourcePath": "ReplicatedStorage.Game.Selling.SellItemConfig"
+    },
+    "Blue_D": {
+      "assetId": "124186296286458",
+      "sourceUri": "rbxassetid://124186296286458",
+      "src": "/item-icons/124186296286458.png",
+      "sourcePath": "ReplicatedStorage.Game.Selling.SellItemConfig"
+    },
+    "PlanetTune_Ce": {
+      "assetId": "119752698793082",
+      "sourceUri": "rbxassetid://119752698793082",
+      "src": "/item-icons/119752698793082.png",
+      "sourcePath": "ReplicatedStorage.Game.Selling.SellItemConfig"
+    },
+    "Egg_DarkStar_Ce": {
+      "assetId": "99068091403237",
+      "sourceUri": "rbxassetid://99068091403237",
+      "src": "/item-icons/99068091403237.png",
+      "sourcePath": "ReplicatedStorage.Game.Selling.SellItemConfig"
+    },
+    "Saturn_Ce": {
+      "assetId": "90015168460653",
+      "sourceUri": "rbxassetid://90015168460653",
+      "src": "/item-icons/90015168460653.png",
+      "sourcePath": "ReplicatedStorage.Game.Selling.SellItemConfig"
+    },
+    "Planet_Ce": {
+      "assetId": "114643526918998",
+      "sourceUri": "rbxassetid://114643526918998",
+      "src": "/item-icons/114643526918998.png",
+      "sourcePath": "ReplicatedStorage.Game.Selling.SellItemConfig"
+    },
+    "Earth_Ce": {
+      "assetId": "117733279628340",
+      "sourceUri": "rbxassetid://117733279628340",
+      "src": "/item-icons/117733279628340.png",
+      "sourcePath": "ReplicatedStorage.Game.Selling.SellItemConfig"
+    },
+    "Mars_Ce": {
+      "assetId": "88111289301417",
+      "sourceUri": "rbxassetid://88111289301417",
+      "src": "/item-icons/88111289301417.png",
+      "sourcePath": "ReplicatedStorage.Game.Selling.SellItemConfig"
+    },
+    "Water_Ce": {
+      "assetId": "74124135956020",
+      "sourceUri": "rbxassetid://74124135956020",
+      "src": "/item-icons/74124135956020.png",
+      "sourcePath": "ReplicatedStorage.Game.Selling.SellItemConfig"
+    },
+    "Vulcan_Ce": {
+      "assetId": "135143936335070",
+      "sourceUri": "rbxassetid://135143936335070",
+      "src": "/item-icons/135143936335070.png",
+      "sourcePath": "ReplicatedStorage.Game.Selling.SellItemConfig"
+    }
+  }
+}
