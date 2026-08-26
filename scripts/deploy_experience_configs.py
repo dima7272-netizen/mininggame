@@ -154,6 +154,27 @@ def validate(configs):
         "Rooms.index",
     )
 
+    for room in configs["Rooms"]["rooms"]:
+        value = room.get("blockMaxHP")
+        if isinstance(value, bool) or not isinstance(value, int):
+            fail(
+                f"Rooms room {room.get('index')}: "
+                "blockMaxHP must be a whole integer"
+            )
+
+    beyond_last_room = configs["Rooms"].get(
+        "beyondLastRoom",
+        {},
+    )
+
+    for field in ("blockMaxHP", "maxBlockHP"):
+        value = beyond_last_room.get(field)
+        if isinstance(value, bool) or not isinstance(value, int):
+            fail(
+                f"Rooms.beyondLastRoom.{field} "
+                "must be a whole integer"
+            )
+
     assert_unique(
         [x.get("id") for x in configs["SellItems"]["items"]],
         "SellItems.id",
@@ -217,6 +238,35 @@ def parse_json(raw, context):
         )
 
 
+def roblox_json_equal(expected, actual):
+    """Compare JSON using Roblox's double-precision number semantics."""
+    if isinstance(expected, bool) or isinstance(actual, bool):
+        return type(expected) is type(actual) and expected == actual
+
+    if isinstance(expected, (int, float)) and isinstance(actual, (int, float)):
+        return float(expected) == float(actual)
+
+    if isinstance(expected, dict) and isinstance(actual, dict):
+        return (
+            expected.keys() == actual.keys()
+            and all(
+                roblox_json_equal(expected[key], actual[key])
+                for key in expected
+            )
+        )
+
+    if isinstance(expected, list) and isinstance(actual, list):
+        return (
+            len(expected) == len(actual)
+            and all(
+                roblox_json_equal(left, right)
+                for left, right in zip(expected, actual)
+            )
+        )
+
+    return expected == actual
+
+
 def current_mismatches(base, api_key, configs):
     _, verify_raw = request(
         "GET",
@@ -237,8 +287,10 @@ def current_mismatches(base, api_key, configs):
     return [
         name
         for name in configs.keys()
-        if verify_entries.get(name)
-        != configs[name]
+        if not roblox_json_equal(
+            configs[name],
+            verify_entries.get(name),
+        )
     ]
 
 
@@ -298,9 +350,9 @@ def verify_revision(
     revision_mismatches = [
         name
         for name, change in changes.items()
-        if (
-            change.get("after")
-            != configs[name]
+        if not roblox_json_equal(
+            configs[name],
+            change.get("after"),
         )
     ]
 
@@ -425,8 +477,10 @@ def main():
             )
 
     all_equal = all(
-        published_entries.get(name)
-        == configs[name]
+        roblox_json_equal(
+            configs[name],
+            published_entries.get(name),
+        )
         for name in configs.keys()
     )
 
