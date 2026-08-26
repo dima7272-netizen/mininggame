@@ -247,7 +247,6 @@ def verify_revision(
     api_key,
     configs,
     config_version,
-    changed_names,
 ):
     _, revisions_raw = request(
         "GET",
@@ -284,11 +283,23 @@ def verify_revision(
         )
 
     changes = revision.get("changes", {}) or {}
+    unexpected_changes = sorted(
+        set(changes.keys())
+        - set(configs.keys())
+    )
+
+    if unexpected_changes:
+        fail(
+            "Published revision changed keys outside "
+            "Git-controlled configs: "
+            + ", ".join(unexpected_changes)
+        )
+
     revision_mismatches = [
         name
-        for name in changed_names
+        for name, change in changes.items()
         if (
-            changes.get(name, {}).get("after")
+            change.get("after")
             != configs[name]
         )
     ]
@@ -419,13 +430,6 @@ def main():
         for name in configs.keys()
     )
 
-    changed_names = [
-        name
-        for name in configs.keys()
-        if published_entries.get(name)
-        != configs[name]
-    ]
-
     if all_equal and not draft_entries:
         print(
             "No config value changes. "
@@ -510,7 +514,6 @@ def main():
             api_key,
             configs,
             config_version,
-            changed_names,
         )
     else:
         error_codes = {

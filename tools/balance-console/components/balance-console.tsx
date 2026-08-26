@@ -258,7 +258,7 @@ export function BalanceConsole({ initialConfigs, initialSha }: { initialConfigs:
     } catch (error) {
       const detail = error instanceof Error ? error.message : String(error);
       setMessage(detail);
-      throw error;
+      return { error: detail };
     } finally {
       setBusy(false);
     }
