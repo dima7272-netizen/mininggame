@@ -1,4 +1,5 @@
 import { redirect } from 'next/navigation';
+import { chatGPTSignInPath } from '@/app/chatgpt-auth';
 import { getAuthPageState, safeReturnPath } from '@/lib/app-auth';
 import { getOptionalCurrentUser } from '@/lib/current-user';
 import { AuthForm } from './auth-form';
@@ -18,5 +19,13 @@ export default async function LoginPage({
     redirect(returnTo);
   }
   const state = await getAuthPageState(params.invite);
-  return <AuthForm inviteToken={params.invite} returnTo={returnTo} state={state} />;
+  const chatGPTReturnTo = params.invite
+    ? `/invite/${encodeURIComponent(params.invite)}`
+    : returnTo;
+  return <AuthForm
+    chatGPTSignInUrl={chatGPTSignInPath(chatGPTReturnTo)}
+    inviteToken={params.invite}
+    returnTo={returnTo}
+    state={state}
+  />;
 }

@@ -1,5 +1,6 @@
 import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
+import { chatGPTSignOutPath, getChatGPTUser } from '@/app/chatgpt-auth';
 import { assertSameOrigin, deleteSession, SESSION_COOKIE } from '@/lib/app-auth';
 
 export const dynamic = 'force-dynamic';
@@ -8,8 +9,12 @@ export async function POST(request: Request) {
   try {
     assertSameOrigin(request);
     const cookieStore = await cookies();
+    const chatGPTUser = await getChatGPTUser();
     await deleteSession(cookieStore.get(SESSION_COOKIE)?.value);
-    const response = NextResponse.json({ ok: true, redirectTo: '/login' }, {
+    const response = NextResponse.json({
+      ok: true,
+      redirectTo: chatGPTUser ? chatGPTSignOutPath('/login') : '/login',
+    }, {
       headers: { 'Cache-Control': 'no-store' },
     });
     response.cookies.set(SESSION_COOKIE, '', {

@@ -6,10 +6,12 @@ import type { AuthPageState } from '@/lib/app-auth';
 type Mode = 'login' | 'register';
 
 export function AuthForm({
+  chatGPTSignInUrl,
   inviteToken,
   returnTo,
   state,
 }: {
+  chatGPTSignInUrl: string;
   inviteToken?: string;
   returnTo: string;
   state: AuthPageState;
@@ -66,7 +68,7 @@ export function AuthForm({
           <ul>
             <li><span>✓</span> Постоянная история изменений и откаты</li>
             <li><span>✓</span> Отдельные роли и права для команды</li>
-            <li><span>✓</span> Вход напрямую по email и паролю</li>
+            <li><span>✓</span> Вход через ChatGPT или по email и паролю</li>
           </ul>
         </div>
       </section>
@@ -103,8 +105,14 @@ export function AuthForm({
             </button>
           </form>
 
+          <div className="auth-divider"><span>или</span></div>
+          <a className="chatgpt-login-button" href={chatGPTSignInUrl}>
+            <span className="chatgpt-login-mark" aria-hidden="true">✦</span>
+            <span><strong>Войти через ChatGPT</strong><small>Вернуться в прежнюю учётную запись</small></span>
+          </a>
+
           {!state.registrationAllowed && <p className="auth-invite-note">Новый участник регистрируется только по ссылке из раздела «Команда и права».</p>}
-          <footer>В базе хранится только защищённый хеш пароля. Сессия использует HttpOnly-cookie.</footer>
+          <footer>Для входа через ChatGPT пароль сервису не передаётся. Для обычной регистрации хранится только защищённый хеш пароля.</footer>
         </div>
       </section>
     </main>
