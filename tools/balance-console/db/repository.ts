@@ -23,6 +23,7 @@ import { hasPermission, type Permission, type Role } from '@/lib/rbac';
 import { redactSecrets } from '@/lib/security';
 import { diffConfigs, type ConfigChange } from '@/lib/config-diff';
 import { roundRoomHpToIntegers } from '@/lib/room-hp';
+import { arrangeRewardsByGameHierarchy } from '@/lib/reward-hierarchy';
 
 export const GAME_ID = 'dig-get-stronger';
 
@@ -187,6 +188,7 @@ export async function getWorkspace(user: AppUser) {
   if (!member) throw new Error('Нет доступа к игре. Используйте действующее приглашение.');
 
   await ensureIntegerRoomHpDraft(user.userId);
+  if (member.role === 'owner') await ensureRewardHierarchyDraft(user.userId);
 
   const versionRows = await db.select().from(versions)
     .where(eq(versions.gameId, GAME_ID))
@@ -282,6 +284,29 @@ async function ensureIntegerRoomHpDraft(userId: string) {
     name: 'Целые значения HP стен',
     notes: 'Сохранён прежний плавный рост мощности стен. Дробные и степенные значения HP округлены и записаны полными целыми числами для совместимости с игрой.',
     source: 'integer_room_hp_fix',
+  });
+}
+
+async function ensureRewardHierarchyDraft(userId: string) {
+  const db = getDb();
+  const [latest] = await db.select().from(versions)
+    .where(eq(versions.gameId, GAME_ID))
+    .orderBy(desc(versions.createdAt))
+    .limit(1);
+  if (!latest) return;
+
+  const configs = JSON.parse(latest.configsJson) as ConfigTextMap;
+  const arranged = arrangeRewardsByGameHierarchy(configs);
+  if (arranged === configs) return;
+
+  await createVersion({
+    userId,
+    configs: arranged,
+    baseVersionId: latest.id,
+    baseSha: latest.baseSha,
+    name: 'Награды по иерархии редкостей',
+    notes: 'Все 75 наград выстроены блоками по иерархии Roblox: Обычные → Необычные → Редкие → Эпические → Легендарные → Мифические → Секретные → Богоподобные → Божественные → Небесные. Существующая лестница круглых цен сохранена и переназначена по этому порядку. Изменение сохранено черновиком и не опубликовано в DEV.',
+    source: 'reward_hierarchy_fix',
   });
 }
 

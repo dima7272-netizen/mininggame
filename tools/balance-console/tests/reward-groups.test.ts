@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import { parseKnownConfigs } from '../lib/config-model';
-import { getRewardGroup, rewardGroupManifest, rewardGroups } from '../lib/reward-groups';
+import Decimal from 'decimal.js';
+import { getRewardGroup, rewardGroupManifest, rewardGroups, rewardHierarchyItemIds } from '../lib/reward-groups';
+import { seedConfigText } from '../lib/generated/seed-configs';
 import { spreadsheetPreviewSnapshot } from '../lib/source-snapshots';
 
 describe('real reward groups from Roblox', () => {
@@ -36,5 +38,13 @@ describe('real reward groups from Roblox', () => {
     expect(getRewardGroup('Flame_D')?.id).toBe('Divine');
     expect(getRewardGroup('Moon_S')?.id).toBe('Secret');
     expect(getRewardGroup('Vulcan_Ce')?.id).toBe('Celestial');
+  });
+
+  it('keeps every rarity as one contiguous ascending price block', () => {
+    const current = parseKnownConfigs(seedConfigText).sellItems;
+    expect(current.map((item) => item.id)).toEqual(rewardHierarchyItemIds);
+    for (let index = 1; index < current.length; index += 1) {
+      expect(new Decimal(current[index].sellPrice).greaterThan(current[index - 1].sellPrice)).toBe(true);
+    }
   });
 });

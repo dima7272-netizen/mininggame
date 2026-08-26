@@ -4,6 +4,7 @@ import type { ConfigTextMap, KnownConfigs } from './config-model';
 import { parseKnownConfigs } from './config-model';
 import { canonicalExactJson, parseExactJson } from './exact-json';
 import { diffConfigs } from './config-diff';
+import { rewardHierarchyItemIds } from './reward-groups';
 
 export type IssueSeverity = 'error' | 'warning' | 'observation';
 export type ValidationIssue = {
@@ -161,6 +162,39 @@ export function validateConfigs(
     ));
   }
   for (const item of known.sellItems) nonNegative(item.sellPrice, `Цена ${item.id}`, 'SellItems', issues);
+  const sellOrder = known.sellItems.map((item) => item.id);
+  if (sellOrder.join('\n') !== rewardHierarchyItemIds.join('\n')) {
+    issues.push(issue(
+      'warning',
+      'sell.reward_hierarchy_order',
+      'Награды перемешаны между группами редкости',
+      'Порядок должен повторять игровую иерархию: Обычные → Необычные → Редкие → Эпические → Легендарные → Мифические → Секретные → Богоподобные → Божественные → Небесные.',
+      'SellItems',
+      '$/items',
+    ));
+  }
+  const sellPriceById = new Map(known.sellItems.map((item) => [item.id, item.sellPrice]));
+  for (let index = 1; index < rewardHierarchyItemIds.length; index += 1) {
+    const previousId = rewardHierarchyItemIds[index - 1];
+    const currentId = rewardHierarchyItemIds[index];
+    const previousPrice = sellPriceById.get(previousId);
+    const currentPrice = sellPriceById.get(currentId);
+    if (
+      previousPrice !== undefined &&
+      currentPrice !== undefined &&
+      new Decimal(currentPrice).lessThanOrEqualTo(previousPrice)
+    ) {
+      issues.push(issue(
+        'warning',
+        'sell.reward_hierarchy_price',
+        `${currentId}: цена нарушает иерархию редкостей`,
+        `${currentPrice} должно быть больше цены ${previousId} (${previousPrice}).`,
+        'SellItems',
+        `$/items/${currentId}/sellPrice`,
+      ));
+      break;
+    }
+  }
   for (const item of known.pickaxes) {
     nonNegative(item.currencyPrice, `Цена ${item.modelName}`, 'Pickaxes', issues);
     nonNegative(item.power, `Сила ${item.modelName}`, 'Pickaxes', issues);
