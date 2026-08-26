@@ -279,8 +279,6 @@ export function RewardMapEditor({
       <div className="reward-map-summary"><ItemIcon itemId={selectedItem} size="lg" /><div><span>Выбрано</span><strong>{selectedItem || '—'}</strong><small>Комната {selectedRoom} · {selectedDrop?.weight ?? 0}%</small></div></div>
     </header>
 
-    <div className="mechanics-warning mechanics-confirmed"><span>✓</span><div><strong>Алгоритм выпадения подключён из Roblox place версии 89</strong><p>Каждый предмет выбирается отдельным взвешенным броском с возвращением. Число предметов детерминировано: нечётные комнаты дают 7, чётные — 8. Для комнаты {selectedRoom} автоматически используется {attemptCount} попыток.</p></div></div>
-
     <nav className="reward-view-tabs" aria-label="Режим карты наград">
       {([
         ['map', 'Тепловая карта'],
