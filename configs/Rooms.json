@@ -8,19 +8,19 @@
     },
     {
       "index": 2,
-      "blockMaxHP": 214,
+      "blockMaxHP": 400,
       "roomLengthCells": 16,
       "barrierLayers": 4
     },
     {
       "index": 3,
-      "blockMaxHP": 916,
+      "blockMaxHP": 2000,
       "roomLengthCells": 16,
       "barrierLayers": 5
     },
     {
       "index": 4,
-      "blockMaxHP": 3920,
+      "blockMaxHP": 5000,
       "roomLengthCells": 16,
       "barrierLayers": 5
     },
