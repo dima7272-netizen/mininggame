@@ -2,7 +2,7 @@
   "visualScale": 2.5,
   "baseSpeedStudsPerSecond": 10,
   "speedPerRoom": 0.5,
-  "maximumSpeedStudsPerSecond": 200,
+  "maximumSpeedStudsPerSecond": 500,
   "patrolRadiusStuds": 15,
   "patrolLoopDurationSeconds": 32,
   "patrolClockwise": true,
