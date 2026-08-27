@@ -20,13 +20,13 @@
     },
     {
       "index": 4,
-      "blockMaxHP": 100000,
+      "blockMaxHP": 75000,
       "roomLengthCells": 16,
       "barrierLayers": 5
     },
     {
       "index": 5,
-      "blockMaxHP": 500000,
+      "blockMaxHP": 260000,
       "roomLengthCells": 16,
       "barrierLayers": 5
     },
