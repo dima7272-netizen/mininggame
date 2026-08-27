@@ -1,0 +1,46 @@
+{
+  "initialAgility": 100,
+  "maximumAgility": 1000000000000,
+  "baseWalkSpeed": 24,
+  "walkSpeedPerSquareRoot": 0.02,
+  "maximumWalkSpeed": 48,
+  "miningSpeedPerSquareRoot": 0.0004,
+  "maximumMiningSpeedMultiplier": 1.75,
+  "rewardIntervalSeconds": 1,
+  "jumpExitGraceSeconds": 0.35,
+  "reentryCooldownSeconds": 1.5,
+  "jumpExitVerticalVelocity": 50,
+  "jumpExitForwardVelocity": 12,
+  "rootHeightOffsetStuds": 3,
+  "sensorHeightStuds": 3,
+  "beltTopOffsetStuds": -0.4,
+  "positionResponsiveness": 80,
+  "maximumConstraintForce": 10000000,
+  "maximumConstraintTorque": 10000000,
+  "tiers": [
+    {
+      "id": 1,
+      "agilityPerSecond": 1,
+      "placementYawDegrees": 0,
+      "runDirectionSign": 1
+    },
+    {
+      "id": 2,
+      "agilityPerSecond": 5,
+      "placementYawDegrees": 0,
+      "runDirectionSign": 1
+    },
+    {
+      "id": 3,
+      "agilityPerSecond": 25,
+      "placementYawDegrees": 180,
+      "runDirectionSign": -1
+    },
+    {
+      "id": 4,
+      "agilityPerSecond": 100,
+      "placementYawDegrees": 180,
+      "runDirectionSign": -1
+    }
+  ]
+}
