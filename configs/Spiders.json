@@ -1,18 +1,18 @@
 {
   "visualScale": 2.5,
   "baseSpeedStudsPerSecond": 10,
-  "speedPerRoom": 0.5,
+  "speedPerRoom": 1.5,
   "maximumSpeedStudsPerSecond": 500,
   "patrolRadiusStuds": 15,
   "patrolLoopDurationSeconds": 32,
   "patrolClockwise": true,
   "attackRadiusStuds": 10,
-  "attackWindupSeconds": 0.5,
+  "attackWindupSeconds": 0.1,
   "attackRecoverySeconds": 0.9,
   "stateSendIntervalSeconds": 0.05,
   "returnHomeSpeedStudsPerSecond": 300,
   "returnHomeArrivalStuds": 1.5,
   "catchUpTriggerDistanceStuds": 100,
   "catchUpStopDistanceStuds": 28,
-  "catchUpSpeedStudsPerSecond": 90
+  "catchUpSpeedStudsPerSecond": 900
 }
