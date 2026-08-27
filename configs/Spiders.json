@@ -14,5 +14,5 @@
   "returnHomeArrivalStuds": 1.5,
   "catchUpTriggerDistanceStuds": 70,
   "catchUpStopDistanceStuds": 28,
-  "catchUpSpeedStudsPerSecond": 90
+  "catchUpSpeedStudsPerSecond": 900
 }
