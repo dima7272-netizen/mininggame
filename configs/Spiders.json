@@ -1,6 +1,6 @@
 {
   "visualScale": 2.5,
-  "baseSpeedStudsPerSecond": 10,
+  "baseSpeedStudsPerSecond": 50,
   "speedPerRoom": 1.5,
   "maximumSpeedStudsPerSecond": 500,
   "patrolRadiusStuds": 15,
