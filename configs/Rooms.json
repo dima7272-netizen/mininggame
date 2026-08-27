@@ -8,7 +8,7 @@
     },
     {
       "index": 2,
-      "blockMaxHP": 1000,
+      "blockMaxHP": 2000,
       "roomLengthCells": 16,
       "barrierLayers": 4
     },
