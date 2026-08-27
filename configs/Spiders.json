@@ -11,7 +11,7 @@
   "attackRecoverySeconds": 0.9,
   "stateSendIntervalSeconds": 0.05,
   "returnHomeSpeedStudsPerSecond": 300,
-  "returnHomeArrivalStuds": 1.5,
+  "returnHomeArrivalStuds": 1,
   "catchUpTriggerDistanceStuds": 100,
   "catchUpStopDistanceStuds": 28,
   "catchUpSpeedStudsPerSecond": 900
