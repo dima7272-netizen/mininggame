@@ -42,5 +42,18 @@
       "placementYawDegrees": 180,
       "runDirectionSign": -1
     }
-  ]
+  ],
+  "rebirthRewardMultiplierPerRebirth": 0.25,
+  "maximumRebirthRewardMultiplier": 10,
+  "lobbyTierIds": [
+    1,
+    2
+  ],
+  "roomTreadmills": {
+    "enabled": true,
+    "firstStage": 1,
+    "interval": 2,
+    "wallInsetStuds": 8,
+    "alternateSides": true
+  }
 }

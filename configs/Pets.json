@@ -48,5 +48,60 @@
     "id": "Elephant",
     "currencyPrice": 1000000000000,
     "power": 50
+  },
+  {
+    "id": "Toilet_G",
+    "currencyPrice": 0,
+    "power": 3
+  },
+  {
+    "id": "Shrimp_G",
+    "currencyPrice": 0,
+    "power": 4
+  },
+  {
+    "id": "Crocodile_G",
+    "currencyPrice": 0,
+    "power": 6
+  },
+  {
+    "id": "Pork_G",
+    "currencyPrice": 0,
+    "power": 10
+  },
+  {
+    "id": "Shark_G",
+    "currencyPrice": 0,
+    "power": 20
+  },
+  {
+    "id": "SeagullCar_G",
+    "currencyPrice": 0,
+    "power": 30
+  },
+  {
+    "id": "Simpol_G",
+    "currencyPrice": 0,
+    "power": 40
+  },
+  {
+    "id": "Reporter_G",
+    "currencyPrice": 0,
+    "power": 60
+  },
+  {
+    "id": "Sushi_G",
+    "currencyPrice": 0,
+    "power": 80
+  },
+  {
+    "id": "Elephant_G",
+    "currencyPrice": 0,
+    "power": 100
+  },
+  {
+    "id": "Spider",
+    "currencyPrice": 0,
+    "power": 100
   }
 ]

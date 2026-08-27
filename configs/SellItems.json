@@ -10,27 +10,27 @@
     },
     {
       "id": "DinosaurEgg_C",
-      "sellPrice": 25
+      "sellPrice": 15
     },
     {
       "id": "Handle_C",
-      "sellPrice": 30
+      "sellPrice": 20
     },
     {
       "id": "barrel_C",
-      "sellPrice": 40
+      "sellPrice": 25
     },
     {
       "id": "Burger_C",
-      "sellPrice": 50
+      "sellPrice": 30
     },
     {
       "id": "crate-bottles_u",
-      "sellPrice": 70
+      "sellPrice": 50
     },
     {
       "id": "pot-stew_u",
-      "sellPrice": 100
+      "sellPrice": 80
     },
     {
       "id": "cannon-mobile_u",
@@ -42,227 +42,227 @@
     },
     {
       "id": "Guitar_u",
-      "sellPrice": 200
+      "sellPrice": 180
     },
     {
       "id": "Handle_u",
-      "sellPrice": 500
+      "sellPrice": 250
     },
     {
       "id": "ship-wreck_r",
-      "sellPrice": 700
+      "sellPrice": 500
     },
     {
       "id": "ship-small_r",
-      "sellPrice": 2500
+      "sellPrice": 600
     },
     {
       "id": "ship-pirate-small_r",
-      "sellPrice": 5000
+      "sellPrice": 700
     },
     {
       "id": "Low Poly_r",
-      "sellPrice": 12000
+      "sellPrice": 800
     },
     {
       "id": "Low Poly1_r",
-      "sellPrice": 40000
+      "sellPrice": 900
     },
     {
       "id": "crystal_r",
-      "sellPrice": 70000
+      "sellPrice": 1000
     },
     {
       "id": "Dimond_r",
-      "sellPrice": 200000
+      "sellPrice": 1200
     },
     {
       "id": "Egg_Ice_r",
-      "sellPrice": 500000
+      "sellPrice": 1500
     },
     {
       "id": "WoodCrate_e",
-      "sellPrice": 1500000
+      "sellPrice": 5000
     },
     {
       "id": "oldtv_e",
-      "sellPrice": 3000000
+      "sellPrice": 6500
     },
     {
       "id": "Gift_box1_e",
-      "sellPrice": 7000000
+      "sellPrice": 8000
     },
     {
       "id": "Gift_box2_e",
-      "sellPrice": 25000000
+      "sellPrice": 9500
     },
     {
       "id": "Gift_box3_e",
-      "sellPrice": 40000000
+      "sellPrice": 12000
     },
     {
       "id": "Raket_e",
-      "sellPrice": 150000000
+      "sellPrice": 13000
     },
     {
       "id": "Tort_e",
-      "sellPrice": 300000000
+      "sellPrice": 14500
     },
     {
       "id": "crystal_e",
-      "sellPrice": 700000000
+      "sellPrice": 16500
     },
     {
       "id": "Chest_L",
-      "sellPrice": 2000000000
+      "sellPrice": 50000
     },
     {
       "id": "Trophy_L",
-      "sellPrice": 5000000000
+      "sellPrice": 80000
     },
     {
       "id": "Crown_L",
-      "sellPrice": 12000000000
+      "sellPrice": 120000
     },
     {
       "id": "turkey_L",
-      "sellPrice": 30000000000
+      "sellPrice": 150000
     },
     {
       "id": "Money_L",
-      "sellPrice": 70000000000
+      "sellPrice": 180000
     },
     {
       "id": "LuckyBlock1_L",
-      "sellPrice": 200000000000
+      "sellPrice": 210000
     },
     {
       "id": "LuckyBlock2_L",
-      "sellPrice": 500000000000
+      "sellPrice": 250000
     },
     {
       "id": "crystal_M",
-      "sellPrice": 1200000000000
+      "sellPrice": 500000
     },
     {
       "id": "Egg_Malicious_M",
-      "sellPrice": 3000000000000
+      "sellPrice": 650000
     },
     {
       "id": "bensrock_M",
-      "sellPrice": 7000000000000
+      "sellPrice": 800000
     },
     {
       "id": "Ocian_M",
-      "sellPrice": 20000000000000
+      "sellPrice": 950000
     },
     {
       "id": "Plan_M",
-      "sellPrice": 50000000000000
+      "sellPrice": 1200000
     },
     {
       "id": "Lava_M",
-      "sellPrice": 120000000000000
+      "sellPrice": 1450000
     },
     {
       "id": "Egg_Galaxy_M",
-      "sellPrice": 300000000000000
+      "sellPrice": 1650000
     },
     {
       "id": "Purke_M",
-      "sellPrice": 700000000000000
+      "sellPrice": 2500000
     },
     {
       "id": "Egg_RockCandy_M",
-      "sellPrice": 2000000000000000
+      "sellPrice": 3500000
     },
     {
       "id": "Moon_S",
-      "sellPrice": 4000000000000000
+      "sellPrice": 5000000
     },
     {
       "id": "crystal_S",
-      "sellPrice": 12000000000000000
+      "sellPrice": 8000000
     },
     {
       "id": "Egg_Aym_S",
-      "sellPrice": 30000000000000000
+      "sellPrice": 12000000
     },
     {
       "id": "Poop_S",
-      "sellPrice": 70000000000000000
+      "sellPrice": 15000000
     },
     {
       "id": "Egg_Dragon_S",
-      "sellPrice": 200000000000000000
+      "sellPrice": 18000000
     },
     {
       "id": "Duck_S",
-      "sellPrice": 400000000000000000
+      "sellPrice": 25000000
     },
     {
       "id": "Flame_D",
-      "sellPrice": 1200000000000000000
+      "sellPrice": 500000000
     },
     {
       "id": "Frost_D",
-      "sellPrice": 2500000000000000000
+      "sellPrice": 650000000
     },
     {
       "id": "Bomb_D",
-      "sellPrice": 7000000000000000000
+      "sellPrice": 800000000
     },
     {
       "id": "Shadow_D",
-      "sellPrice": 20000000000000000000
+      "sellPrice": 950000000
     },
     {
       "id": "Growth_D",
-      "sellPrice": 40000000000000000000
+      "sellPrice": 1200000000
     },
     {
       "id": "Rainbow_D",
-      "sellPrice": 120000000000000000000
+      "sellPrice": 1450000000
     },
     {
       "id": "Egg_Lava_D",
-      "sellPrice": 250000000000000000000
+      "sellPrice": 1800000000
     },
     {
       "id": "Blue_D",
-      "sellPrice": 700000000000000000000
+      "sellPrice": 2500000000
     },
     {
       "id": "PlanetTune_Ce",
-      "sellPrice": 1500000000000000000000
+      "sellPrice": 5000000000
     },
     {
       "id": "Egg_DarkStar_Ce",
-      "sellPrice": 5000000000000000000000
+      "sellPrice": 6500000000
     },
     {
       "id": "Saturn_Ce",
-      "sellPrice": 10000000000000000000000
+      "sellPrice": 8000000000
     },
     {
       "id": "Planet_Ce",
-      "sellPrice": 25000000000000000000000
+      "sellPrice": 9500000000
     },
     {
       "id": "Earth_Ce",
-      "sellPrice": 70000000000000000000000
+      "sellPrice": 12000000000
     },
     {
       "id": "Mars_Ce",
-      "sellPrice": 150000000000000000000000
+      "sellPrice": 14500000000
     },
     {
       "id": "Water_Ce",
-      "sellPrice": 5000000000000000000000000
+      "sellPrice": 18000000000
     },
     {
       "id": "Vulcan_Ce",
-      "sellPrice": 100000000000000000000000
+      "sellPrice": 25000000000
     }
   ]
 }

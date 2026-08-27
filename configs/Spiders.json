@@ -1,10 +1,18 @@
 {
-  "visualScale": 5,
-  "baseSpeedStudsPerSecond": 500,
-  "speedPerRoom": 30,
-  "maximumSpeedStudsPerSecond": 2000,
+  "visualScale": 2.5,
+  "baseSpeedStudsPerSecond": 9,
+  "speedPerRoom": 0.32,
+  "maximumSpeedStudsPerSecond": 20,
+  "patrolRadiusStuds": 15,
+  "patrolLoopDurationSeconds": 32,
+  "patrolClockwise": true,
   "attackRadiusStuds": 10,
-  "attackWindupSeconds": 0.1,
+  "attackWindupSeconds": 0.5,
   "attackRecoverySeconds": 0.9,
-  "stateSendIntervalSeconds": 0.1
+  "stateSendIntervalSeconds": 0.05,
+  "returnHomeSpeedStudsPerSecond": 120,
+  "returnHomeArrivalStuds": 1.5,
+  "catchUpTriggerDistanceStuds": 70,
+  "catchUpStopDistanceStuds": 28,
+  "catchUpSpeedStudsPerSecond": 90
 }

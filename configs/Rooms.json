@@ -4,13 +4,13 @@
       "index": 1,
       "blockMaxHP": 50,
       "roomLengthCells": 16,
-      "barrierLayers": 3
+      "barrierLayers": 5
     },
     {
       "index": 2,
-      "blockMaxHP": 2000,
+      "blockMaxHP": 600,
       "roomLengthCells": 16,
-      "barrierLayers": 4
+      "barrierLayers": 5
     },
     {
       "index": 3,
@@ -20,329 +20,269 @@
     },
     {
       "index": 4,
-      "blockMaxHP": 75000,
+      "blockMaxHP": 50000,
       "roomLengthCells": 16,
       "barrierLayers": 5
     },
     {
       "index": 5,
-      "blockMaxHP": 375000,
+      "blockMaxHP": 200000,
       "roomLengthCells": 16,
       "barrierLayers": 5
     },
     {
       "index": 6,
-      "blockMaxHP": 1875000,
+      "blockMaxHP": 1000000,
       "roomLengthCells": 16,
       "barrierLayers": 5
     },
     {
       "index": 7,
-      "blockMaxHP": 9375000,
+      "blockMaxHP": 6500000,
       "roomLengthCells": 16,
       "barrierLayers": 5
     },
     {
       "index": 8,
-      "blockMaxHP": 46875000,
+      "blockMaxHP": 70000000,
       "roomLengthCells": 16,
       "barrierLayers": 5
     },
     {
       "index": 9,
-      "blockMaxHP": 234375000,
+      "blockMaxHP": 750000000,
       "roomLengthCells": 16,
       "barrierLayers": 5
     },
     {
       "index": 10,
-      "blockMaxHP": 1171875000,
+      "blockMaxHP": 7500000000,
       "roomLengthCells": 16,
       "barrierLayers": 5
     },
     {
       "index": 11,
-      "blockMaxHP": 5859375000,
+      "blockMaxHP": 50000000000,
       "roomLengthCells": 16,
       "barrierLayers": 5
     },
     {
       "index": 12,
-      "blockMaxHP": 29296875000,
+      "blockMaxHP": 500000000000,
       "roomLengthCells": 16,
       "barrierLayers": 5
     },
     {
       "index": 13,
-      "blockMaxHP": 146484375000,
+      "blockMaxHP": 2500000000000,
       "roomLengthCells": 16,
       "barrierLayers": 5
     },
     {
       "index": 14,
-      "blockMaxHP": 732421875000,
+      "blockMaxHP": 15000000000000,
       "roomLengthCells": 16,
       "barrierLayers": 5
     },
     {
       "index": 15,
-      "blockMaxHP": 3662109375000,
+      "blockMaxHP": 75000000000000,
       "roomLengthCells": 16,
       "barrierLayers": 5
     },
     {
       "index": 16,
-      "blockMaxHP": 18310546875000,
+      "blockMaxHP": 1500000000000000,
       "roomLengthCells": 16,
       "barrierLayers": 5
     },
     {
       "index": 17,
-      "blockMaxHP": 91552734375000,
+      "blockMaxHP": 7500000000000000,
       "roomLengthCells": 16,
       "barrierLayers": 5
     },
     {
       "index": 18,
-      "blockMaxHP": 457763671875000,
+      "blockMaxHP": 75000000000000000,
       "roomLengthCells": 16,
       "barrierLayers": 5
     },
     {
       "index": 19,
-      "blockMaxHP": 2288818359375000,
+      "blockMaxHP": 275000000000000000,
       "roomLengthCells": 16,
       "barrierLayers": 5
     },
     {
       "index": 20,
-      "blockMaxHP": 11444091796875000,
+      "blockMaxHP": 500000000000000000,
       "roomLengthCells": 16,
       "barrierLayers": 5
     },
     {
       "index": 21,
-      "blockMaxHP": 57220458984375000,
+      "blockMaxHP": 900000000000000000,
       "roomLengthCells": 16,
       "barrierLayers": 5
     },
     {
       "index": 22,
-      "blockMaxHP": 286102294921875000,
+      "blockMaxHP": 1900000000000000000,
       "roomLengthCells": 16,
       "barrierLayers": 5
     },
     {
       "index": 23,
-      "blockMaxHP": 1430511474609375000,
+      "blockMaxHP": 2900000000000000000,
       "roomLengthCells": 16,
       "barrierLayers": 5
     },
     {
       "index": 24,
-      "blockMaxHP": 7152557373046875000,
+      "blockMaxHP": 5000000000000000000,
       "roomLengthCells": 16,
       "barrierLayers": 5
     },
     {
       "index": 25,
-      "blockMaxHP": 35762786865234375000,
+      "blockMaxHP": 15000000000000000000,
       "roomLengthCells": 16,
       "barrierLayers": 5
     },
     {
       "index": 26,
-      "blockMaxHP": 178813934326171875000,
+      "blockMaxHP": 25000000000000000000,
       "roomLengthCells": 16,
       "barrierLayers": 5
     },
     {
       "index": 27,
-      "blockMaxHP": 894069671630859375000,
+      "blockMaxHP": 35000000000000000000,
       "roomLengthCells": 16,
       "barrierLayers": 5
     },
     {
       "index": 28,
-      "blockMaxHP": 4470348358154296875000,
+      "blockMaxHP": 45000000000000000000,
       "roomLengthCells": 16,
       "barrierLayers": 5
     },
     {
       "index": 29,
-      "blockMaxHP": 22351741790771484375000,
+      "blockMaxHP": 55000000000000000000,
       "roomLengthCells": 16,
       "barrierLayers": 5
     },
     {
       "index": 30,
-      "blockMaxHP": 111758708953857421875000,
+      "blockMaxHP": 65000000000000000000,
       "roomLengthCells": 16,
       "barrierLayers": 5
     },
     {
       "index": 31,
-      "blockMaxHP": 558793544769287109375000,
+      "blockMaxHP": 75000000000000000000,
       "roomLengthCells": 16,
       "barrierLayers": 5
     },
     {
       "index": 32,
-      "blockMaxHP": 2793967723846435546875000,
+      "blockMaxHP": 85000000000000000000,
       "roomLengthCells": 16,
       "barrierLayers": 5
     },
     {
       "index": 33,
-      "blockMaxHP": 13969838619232177734375000,
+      "blockMaxHP": 95000000000000000000,
       "roomLengthCells": 16,
       "barrierLayers": 5
     },
     {
       "index": 34,
-      "blockMaxHP": 69849193096160888671875000,
+      "blockMaxHP": 110000000000000000000,
       "roomLengthCells": 16,
       "barrierLayers": 5
     },
     {
       "index": 35,
-      "blockMaxHP": 349245965480804443359375000,
+      "blockMaxHP": 120000000000000000000,
       "roomLengthCells": 16,
       "barrierLayers": 5
     },
     {
       "index": 36,
-      "blockMaxHP": 1746229827404022216796875000,
+      "blockMaxHP": 130000000000000000000,
       "roomLengthCells": 16,
       "barrierLayers": 5
     },
     {
       "index": 37,
-      "blockMaxHP": 8731149137020111083984375000,
+      "blockMaxHP": 1300000000000000000000,
       "roomLengthCells": 16,
       "barrierLayers": 5
     },
     {
       "index": 38,
-      "blockMaxHP": 43655745685100555419921875000,
+      "blockMaxHP": 13000000000000000000000,
       "roomLengthCells": 16,
       "barrierLayers": 5
     },
     {
       "index": 39,
-      "blockMaxHP": 218278728425502777099609375000,
+      "blockMaxHP": 130000000000000000000000,
       "roomLengthCells": 16,
       "barrierLayers": 5
     },
     {
       "index": 40,
-      "blockMaxHP": 1091393642127513885498046875000,
+      "blockMaxHP": 1300000000000000000000000,
       "roomLengthCells": 16,
       "barrierLayers": 5
     },
     {
       "index": 41,
-      "blockMaxHP": 5456968210637569427490234375000,
+      "blockMaxHP": 13000000000000000000000000,
       "roomLengthCells": 16,
       "barrierLayers": 5
     },
     {
       "index": 42,
-      "blockMaxHP": 27284841053187847137451171875000,
+      "blockMaxHP": 130000000000000000000000000,
       "roomLengthCells": 16,
       "barrierLayers": 5
     },
     {
       "index": 43,
-      "blockMaxHP": 136424205265939235687255859375000,
+      "blockMaxHP": 1300000000000000000000000000,
       "roomLengthCells": 16,
       "barrierLayers": 5
     },
     {
       "index": 44,
-      "blockMaxHP": 682121026329696178436279296875000,
+      "blockMaxHP": 13000000000000000000000000000,
       "roomLengthCells": 16,
       "barrierLayers": 5
     },
     {
       "index": 45,
-      "blockMaxHP": 3410605131648480892181396484375000,
+      "blockMaxHP": 130000000000000000000000000000,
       "roomLengthCells": 16,
       "barrierLayers": 5
     },
     {
       "index": 46,
-      "blockMaxHP": 17053025658242404460906982421875000,
-      "roomLengthCells": 16,
-      "barrierLayers": 5
-    },
-    {
-      "index": 47,
-      "blockMaxHP": 85265128291212022304534912109375000,
-      "roomLengthCells": 16,
-      "barrierLayers": 5
-    },
-    {
-      "index": 48,
-      "blockMaxHP": 426325641456060111522674560546875000,
-      "roomLengthCells": 16,
-      "barrierLayers": 5
-    },
-    {
-      "index": 49,
-      "blockMaxHP": 2131628207280300557613372802734375000,
-      "roomLengthCells": 16,
-      "barrierLayers": 5
-    },
-    {
-      "index": 50,
-      "blockMaxHP": 10658141036401502788066864013671875000,
-      "roomLengthCells": 16,
-      "barrierLayers": 5
-    },
-    {
-      "index": 51,
-      "blockMaxHP": 53290705182007513940334320068359375000,
-      "roomLengthCells": 16,
-      "barrierLayers": 5
-    },
-    {
-      "index": 52,
-      "blockMaxHP": 266453525910037569701671600341796875000,
-      "roomLengthCells": 16,
-      "barrierLayers": 5
-    },
-    {
-      "index": 53,
-      "blockMaxHP": 1332267629550187848508358001708984375000,
-      "roomLengthCells": 16,
-      "barrierLayers": 5
-    },
-    {
-      "index": 54,
-      "blockMaxHP": 6661338147750939242541790008544921875000,
-      "roomLengthCells": 16,
-      "barrierLayers": 5
-    },
-    {
-      "index": 55,
-      "blockMaxHP": 33306690738754696212708950042724609375000,
-      "roomLengthCells": 16,
-      "barrierLayers": 5
-    },
-    {
-      "index": 56,
-      "blockMaxHP": 166533453693773481063544750213623046875000,
+      "blockMaxHP": 1300000000000000000000000000000,
       "roomLengthCells": 16,
       "barrierLayers": 5
     }
   ],
   "beyondLastRoom": {
-    "blockMaxHP": 166533453693773481063544750213623046875000,
+    "blockMaxHP": 1300000000000000000000000000000,
     "roomLengthCells": 16,
     "barrierLayers": 5,
-    "hpMultiplier": 5,
+    "hpMultiplier": 1,
     "hpGrowthEveryStages": 1,
-    "maxBlockHP": 2681525146440043389998593024805651090
+    "maxBlockHP": 1300000000000000000000000000000
   }
 }
