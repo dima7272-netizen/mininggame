@@ -8,37 +8,37 @@
     },
     {
       "index": 2,
-      "blockMaxHP": 400,
+      "blockMaxHP": 1000,
       "roomLengthCells": 16,
       "barrierLayers": 4
     },
     {
       "index": 3,
-      "blockMaxHP": 2000,
+      "blockMaxHP": 15000,
       "roomLengthCells": 16,
       "barrierLayers": 5
     },
     {
       "index": 4,
-      "blockMaxHP": 5000,
+      "blockMaxHP": 50000,
       "roomLengthCells": 16,
       "barrierLayers": 5
     },
     {
       "index": 5,
-      "blockMaxHP": 16778,
+      "blockMaxHP": 150000,
       "roomLengthCells": 16,
       "barrierLayers": 5
     },
     {
       "index": 6,
-      "blockMaxHP": 71811,
+      "blockMaxHP": 500000,
       "roomLengthCells": 16,
       "barrierLayers": 5
     },
     {
       "index": 7,
-      "blockMaxHP": 307350,
+      "blockMaxHP": 807350,
       "roomLengthCells": 16,
       "barrierLayers": 5
     },
