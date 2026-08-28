@@ -1,8 +1,8 @@
 {
   "visualScale": 2.5,
   "baseSpeedStudsPerSecond": 50,
-  "speedPerRoom": 1.5,
-  "maximumSpeedStudsPerSecond": 500,
+  "speedPerRoom": 0.5,
+  "maximumSpeedStudsPerSecond": 20,
   "patrolRadiusStuds": 15,
   "patrolLoopDurationSeconds": 32,
   "patrolClockwise": true,
@@ -14,5 +14,5 @@
   "returnHomeArrivalStuds": 1,
   "catchUpTriggerDistanceStuds": 100,
   "catchUpStopDistanceStuds": 28,
-  "catchUpSpeedStudsPerSecond": 900
+  "catchUpSpeedStudsPerSecond": 90
 }
