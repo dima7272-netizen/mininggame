@@ -28,5 +28,5 @@ jobs:
         env:
           ROBLOX_ENV: PROD
           ROBLOX_UNIVERSE_ID: "10590998713"
-          ROBLOX_API_KEY: ${{ secrets.ROBLOX_API_KEY }}
+          ROBLOX_API_KEY: ${{ secrets.ROBLOX_PROD_API_KEY }}
         run: python3 scripts/deploy_experience_configs.py

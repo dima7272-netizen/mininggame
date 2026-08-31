@@ -49,7 +49,7 @@ jobs:
         env:
           ROBLOX_ENV: ${{ inputs.environment }}
           ROBLOX_UNIVERSE_ID: ${{ steps.target.outputs.universe_id }}
-          ROBLOX_API_KEY: ${{ secrets.ROBLOX_API_KEY }}
+          ROBLOX_API_KEY: ${{ inputs.environment == 'PROD' && secrets.ROBLOX_PROD_API_KEY || secrets.ROBLOX_API_KEY }}
           CONFIG_NAME: ${{ inputs.config_name }}
           OUTPUT_PATH: out/configs.json
         run: python3 scripts/read_experience_configs.py
