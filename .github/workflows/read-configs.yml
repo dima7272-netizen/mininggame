@@ -1,0 +1,63 @@
+name: Read Roblox Configs
+run-name: Read Roblox configs · ${{ inputs.environment }} · ${{ inputs.request_id }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: Environment to read
+        required: true
+        type: choice
+        options:
+          - DEV
+          - PROD
+      config_name:
+        description: One config name; empty reads all
+        required: false
+        type: string
+      request_id:
+        description: Balance service request identifier
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  read:
+    name: Read published configs without modifying Roblox
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Select Roblox environment
+        id: target
+        env:
+          ENVIRONMENT: ${{ inputs.environment }}
+        run: |
+          if [ "$ENVIRONMENT" = "DEV" ]; then
+            echo "universe_id=10516693405" >> "$GITHUB_OUTPUT"
+          elif [ "$ENVIRONMENT" = "PROD" ]; then
+            echo "universe_id=10590998713" >> "$GITHUB_OUTPUT"
+          else
+            echo "Unsupported environment: $ENVIRONMENT" >&2
+            exit 1
+          fi
+
+      - name: Read published Roblox configs
+        env:
+          ROBLOX_ENV: ${{ inputs.environment }}
+          ROBLOX_UNIVERSE_ID: ${{ steps.target.outputs.universe_id }}
+          ROBLOX_API_KEY: ${{ secrets.ROBLOX_API_KEY }}
+          CONFIG_NAME: ${{ inputs.config_name }}
+          OUTPUT_PATH: out/configs.json
+        run: python3 scripts/read_experience_configs.py
+
+      - name: Upload read-only result
+        uses: actions/upload-artifact@v7
+        with:
+          name: roblox-config-read-${{ inputs.request_id }}
+          path: out/configs.json
+          retention-days: 1
+          if-no-files-found: error
