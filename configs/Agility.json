@@ -43,7 +43,7 @@
       "runDirectionSign": -1
     }
   ],
-  "rebirthRewardMultiplierPerRebirth": 0.25,
+  "rebirthRewardMultiplierPerRebirth": 1,
   "maximumRebirthRewardMultiplier": 10,
   "lobbyTierIds": [
     1,
