@@ -14,19 +14,19 @@
   "growth": [
     {
       "upTo": 20,
-      "multiplier": 5
+      "multiplier": 6
     },
     {
       "upTo": 30,
-      "multiplier": 1.5
+      "multiplier": 5
     },
     {
       "upTo": 40,
-      "multiplier": 1.2
+      "multiplier": 4
     },
     {
       "upTo": 120,
-      "multiplier": 1.15
+      "multiplier": 3
     }
   ],
   "strengthPerRebirth": 1,
