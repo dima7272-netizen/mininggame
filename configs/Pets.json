@@ -5,52 +5,27 @@
     "power": 1.5
   },
   {
+    "id": "Toilet_S",
+    "currencyPrice": 0,
+    "power": 2.25
+  },
+  {
+    "id": "Toilet_G",
+    "currencyPrice": 0,
+    "power": 3
+  },
+  {
+    "id": "Toilet_R",
+    "currencyPrice": 0,
+    "power": 4.5
+  },
+  {
     "id": "Shrimp",
     "currencyPrice": 50000,
     "power": 2
   },
   {
-    "id": "Crocodile",
-    "currencyPrice": 500000,
-    "power": 3
-  },
-  {
-    "id": "Pork",
-    "currencyPrice": 1000000,
-    "power": 5
-  },
-  {
-    "id": "Shark",
-    "currencyPrice": 10000000,
-    "power": 10
-  },
-  {
-    "id": "SeagullCar",
-    "currencyPrice": 100000000,
-    "power": 15
-  },
-  {
-    "id": "Simpol",
-    "currencyPrice": 1000000000,
-    "power": 20
-  },
-  {
-    "id": "Reporter",
-    "currencyPrice": 10000000000,
-    "power": 30
-  },
-  {
-    "id": "Sushi",
-    "currencyPrice": 100000000000,
-    "power": 40
-  },
-  {
-    "id": "Elephant",
-    "currencyPrice": 1000000000000,
-    "power": 50
-  },
-  {
-    "id": "Toilet_G",
+    "id": "Shrimp_S",
     "currencyPrice": 0,
     "power": 3
   },
@@ -60,9 +35,39 @@
     "power": 4
   },
   {
+    "id": "Shrimp_R",
+    "currencyPrice": 0,
+    "power": 6
+  },
+  {
+    "id": "Crocodile",
+    "currencyPrice": 500000,
+    "power": 3
+  },
+  {
+    "id": "Crocodile_S",
+    "currencyPrice": 0,
+    "power": 4.5
+  },
+  {
     "id": "Crocodile_G",
     "currencyPrice": 0,
     "power": 6
+  },
+  {
+    "id": "Crocodile_R",
+    "currencyPrice": 0,
+    "power": 9
+  },
+  {
+    "id": "Pork",
+    "currencyPrice": 1000000,
+    "power": 5
+  },
+  {
+    "id": "Pork_S",
+    "currencyPrice": 0,
+    "power": 7.5
   },
   {
     "id": "Pork_G",
@@ -70,12 +75,57 @@
     "power": 10
   },
   {
+    "id": "Pork_R",
+    "currencyPrice": 0,
+    "power": 15
+  },
+  {
+    "id": "Shark",
+    "currencyPrice": 10000000,
+    "power": 10
+  },
+  {
+    "id": "Shark_S",
+    "currencyPrice": 0,
+    "power": 15
+  },
+  {
     "id": "Shark_G",
     "currencyPrice": 0,
     "power": 20
   },
   {
+    "id": "Shark_R",
+    "currencyPrice": 0,
+    "power": 30
+  },
+  {
+    "id": "SeagullCar",
+    "currencyPrice": 100000000,
+    "power": 15
+  },
+  {
+    "id": "SeagullCar_S",
+    "currencyPrice": 0,
+    "power": 22.5
+  },
+  {
     "id": "SeagullCar_G",
+    "currencyPrice": 0,
+    "power": 30
+  },
+  {
+    "id": "SeagullCar_R",
+    "currencyPrice": 0,
+    "power": 45
+  },
+  {
+    "id": "Simpol",
+    "currencyPrice": 1000000000,
+    "power": 20
+  },
+  {
+    "id": "Simpol_S",
     "currencyPrice": 0,
     "power": 30
   },
@@ -85,7 +135,37 @@
     "power": 40
   },
   {
+    "id": "Simpol_R",
+    "currencyPrice": 0,
+    "power": 60
+  },
+  {
+    "id": "Reporter",
+    "currencyPrice": 10000000000,
+    "power": 30
+  },
+  {
+    "id": "Reporter_S",
+    "currencyPrice": 0,
+    "power": 45
+  },
+  {
     "id": "Reporter_G",
+    "currencyPrice": 0,
+    "power": 60
+  },
+  {
+    "id": "Reporter_R",
+    "currencyPrice": 0,
+    "power": 90
+  },
+  {
+    "id": "Sushi",
+    "currencyPrice": 100000000000,
+    "power": 40
+  },
+  {
+    "id": "Sushi_S",
     "currencyPrice": 0,
     "power": 60
   },
@@ -95,9 +175,29 @@
     "power": 80
   },
   {
+    "id": "Sushi_R",
+    "currencyPrice": 0,
+    "power": 120
+  },
+  {
+    "id": "Elephant",
+    "currencyPrice": 1000000000000,
+    "power": 50
+  },
+  {
+    "id": "Elephant_S",
+    "currencyPrice": 0,
+    "power": 75
+  },
+  {
     "id": "Elephant_G",
     "currencyPrice": 0,
     "power": 100
+  },
+  {
+    "id": "Elephant_R",
+    "currencyPrice": 0,
+    "power": 150
   },
   {
     "id": "Spider",
