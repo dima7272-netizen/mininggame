@@ -1,7 +1,7 @@
 [
   {
     "id": "Toilet",
-    "currencyPrice": 0,
+    "currencyPrice": 10,
     "power": 1.5
   },
   {
