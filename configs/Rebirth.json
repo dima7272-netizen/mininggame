@@ -22,11 +22,11 @@
     },
     {
       "upTo": 40,
-      "multiplier": 4
+      "multiplier": 2
     },
     {
       "upTo": 120,
-      "multiplier": 3
+      "multiplier": 2
     }
   ],
   "strengthPerRebirth": 1,
