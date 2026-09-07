@@ -18,15 +18,15 @@
     },
     {
       "upTo": 30,
-      "multiplier": 5
+      "multiplier": 4
     },
     {
       "upTo": 40,
-      "multiplier": 2
+      "multiplier": 1.5
     },
     {
       "upTo": 120,
-      "multiplier": 1.5
+      "multiplier": 1.1
     }
   ],
   "strengthPerRebirth": 1,
