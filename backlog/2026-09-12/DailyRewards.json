@@ -1,0 +1,84 @@
+{
+  "cycleSeconds": 604800,
+  "strengthPerCurrency": 11,
+  "intervalSeconds": 86400,
+  "days": [
+    {
+      "minimum": 5000,
+      "kind": "Currency",
+      "trainingSeconds": 300
+    },
+    {
+      "minimum": 10000,
+      "kind": "DigPower",
+      "trainingSeconds": 600
+    },
+    {
+      "minimum": 15000,
+      "kind": "Currency",
+      "trainingSeconds": 900
+    },
+    {
+      "minimum": 50000,
+      "kind": "DigPower",
+      "trainingSeconds": 1200
+    },
+    {
+      "minimum": 50000,
+      "kind": "Currency",
+      "trainingSeconds": 1800
+    },
+    {
+      "minimum": 150000,
+      "kind": "DigPower",
+      "trainingSeconds": 2400
+    },
+    {
+      "minimum": 0,
+      "kind": "Pet",
+      "trainingSeconds": 0
+    }
+  ],
+  "petPool": [
+    {
+      "petId": "Toilet_G",
+      "minimumRoom": 1
+    },
+    {
+      "petId": "Shrimp_G",
+      "minimumRoom": 5
+    },
+    {
+      "petId": "Crocodile_G",
+      "minimumRoom": 10
+    },
+    {
+      "petId": "Pork_G",
+      "minimumRoom": 15
+    },
+    {
+      "petId": "Shark_G",
+      "minimumRoom": 20
+    },
+    {
+      "petId": "SeagullCar_G",
+      "minimumRoom": 25
+    },
+    {
+      "petId": "Simpol_G",
+      "minimumRoom": 30
+    },
+    {
+      "petId": "Reporter_G",
+      "minimumRoom": 35
+    },
+    {
+      "petId": "Sushi_G",
+      "minimumRoom": 40
+    },
+    {
+      "petId": "Elephant_G",
+      "minimumRoom": 45
+    }
+  ]
+}
