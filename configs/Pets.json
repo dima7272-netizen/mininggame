@@ -1,23 +1,23 @@
 [
   {
     "id": "Toilet",
-    "currencyPrice": 10,
+    "currencyPrice": 1000,
     "power": 1.5
   },
   {
     "id": "Toilet_S",
     "currencyPrice": 0,
-    "power": 2.25
+    "power": 2
   },
   {
     "id": "Toilet_G",
     "currencyPrice": 0,
-    "power": 3
+    "power": 4
   },
   {
     "id": "Toilet_R",
     "currencyPrice": 0,
-    "power": 4.5
+    "power": 8
   },
   {
     "id": "Shrimp",
@@ -27,181 +27,181 @@
   {
     "id": "Shrimp_S",
     "currencyPrice": 0,
-    "power": 3
+    "power": 4
   },
   {
     "id": "Shrimp_G",
     "currencyPrice": 0,
-    "power": 4
+    "power": 8
   },
   {
     "id": "Shrimp_R",
     "currencyPrice": 0,
-    "power": 6
+    "power": 16
   },
   {
     "id": "Crocodile",
     "currencyPrice": 500000,
-    "power": 3
+    "power": 4
   },
   {
     "id": "Crocodile_S",
     "currencyPrice": 0,
-    "power": 4.5
+    "power": 8
   },
   {
     "id": "Crocodile_G",
     "currencyPrice": 0,
-    "power": 6
+    "power": 16
   },
   {
     "id": "Crocodile_R",
     "currencyPrice": 0,
-    "power": 9
+    "power": 32
   },
   {
     "id": "Pork",
     "currencyPrice": 1000000,
-    "power": 5
+    "power": 8
   },
   {
     "id": "Pork_S",
     "currencyPrice": 0,
-    "power": 7.5
+    "power": 16
   },
   {
     "id": "Pork_G",
     "currencyPrice": 0,
-    "power": 10
+    "power": 32
   },
   {
     "id": "Pork_R",
     "currencyPrice": 0,
-    "power": 15
+    "power": 64
   },
   {
     "id": "Shark",
     "currencyPrice": 10000000,
-    "power": 10
+    "power": 16
   },
   {
     "id": "Shark_S",
     "currencyPrice": 0,
-    "power": 15
+    "power": 32
   },
   {
     "id": "Shark_G",
     "currencyPrice": 0,
-    "power": 20
+    "power": 64
   },
   {
     "id": "Shark_R",
     "currencyPrice": 0,
-    "power": 30
+    "power": 128
   },
   {
     "id": "SeagullCar",
     "currencyPrice": 100000000,
-    "power": 15
+    "power": 32
   },
   {
     "id": "SeagullCar_S",
     "currencyPrice": 0,
-    "power": 22.5
+    "power": 64
   },
   {
     "id": "SeagullCar_G",
     "currencyPrice": 0,
-    "power": 30
+    "power": 128
   },
   {
     "id": "SeagullCar_R",
     "currencyPrice": 0,
-    "power": 45
+    "power": 256
   },
   {
     "id": "Simpol",
     "currencyPrice": 1000000000,
-    "power": 20
+    "power": 64
   },
   {
     "id": "Simpol_S",
     "currencyPrice": 0,
-    "power": 30
+    "power": 128
   },
   {
     "id": "Simpol_G",
     "currencyPrice": 0,
-    "power": 40
+    "power": 256
   },
   {
     "id": "Simpol_R",
     "currencyPrice": 0,
-    "power": 60
+    "power": 512
   },
   {
     "id": "Reporter",
     "currencyPrice": 10000000000,
-    "power": 30
+    "power": 128
   },
   {
     "id": "Reporter_S",
     "currencyPrice": 0,
-    "power": 45
+    "power": 256
   },
   {
     "id": "Reporter_G",
     "currencyPrice": 0,
-    "power": 60
+    "power": 512
   },
   {
     "id": "Reporter_R",
     "currencyPrice": 0,
-    "power": 90
+    "power": 1024
   },
   {
     "id": "Sushi",
     "currencyPrice": 100000000000,
-    "power": 40
+    "power": 256
   },
   {
     "id": "Sushi_S",
     "currencyPrice": 0,
-    "power": 60
+    "power": 512
   },
   {
     "id": "Sushi_G",
     "currencyPrice": 0,
-    "power": 80
+    "power": 1024
   },
   {
     "id": "Sushi_R",
     "currencyPrice": 0,
-    "power": 120
+    "power": 2048
   },
   {
     "id": "Elephant",
     "currencyPrice": 1000000000000,
-    "power": 50
+    "power": 512
   },
   {
     "id": "Elephant_S",
     "currencyPrice": 0,
-    "power": 75
+    "power": 1024
   },
   {
     "id": "Elephant_G",
     "currencyPrice": 0,
-    "power": 100
+    "power": 2048
   },
   {
     "id": "Elephant_R",
     "currencyPrice": 0,
-    "power": 150
+    "power": 4096
   },
   {
     "id": "Spider",
     "currencyPrice": 0,
-    "power": 100
+    "power": 1000
   }
 ]
