@@ -2,7 +2,7 @@
   "rooms": [
     {
       "index": 1,
-      "blockMaxHP": 50,
+      "blockMaxHP": 20,
       "roomLengthCells": 16,
       "barrierLayers": 5
     },
