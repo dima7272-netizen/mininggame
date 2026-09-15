@@ -9,9 +9,9 @@
       "trainingSeconds": 0
     },
     {
-      "minimum": 10000,
-      "kind": "DigPower",
-      "trainingSeconds": 600
+      "minimum": 0,
+      "kind": "Pet",
+      "trainingSeconds": 0
     },
     {
       "minimum": 15000,
