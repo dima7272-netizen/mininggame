@@ -1,7 +1,7 @@
 {
   "enabled": true,
-  "baseOpenSeconds": 30,
-  "perRoomOpenSeconds": 60,
+  "baseOpenSeconds": 60,
+  "perRoomOpenSeconds": 0,
   "maxOpenSeconds": 600000,
   "rewardTierOffset": 1,
   "rewardQuantity": 1,
