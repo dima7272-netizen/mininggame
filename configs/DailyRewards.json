@@ -4,9 +4,9 @@
   "intervalSeconds": 86400,
   "days": [
     {
-      "minimum": 5000,
-      "kind": "Currency",
-      "trainingSeconds": 300
+      "minimum": 1,
+      "kind": "Pet",
+      "trainingSeconds": 0
     },
     {
       "minimum": 10000,
