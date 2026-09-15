@@ -1,0 +1,10 @@
+{
+  "enabled": true,
+  "baseOpenSeconds": 60,
+  "perRoomOpenSeconds": 30,
+  "maxOpenSeconds": 1800,
+  "rewardTierOffset": 1,
+  "rewardQuantity": 1,
+  "topTierQuantity": 2,
+  "petChancePercent": 50
+}
