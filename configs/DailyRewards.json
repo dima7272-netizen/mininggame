@@ -5,8 +5,8 @@
   "days": [
     {
       "minimum": 1,
-      "kind": "Pet",
-      "trainingSeconds": 0
+      "kind": "Currency",
+      "trainingSeconds": 1
     },
     {
       "minimum": 0,
