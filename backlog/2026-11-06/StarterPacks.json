@@ -1,0 +1,32 @@
+[
+  {
+    "petId": "Crocodile",
+    "pickaxeModelName": "IcePickaxe",
+    "arenaId": 12,
+    "section": "Starter_Pack",
+    "id": "Starter",
+    "offerSeconds": 3600,
+    "bagSlots": 0,
+    "productName": "StarterPack"
+  },
+  {
+    "petId": "Shark",
+    "pickaxeModelName": "PixelPickaxe",
+    "arenaId": 12,
+    "section": "Master_Pack",
+    "id": "Master",
+    "offerSeconds": 10800,
+    "bagSlots": 3,
+    "productName": "MasterPack"
+  },
+  {
+    "petId": "Elephant",
+    "pickaxeModelName": "CrimsonHook",
+    "arenaId": 13,
+    "section": "Legendary_Pack",
+    "id": "Legendary",
+    "offerSeconds": 18000,
+    "bagSlots": 10,
+    "productName": "LegendaryPack"
+  }
+]
