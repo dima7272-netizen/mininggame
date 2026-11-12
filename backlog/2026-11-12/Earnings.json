@@ -1,0 +1,6 @@
+{
+  "StrengthPerSecondPerPickaxeDamage": 1,
+  "StrengthPerCurrency": 11,
+  "MaximumOfflineSeconds": 86400,
+  "MinimumOfflineSeconds": 60
+}
