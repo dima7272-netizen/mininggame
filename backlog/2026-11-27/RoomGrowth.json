@@ -1,0 +1,9 @@
+{
+  "enabled": true,
+  "lengthPerRoom": 0.08,
+  "widthPerRoom": 0.06,
+  "heightPerRoom": 0.04,
+  "maxLengthScale": 4,
+  "maxWidthScale": 3,
+  "maxHeightScale": 2.5
+}
